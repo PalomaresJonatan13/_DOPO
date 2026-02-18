@@ -8,6 +8,7 @@
 import java.util.List;
 import java.util.ArrayList;
 
+// should include .getLid
 public class Cup
 {
     private int i;
