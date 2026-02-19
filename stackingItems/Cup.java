@@ -69,4 +69,16 @@ public class Cup
         this.left.makeInvisible();
         this.right.makeInvisible();
     }
+
+    public void moveVerticallyFromTo(int from, int to, boolean show) {
+        if (show) {
+            this.moveVerticallyTo(from);
+            this.makeVisible();
+        }
+        this.moveVerticallyTo(to);
+    }
+
+    public void makeLidInvisible() {
+        // 
+    }
 }

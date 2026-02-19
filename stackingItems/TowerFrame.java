@@ -5,29 +5,75 @@
  * @author (your name) 
  * @version (a version number or a date)
  */ // ------------------------------------------------------ // ------------------------------------------------------ // ------------------------------------------------------
-public class TowerFrame
-{
-    // instance variables - replace the example below with your own
-    private int x;
 
-    /**
-     * Constructor for objects of class TowerFrame
-     */
-    public TowerFrame()
-    {
-        // initialise instance variables
-        x = 0;
+import java.util.*;
+
+// CONSIDER ADDING A VERTICAL PADDING TO THE FRAME
+public class TowerFrame {
+    private Rectangle leftBorder;
+    private Rectangle topBorder;
+    private Rectangle rightBorder;
+    private Rectangle bottomBorder;
+    private List<Rectangle> ticks;
+    private static int THICKNESS = 1;
+    private static int TICKLENGTH = 5;
+    private int width;
+    private int height;
+    private int space;
+    private int margin;
+
+    // width, height, space and margin in px
+    public TowerFrame(int width, int height, int space, int margin) {
+        this.width = width;
+        this.height = height;
+        this.space = space;
+        this.margin = margin;
+        this.createBorder();
+        this.createTicks();
     }
 
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+    private void createBorder() {
+        this.leftBorder = new Rectangle(THICKNESS, this.height);
+        this.leftBorder.moveTo(this.margin, this.margin);
+
+        this.topBorder = new Rectangle(this.width, THICKNESS);
+        this.topBorder.moveTo(this.margin, this.margin);
+
+        this.rightBorder = new Rectangle(THICKNESS, this.height);
+        this.rightBorder.moveTo(this.margin + this.width, this.margin);
+
+        this.bottomBorder = new Rectangle(this.width, THICKNESS);
+        this.bottomBorder.moveTo(this.margin, this.margin + this.height);
+    }
+
+    private void createTicks() {
+        int xPosition = this.margin - TICKLENGTH;
+        for (int i=0; i <= this.height/this.space; i++) {
+            Rectangle tick = new Rectangle(TICKLENGTH, THICKNESS);
+            int yPosition = this.margin + this.height - this.space*(i);
+            tick.moveTo(xPosition, yPosition);
+        }
+    }
+
+    public void makeVisible() {
+        this.leftBorder.makeVisible();
+        this.topBorder.makeVisible();
+        this.rightBorder.makeVisible();
+        this.bottomBorder.makeVisible();
+
+        for (Rectangle tick : this.ticks) {
+            tick.makeVisible();
+        }
+    }
+
+    public void makeInvisible() {
+        this.leftBorder.makeInvisible();
+        this.topBorder.makeInvisible();
+        this.rightBorder.makeInvisible();
+        this.bottomBorder.makeInvisible();
+
+        for (Rectangle tick : this.ticks) {
+            tick.makeInvisible();
+        }
     }
 }

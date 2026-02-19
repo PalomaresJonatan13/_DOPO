@@ -37,7 +37,7 @@ public class Rectangle{
         this.height = height;
         this.xPosition = 0;
         this.yPosition = 0;
-        this.color = "magenta";
+        this.color = "black";
         this.isVisible = false;
     }
     
