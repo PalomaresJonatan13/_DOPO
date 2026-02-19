@@ -5,13 +5,10 @@
  * @author (your name) 
  * @version (a version number or a date)
  */ // ------------------------------------------------------ // ------------------------------------------------------ // ------------------------------------------------------
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
-// should include .getLid
-public class Cup
-{
-    private int i;
+public class Cup {
+    private int index;
     private Rectangle base;
     private Rectangle left;
     private Rectangle right;
@@ -19,43 +16,49 @@ public class Cup
     private Lid lid;
     private int blockSize;
 
-    public Cup(int i, String color, int blockSize) {
-        this.i = i;
-        this.base = new Rectangle();
-        this.left = new Rectangle();
-        this.right = new Rectangle();
+    public Cup(int index, String color, int blockSize) {
+        this.index = index;
         this.color = color;
         this.blockSize = blockSize;
-        this.lid = new Lid(i, color);
-        
-        this.base.changeSize(size, this.height());
-        this.left.changeSize((this.height()-1) * blockSize, blockSize);
-        this.right.changeSize((this.height()-1) * blockSize, blockSize);
-    }
-    
-    public int height() {
-        return this.i * 2 - 1;
-    }
-    
-    // IS THIS USEFUL?
-    private void moveToOrigin() {
-        this.left.moveToOrigin();
-        this.base.moveTo(0, (this.height() - 1)*this.blockSize);
-        this.right.moveTo((this.height() - 1)*this.blockSize, 0);
+        this.lid = new Lid(index, color, blockSize);
+        this.createSides();
     }
 
-    private void centerX(int leftLimit, int totalWidth) {                     // USE IN THE CONSTRUCTOR: no
-        int halfWidth = this.base.getWidth()/2;
-        int center = leftLimit + totalWidth/2;
-        this.base.moveHorizontallyTo(center - halfWidth);
-        this.left.moveHorizontallyTo(center - halfWidth);
-        this.right.moveHorizontallyTo(center + halfWidth - this.blockSize);
+    private void createSides() {
+        // the sides will overlap, but it wont matter
+        int sideLengthPx = this.size()*this.blockSize;
+        this.base = new Rectangle(sideLengthPx, this.blockSize);
+        this.left = new Rectangle(this.blockSize, sideLengthPx);
+        this.right = new Rectangle(this.blockSize, sideLengthPx);
+
+        this.base.changeColor(this.color);
+        this.left.changeColor(this.color);
+        this.right.changeColor(this.color);
+
+        this.base.moveVerticallyTo(sideLengthPx - this.blockSize);
+        this.right.moveHorizontallyTo(sideLengthPx - this.blockSize);
+    }
+    
+    public int size() {
+        return 2 * this.index - 1;
     }
 
-    public void moveVertical(int y) {
-        this.base.moveVertical(y);
-        this.left.moveVertical(y);
-        this.right.moveVertical(y);
+    public Lid getLid() {
+        return this.lid;
+    }
+
+    // this is in terms of pixels
+    public void centerX(int leftLimit, int totalWidth) {
+        int newX = leftLimit + (totalWidth - this.size()*this.blockSize)/2;
+        this.base.moveHorizontallyTo(newX);
+        this.left.moveHorizontallyTo(newX);
+        this.right.moveHorizontallyTo(newX);
+    }
+
+    public void moveVerticallyTo(int y) {
+        this.base.moveVerticallyTo(y);
+        this.left.moveVerticallyTo(y);
+        this.right.moveVerticallyTo(y);
     }
 
     public void makeVisible() {
@@ -78,7 +81,11 @@ public class Cup
         this.moveVerticallyTo(to);
     }
 
+    public void makeLidVisible() {
+        this.lid.makeVisible();
+    }
+
     public void makeLidInvisible() {
-        // 
+        this.lid.makeInvisible();
     }
 }

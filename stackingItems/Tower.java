@@ -9,6 +9,10 @@
 import java.util.*;
 import javax.swing.JOptionPane;
 
+
+// THE COLORS ARE MISSING
+// MAKE THE CANVAS BIGGER
+// ORGANIZE THE METHODS, HERE IN THE CODE (SOME ORDER)
 public class Tower {
     private int width;
     private int height;
@@ -21,36 +25,36 @@ public class Tower {
     private static int MARGIN = 20;
     private static int BLOCKSIZE = 20;
 
-    // width and maxHeight in terms of i's
+    // width in terms of i, this.width in terms of 2i-1, height and maxHeight in terms of i
     public Tower(int width, int maxHeight) {
         if ((width > 0) && (maxHeight > 0)) {
-            this.width = width;
+            this.width = 2*width - 1;
             this.height = maxHeight;
             this.visible = false;
             this.ok = true;
             this.active = true;
             this.orderOfItems = new ArrayList<>(); // {"c13", "l1", "c4"}
             this.heightOfItems = new ArrayList<>();
-            this.frame = new TowerFrame(width*BLOCKSIZE, maxHeight*BLOCKSIZE, BLOCKSIZE, MARGIN);
+            this.frame = new TowerFrame(this.width*BLOCKSIZE, this.height*BLOCKSIZE, BLOCKSIZE, MARGIN);
             this.cups = new HashMap<>();
         } else {
             this.showMessage("`width` and `height` must be positive natural numbers.");
         }
     }
 
-    public void pushCup(int i) {
-        this.pushItem(i, true);
+    public void pushCup(int index) {
+        this.pushItem(index, true);
     }
 
     public void popCup() {
         this.popItem(true);
     }
 
-    private boolean isLided(int i) {
+    private boolean isLided(int index) {
         boolean isLided = false;
-        int cupIndex = this.orderOfItems.indexOf("C" + i);
+        int cupIndex = this.orderOfItems.indexOf("C" + index);
         if (this.orderOfItems.size() > cupIndex + 1) {
-            isLided = this.orderOfItems.get(cupIndex+1).equals("L" + i);
+            isLided = this.orderOfItems.get(cupIndex+1).equals("L" + index);
         }
         return isLided;
     }
@@ -59,10 +63,10 @@ public class Tower {
         int totalItems = this.orderOfItems.size();
         if (totalItems > 0) {
             String lastItem = this.orderOfItems.getLast();
-            int lastI = this.getI(lastItem);
+            int lastIndex = this.getI(lastItem);
             // in case there is not the cup or lid to keep saving the cup associated
-            if (!this.orderOfItems.containsAll(Arrays.asList("C" + lastI, "L" + lastI))) {
-                this.cups.remove(lastI);
+            if (!this.orderOfItems.containsAll(Arrays.asList("C" + lastIndex, "L" + lastIndex))) {
+                this.cups.remove(lastIndex);
             }
             this.orderOfItems.removeLast();
             this.heightOfItems.removeLast();
@@ -76,48 +80,50 @@ public class Tower {
         return this.orderOfItems.contains(item);
     }
 
-    public void removeCup(int i) {
-        this.removeItem(i, true);
+    public void removeCup(int index) {
+        this.removeItem(index, true);
     }
 
     private boolean isCup(String item) {
         return item.charAt(0) == "C";
     }
     
-    public void pushLid (int i) {
-        this.pushItem(i, false);
+    public void pushLid (int index) {
+        this.pushItem(index, false);
     }
 
-    private int heightReachedByNewItem(int i, boolean isCup) {
+    private int heightReachedByNewItem(int index, boolean isCup) {
         String lastItem = this.orderOfItems.getLast();
         // 1 if the last item was a lid
         int lastHeight = (this.isCup(lastItem) ? 2*this.getI(lastItem) - 1 : 1);
 
-        int itemWidth = 2*i - 1;
+        int itemWidth = 2*index - 1;
         int itemHeight = (isCup ? itemWidth : 1);
         int lastHeightReached = this.heightOfItems.getLast();
         // this is the height the new item will reach
         return lastHeightReached + (lastHeight < itemWidth ? itemHeight : itemHeight + 1 - lastHeight);
     }
 
-    private void pushItem(int i, boolean isCup) {
+    private void pushItem(int index, boolean isCup) {
         this.ok = false; String errorMessage;
         String stringCL = (isCup ? "C" : "L");
-        if (!this.orderOfItems.contains(stringCL + i) && (i > 0) && (i <= this.width)) {
+        if (!this.orderOfItems.contains(stringCL + index) && (index > 0) && (2*index-1 <= this.width)) {
             // this is the height the new item will reach
-            int newHeight = this.heightReachedByNewItem(i, isCup);
+            int newHeight = this.heightReachedByNewItem(index, isCup);
             if (!((newHeight > this.height) && this.visible)) {
                 Cup associatedCup;
-                if (this.cups.containsKey(i)) {associatedCup = this.cups.get(i);}
+                if (this.cups.containsKey(index)) {associatedCup = this.cups.get(index);}
                 else {
-                    associatedCup = new Cup(i, "black", BLOCKSIZE);
-                    this.cups.put(i, associatedCup);
+                    associatedCup = new Cup(index, "black", BLOCKSIZE);
+                    this.cups.put(index, associatedCup);
                 }
                 if (isCup) {
-                    associatedCup.moveHorizontallyFromTo(MARGIN, MARGIN + this.height - newHeight*BLOCKSIZE, this.visible);
+                    associatedCup.centerX(MARGIN, this.width*BLOCKSIZE);
+                    associatedCup.moveVerticallyFromTo(MARGIN, MARGIN + this.height - newHeight*BLOCKSIZE, this.visible);
                 } else {
                     Lid newLid = associatedCup.getLid();
-                    newLid.moveHorizontallyFromTo(MARGIN, MARGIN + this.height - newHeight*BLOCKSIZE, this.visible);
+                    newLid.centerX(MARGIN, this.width*BLOCKSIZE);
+                    newLid.moveVerticallyFromTo(MARGIN, MARGIN + this.height - newHeight*BLOCKSIZE, this.visible);
                 }
                 this.heightOfItems.add(newHeight);
                 this.orderOfItems.add(stringCL + i);
@@ -148,21 +154,21 @@ public class Tower {
         }
     }
     
-    public void removeLid (int i) {
-        this.removeItem(i, false);
+    public void removeLid (int index) {
+        this.removeItem(index, false);
     }
 
-    private void removeItem(int i, boolean isCup) {
+    private void removeItem(int index, boolean isCup) {
         String stringCL = (isCup ? "C" : "L");
-        if (this.hasItem(stringCL + i)) {
+        if (this.hasItem(stringCL + index)) {
             boolean itemFound = false;
-            String lastItem; int lastI;
+            String lastItem; int lastIndex;
             List<String> items = new ArrayList<>();
-            boolean cupLided = this.isLided(i);
+            boolean cupLided = this.isLided(index);
             do {
                 lastItem = this.orderOfItems.getLast();
-                lastI = this.getI(lastItem);
-                if (lastItem.equals(stringCL + i)) {itemFound = true;}
+                lastIndex = this.getI(lastItem);
+                if (lastItem.equals(stringCL + index)) {itemFound = true;}
                 else {items.add(lastItem);}
                 // this is why the while is used instead of .subList and .indexOf
                 this.pop();
@@ -175,10 +181,10 @@ public class Tower {
             }
             while (items.size() > limit) {
                 lastItem = items.getLast();
-                lastI = this.getI(lastItem);
+                lastIndex = this.getI(lastItem);
 
-                if (this.isCup(lastItem)) {this.pushCup(lastI);}
-                else {this.pushLid(lastI);}
+                if (this.isCup(lastItem)) {this.pushCup(lastIndex);}
+                else {this.pushLid(lastIndex);}
                 items.removeLast();
             }
             this.ok = true;
@@ -209,8 +215,8 @@ public class Tower {
         } else if (!this.visible) {
             this.frame.makeVisible();
             for (String item : this.orderOfItems) {
-                int itemI = this.getI(item);
-                Cup associatedCup = this.cups.get(itemI);
+                int itemIndex = this.getI(item);
+                Cup associatedCup = this.cups.get(itemIndex);
                 if (this.isCup(item)) {
                     associatedCup.makeVisible();
                 } else {
@@ -224,8 +230,8 @@ public class Tower {
     public void makeInvisible() {
         this.frame.makeInvisible();
         for (String item : this.orderOfItems) {
-            int itemI = this.getI(item);
-            Cup associatedCup = this.cups.get(itemI);
+            int itemIndex = this.getI(item);
+            Cup associatedCup = this.cups.get(itemIndex);
             if (this.isCup(item)) {
                 associatedCup.makeInvisible();
             } else {
@@ -248,11 +254,11 @@ public class Tower {
 
     public int[] lidedCups() {
         List<Integer> lidedCups = new ArrayList<>();
-        boolean itemI;
+        int itemIndex;
         for (String item : this.orderOfItems) {
-            itemI = this.getI(item);
-            if (this.isCup(item) && this.isLided(itemI)) {
-                lidedCups.add(itemI);
+            itemIndex = this.getI(item);
+            if (this.isCup(item) && this.isLided(itemIndex)) {
+                lidedCups.add(itemIndex);
             }
         }
         return lidedCups.stream().mapToInt(Integer::intValue).toArray(); // \\\\\\\\\\
@@ -286,21 +292,21 @@ public class Tower {
 
         int j = 0;
         String item;
-        int itemI;
+        int itemIndex;
         boolean isCup;
         int newHeight = 0;
         while ((j < itemsDescendingOrder.size()) && (newHeight < this.height)) {
             item = itemsDescendingOrder.get(j);
-            itemI = this.getI(item);
+            itemIndex = this.getI(item);
             isCup = this.isCup(item);
-            newHeight = this.heightReachedByNewItem(itemI, isCup);
-            if ((!isCup) && (itemsDescendingOrder.indexOf("C" + itemI) > 0)) { // in descending order, the l comes before the c
-                this.pushCup(itemI);
-                newHeight = this.heightReachedByNewItem(itemI, isCup);
+            newHeight = this.heightReachedByNewItem(itemIndex, isCup);
+            if ((!isCup) && (itemsDescendingOrder.indexOf("C" + itemIndex) > 0)) { // in descending order, the l comes before the c
+                this.pushCup(itemIndex);
+                newHeight = this.heightReachedByNewItem(itemIndex, isCup);
                 j++;
             }
             if (newHeight < this.height) {
-                this.pushItem(itemI, isCup);
+                this.pushItem(itemIndex, isCup);
                 j++;
             }
         }

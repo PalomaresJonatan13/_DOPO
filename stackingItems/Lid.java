@@ -5,29 +5,53 @@
  * @author (your name) 
  * @version (a version number or a date)
  */ // ------------------------------------------------------ // ------------------------------------------------------ // ------------------------------------------------------
-public class Lid
-{
-    // instance variables - replace the example below with your own
-    private int x;
 
-    /**
-     * Constructor for objects of class Lid
-     */
-    public Lid()
-    {
-        // initialise instance variables
-        x = 0;
+
+public class Lid {
+    private int index;
+    private Rectangle base;
+    private String color;
+    private int blockSize;
+
+    public Lid(int index, String color, int blockSize) {
+        this.index = index;
+        this.color = color;
+        this.blockSize = blockSize;
+        this.createBase();
     }
 
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+    private void createBase() {
+        Rectangle base = new Rectangle(this.size()*this.blockSize, this.blockSize);
+        base.changeColor(this.color);
+    }
+
+    public int size() {
+        return 2 * this.index - 1;
+    }
+
+    // this is in terms of pixels
+    public void centerX(int leftLimit, int totalWidth) {
+        int newX = leftLimit + (totalWidth - this.size()*this.blockSize)/2;
+        this.base.moveHorizontallyTo(newX);
+    }
+
+    public void moveVerticallyTo(int y) {
+        this.base.moveVerticallyTo(y);
+    }
+
+    public void makeVisible() {
+        this.base.makeVisible();
+    }
+
+    public void makeInvisible() {
+        this.base.makeInvisible();
+    }
+
+    public void moveVerticallyFromTo(int from, int to, boolean show) {
+        if (show) {
+            this.moveVerticallyTo(from);
+            this.makeVisible();
+        }
+        this.moveVerticallyTo(to);
     }
 }
