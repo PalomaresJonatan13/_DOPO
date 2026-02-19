@@ -21,8 +21,8 @@ public class Lid {
     }
 
     private void createBase() {
-        Rectangle base = new Rectangle(this.size()*this.blockSize, this.blockSize);
-        base.changeColor(this.color);
+        this.base = new Rectangle(this.size()*this.blockSize, this.blockSize);
+        this.base.changeColor(this.color);
     }
 
     public int size() {
