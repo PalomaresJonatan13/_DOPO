@@ -6,21 +6,23 @@
  * @version (a version number or a date)
  */ // ------------------------------------------------------ // ------------------------------------------------------ // ------------------------------------------------------
 import java.util.*;
+import java.awt.*;
 
 public class Cup {
     private int index;
     private Rectangle base;
     private Rectangle left;
     private Rectangle right;
-    private String color;
+    private Color color;
     private Lid lid;
     private int blockSize;
 
-    public Cup(int index, String color, int blockSize) {
+    public Cup(int index, int blockSize) {
         this.index = index;
-        this.color = color;
         this.blockSize = blockSize;
-        this.lid = new Lid(index, color, blockSize);
+        this.setColor();
+
+        this.lid = new Lid(index, this.color, blockSize);
         this.createSides();
     }
 
@@ -37,6 +39,18 @@ public class Cup {
 
         this.base.moveVerticallyTo(sideLengthPx - this.blockSize);
         this.right.moveHorizontallyTo(sideLengthPx - this.blockSize);
+    }
+
+    private void setColor() {
+        Random random = new Random();
+        int hue = random.nextFloat();
+        int saturation = random.nextFloat();
+        int brightness = random.nextFloat();
+        this.color = Color.getHSBColor(hue, saturation, brightness);
+        
+        this.base.changeColor(this.color);
+        this.left.changeColor(this.color);
+        this.right.changeColor(this.color);
     }
     
     public int size() {
@@ -73,13 +87,13 @@ public class Cup {
         this.right.makeInvisible();
     }
 
-    public void moveVerticallyFromTo(int from, int to, boolean show) {
+    /* public void moveVerticallyFromTo(int from, int to, boolean show) {
         if (show) {
             this.moveVerticallyTo(from);
             this.makeVisible();
         }
         this.moveVerticallyTo(to);
-    }
+    } */
 
     public void makeLidVisible() {
         this.lid.makeVisible();

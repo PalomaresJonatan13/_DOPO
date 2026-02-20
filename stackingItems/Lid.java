@@ -6,14 +6,15 @@
  * @version (a version number or a date)
  */ // ------------------------------------------------------ // ------------------------------------------------------ // ------------------------------------------------------
 
+import java.awt.*;
 
 public class Lid {
     private int index;
     private Rectangle base;
-    private String color;
+    private Color color;
     private int blockSize;
 
-    public Lid(int index, String color, int blockSize) {
+    public Lid(int index, Color color, int blockSize) {
         this.index = index;
         this.color = color;
         this.blockSize = blockSize;

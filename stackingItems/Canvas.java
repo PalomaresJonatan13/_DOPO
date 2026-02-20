@@ -24,13 +24,17 @@ public class Canvas{
 	/**
 	 * Factory method to get the canvas singleton object.
 	 */
-	public static Canvas getCanvas(){
+	public static Canvas getCanvas(int width, int height) {
 		if(canvasSingleton == null) {
-			canvasSingleton = new Canvas("BlueJ Shapes Demo", 300, 300, 
+			canvasSingleton = new Canvas("BlueJ Shapes Demo", width, height, 
 										 Color.white);
 		}
 		canvasSingleton.setVisible(true);
 		return canvasSingleton;
+	}
+
+    public static Canvas getCanvas() {
+		return getCanvas(300, 300);
 	}
 
 	//  ----- instance part -----
@@ -98,12 +102,19 @@ public class Canvas{
     	shapes.put(referenceObject, new ShapeDescription(shape, color));
     	redraw();
     }
+
+    public void draw(Object referenceObject, Color color, Shape shape) { // ------------------------------------------------------
+        objects.remove(referenceObject);
+        objects.add(referenceObject);
+        shapes.put(referenceObject, new ShapeDescription(shape, color));
+        redraw();
+    }
  
     /**
      * Erase a given shape's from the screen.
      * @param  referenceObject  the shape object to be erased 
      */
-    public void erase(Object referenceObject){
+    public void erase(Object referenceObject){ 
     	objects.remove(referenceObject);   // just in case it was already there
     	shapes.remove(referenceObject);
     	redraw();
@@ -130,6 +141,10 @@ public class Canvas{
 			graphic.setColor(Color.white);
 		else
 			graphic.setColor(Color.black);
+    }
+
+    public void setForegroundColor(Color color) { // ------------------------------------------------------
+        graphic.setColor(color);
     }
 
     /**
@@ -188,14 +203,24 @@ public class Canvas{
     private class ShapeDescription{
     	private Shape shape;
     	private String colorString;
+        private Color color;
 
 		public ShapeDescription(Shape shape, String color){
     		this.shape = shape;
     		colorString = color;
-    	}
+        }
 
-		public void draw(Graphics2D graphic){
-			setForegroundColor(colorString);
+        public ShapeDescription(Shape shape, Color color) { // ------------------------------------------------------
+            this.shape = shape;
+            this.color = color;
+        }
+
+		public void draw(Graphics2D graphic){ // ------------------------------------------------------
+			if (color != null) {
+                setForegroundColor(color);
+            } else {
+                setForegroundColor(colorString);
+            }
 			graphic.draw(shape);
 			graphic.fill(shape);
 		}

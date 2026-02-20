@@ -47,17 +47,19 @@ public class TowerFrame {
     }
 
     private void createTicks() {
+        this.ticks = new ArrayList<>();
         int xPosition = this.margin - TICKLENGTH;
         for (int i=0; i <= this.height/this.space; i++) {
             Rectangle tick = new Rectangle(TICKLENGTH, THICKNESS);
             int yPosition = this.margin + this.height - this.space*(i);
             tick.moveTo(xPosition, yPosition);
+            this.ticks.add(tick);
         }
     }
 
     public void makeVisible() {
         this.leftBorder.makeVisible();
-        this.topBorder.makeVisible();
+        // this.topBorder.makeVisible();
         this.rightBorder.makeVisible();
         this.bottomBorder.makeVisible();
 
