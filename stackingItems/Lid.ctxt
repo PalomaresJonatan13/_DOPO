@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=Lid
+comment1.params=index\ color\ blockSize
+comment1.target=Lid(int,\ java.awt.Color,\ int)
+comment2.params=
+comment2.target=void\ createBase()
+comment3.params=
+comment3.target=int\ size()
+comment4.params=leftLimit\ totalWidth
+comment4.target=void\ centerX(int,\ int)
+comment5.params=y
+comment5.target=void\ moveVerticallyTo(int)
+comment6.params=
+comment6.target=void\ makeVisible()
+comment7.params=
+comment7.target=void\ makeInvisible()
+comment8.params=from\ to\ show
+comment8.target=void\ moveVerticallyFromTo(int,\ int,\ boolean)
+numComments=9

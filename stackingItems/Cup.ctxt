@@ -1,0 +1,26 @@
+#BlueJ class context
+comment0.target=Cup
+comment1.params=index\ blockSize
+comment1.target=Cup(int,\ int)
+comment10.params=
+comment10.target=void\ makeLidVisible()
+comment10.text=\ public\ void\ moveVerticallyFromTo(int\ from,\ int\ to,\ boolean\ show)\ {\r\n\ \ \ \ \ \ \ \ if\ (show)\ {\r\n\ \ \ \ \ \ \ \ \ \ \ \ this.moveVerticallyTo(from);\r\n\ \ \ \ \ \ \ \ \ \ \ \ this.makeVisible();\r\n\ \ \ \ \ \ \ \ }\r\n\ \ \ \ \ \ \ \ this.moveVerticallyTo(to);\r\n}
+comment11.params=
+comment11.target=void\ makeLidInvisible()
+comment2.params=
+comment2.target=void\ createSides()
+comment3.params=
+comment3.target=void\ setColor()
+comment4.params=
+comment4.target=int\ size()
+comment5.params=
+comment5.target=Lid\ getLid()
+comment6.params=leftLimit\ totalWidth
+comment6.target=void\ centerX(int,\ int)
+comment7.params=y
+comment7.target=void\ moveVerticallyTo(int)
+comment8.params=
+comment8.target=void\ makeVisible()
+comment9.params=
+comment9.target=void\ makeInvisible()
+numComments=12

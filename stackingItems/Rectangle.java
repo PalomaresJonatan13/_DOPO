@@ -7,7 +7,7 @@ import java.awt.*;
  * @version 1.0  (15 July 2000)()
  */
 
-import java.util.*;
+import java.util.*; 
  
 public class Rectangle{
 

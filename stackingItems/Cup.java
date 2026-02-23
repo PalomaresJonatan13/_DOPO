@@ -16,6 +16,7 @@ public class Cup {
     private Color color;
     private Lid lid;
     private int blockSize;
+    private static final Random RANDOM = new Random();
 
     public Cup(int index, int blockSize) {
         this.index = index;
@@ -42,15 +43,10 @@ public class Cup {
     }
 
     private void setColor() {
-        Random random = new Random();
-        int hue = random.nextFloat();
-        int saturation = random.nextFloat();
-        int brightness = random.nextFloat();
+        float hue = RANDOM.nextFloat();
+        float saturation = RANDOM.nextFloat();
+        float brightness = RANDOM.nextFloat();
         this.color = Color.getHSBColor(hue, saturation, brightness);
-        
-        this.base.changeColor(this.color);
-        this.left.changeColor(this.color);
-        this.right.changeColor(this.color);
     }
     
     public int size() {
@@ -66,11 +62,11 @@ public class Cup {
         int newX = leftLimit + (totalWidth - this.size()*this.blockSize)/2;
         this.base.moveHorizontallyTo(newX);
         this.left.moveHorizontallyTo(newX);
-        this.right.moveHorizontallyTo(newX);
+        this.right.moveHorizontallyTo(newX + (this.size() - 1)*this.blockSize);
     }
 
     public void moveVerticallyTo(int y) {
-        this.base.moveVerticallyTo(y);
+        this.base.moveVerticallyTo(y + (this.size() - 1)*this.blockSize);
         this.left.moveVerticallyTo(y);
         this.right.moveVerticallyTo(y);
     }
