@@ -9,32 +9,28 @@
 import java.util.*;
 import javax.swing.JOptionPane;
 
-// USE HASITEM INSTEAD OF CONTAINS
-public class Tower {
+
+public class TowerV2 {
     private int width;
     private int height;
     private boolean visible;
     private boolean ok;
-    private List<String> orderOfItems;
-    private List<Integer> heightOfItems;
+    private List<TowerItem> orderOfItems;
     private TowerFrame frame;
-    private HashMap<Integer, Cup> cups;
     private static int MARGIN = 20;
     private static int BLOCKSIZE = 20;
 
     private boolean showMessages = true; // ------------------------------------------------------
 
     // width in terms of i, this.width in terms of 2i-1, height and maxHeight in terms of i
-    public Tower(int width, int maxHeight) {
+    public TowerV2(int width, int maxHeight) {
         if ((width > 0) && (maxHeight > 0)) {
             this.width = 2*width - 1;
             this.height = maxHeight;
             this.visible = true;
             this.ok = true;
-            this.orderOfItems = new ArrayList<>(); // {"c13", "l1", "c4"}
-            this.heightOfItems = new ArrayList<>();
+            this.orderOfItems = new ArrayList<>(); 
             this.frame = new TowerFrame(this.width*BLOCKSIZE, this.height*BLOCKSIZE, BLOCKSIZE, MARGIN);
-            this.cups = new HashMap<>();
 
             Canvas.getCanvas(this.width*BLOCKSIZE + 2*MARGIN, this.height*BLOCKSIZE + 2*MARGIN);
             this.frame.makeVisible();
@@ -69,22 +65,20 @@ public class Tower {
     // ------------------------------------------------------------------------------------------------------------
 
     public int height() {
-        return (this.heightOfItems.size() > 0 ? Collections.max(this.heightOfItems) : 0);
+        int maxHeight = 0;
+        for (TowerItem item : this.orderOfItems) {
+            maxHeight = Math.max(maxHeight, item.getHeightReached());
+        }
+        return maxHeight;
     }
 
     public void makeVisible() {
         if (this.height() > this.height) {
             this.showMessage("Cannot make visible because the tower is overflowed.");
-        } else { // CHANGED
+        } else {
             this.frame.makeVisible();
-            for (String item : this.orderOfItems) {
-                int itemIndex = this.getItemIndex(item);
-                Cup associatedCup = this.cups.get(itemIndex);
-                if (this.isCup(item)) {
-                    associatedCup.makeVisible();
-                } else {
-                    associatedCup.makeLidVisible();
-                }
+            for (TowerItem item : this.orderOfItems) {
+                item.makeVisible();
             }
             this.visible = true;
             this.ok = true;
@@ -92,30 +86,38 @@ public class Tower {
     }
 
     public void makeInvisible() {
-        this.visible = false;
         this.frame.makeInvisible();
-        for (String item : this.orderOfItems) {
-            int itemIndex = this.getItemIndex(item);
-            Cup associatedCup = this.cups.get(itemIndex);
-            if (this.isCup(item)) {
-                associatedCup.makeInvisible();
-            } else {
-                associatedCup.makeLidInvisible();
-            }
+        for (TowerItem item : this.orderOfItems) {
+            item.makeInvisible();
         }
+        this.visible = false;
         this.ok = true;
     }
 
-    private boolean hasItem(String item) {
-        return this.orderOfItems.contains(item);
+    private boolean hasItem(int index, boolean isCup) {
+        boolean hasItem = false;
+        int j = 0;
+        while (!hasItem && (j < this.orderOfItems.size())) {
+            TowerItem item = this.orderOfItems.get(j);
+            if ((item.isCup() == isCup) && (item.getIndex() == index)) {
+                hasItem = true;
+            }
+            j++;
+        }
+        return hasItem;
     }
 
-    public int getItemIndex(String item) { // needs to be public ?????
-        return Integer.parseInt(item.substring(1));
-    }
-
-    private boolean isCup(String item) {
-        return item.charAt(0) == 'C';
+    private TowerItem getItem(int index, boolean isCup) { // -------------**************+++++++++++++++++\\\\\\\\\\\\\\\\
+        TowerItem itemFound = null;
+        int j = 0;
+        while (itemFound == null && (j < this.orderOfItems.size())) {
+            TowerItem item = this.orderOfItems.get(j);
+            if ((item.isCup() == isCup) && (item.getIndex() == index)) {
+                itemFound = item;
+            }
+            j++;
+        }
+        return itemFound;
     }
 
     private int heightReachedByNewItem(int index, boolean isCup) {
@@ -125,10 +127,10 @@ public class Tower {
             int j = this.orderOfItems.size() - 1;
             boolean foundGreaterEqualWidth = false;
             while (j >= 0 && !foundGreaterEqualWidth) {
-                String item = this.orderOfItems.get(j);
-                int itemIndex = this.getItemIndex(item);
-                int heightReached = this.heightOfItems.get(j);
-                int itemHeight = (this.isCup(item) ? 2*itemIndex - 1 : 1);
+                TowerItem item = this.orderOfItems.get(j);
+                int itemIndex = item.getIndex();
+                int heightReached = item.getHeightReached();
+                int itemHeight = (item.isCup() ? 2*itemIndex - 1 : 1);
                 if (itemIndex > index) {
                     heightReachedByNewItem = Math.max(heightReachedByNewItem, heightReached + (newItemHeight+1-itemHeight));
                     foundGreaterEqualWidth = true;
@@ -142,19 +144,23 @@ public class Tower {
         return heightReachedByNewItem;
     }
 
-    private boolean isLidded(int index) {
-        boolean isLidded = false;
+    // MISSING ---------------------------------------------------------------**************************++\\\\\\\\\\\\\\\\\\
+    private boolean isItemLidded(int index) {
+        boolean isItemLidded = false;
         int cupIndex = this.orderOfItems.indexOf("C" + index);
         if (cupIndex >= 0 && this.orderOfItems.size() > cupIndex + 1) {
-            isLidded = this.orderOfItems.get(cupIndex+1).equals("L" + index);
+            isItemLidded = this.orderOfItems.get(cupIndex+1).equals("L" + index);
         }
-        return isLidded;
+        return isItemLidded;
     }
-
     /* is lidded if the lid has lidHeight = cupHeight + 1*/ // ---------------------------------------------------
 
-    public int[] getHeightOfItems() {
-        return this.heightOfItems.stream().mapToInt(Integer::intValue).toArray(); // \\\\\\\\\\
+    public int[] heightReachedByItems() {
+        int[] heightOfItems = new int[this.orderOfItems.size()];
+        for (int i=0; i<this.orderOfItems.size(); i++) {
+            heightOfItems[i] = this.orderOfItems.get(i).getHeightReached();
+        }
+        return heightOfItems;
     }
 
     // ------------------------------------------------------------------------------------------------------------
@@ -164,29 +170,14 @@ public class Tower {
     private void pushItem(int index, boolean isCup) {
         this.ok = false;
         String errorMessage = "";
-        String stringCL = (isCup ? "C" : "L");
-        if (!this.orderOfItems.contains(stringCL + index) && (index > 0) && (2*index-1 <= this.width)) {
+        if (!this.hasItem(index, isCup) && (index > 0) && (2*index-1 <= this.width)) {
             // this is the height the new item will reach
             int newHeight = this.heightReachedByNewItem(index, isCup);
             if (!((newHeight > this.height) && this.visible)) {
-                Cup associatedCup;
-                if (this.cups.containsKey(index)) {associatedCup = this.cups.get(index);}
-                else {
-                    associatedCup = new Cup(index, BLOCKSIZE);
-                    this.cups.put(index, associatedCup);
-                }
-                if (isCup) {
-                    associatedCup.centerX(MARGIN, this.width*BLOCKSIZE);
-                    associatedCup.moveVerticallyTo(MARGIN + (this.height - newHeight)*BLOCKSIZE);
-                    if (this.visible) {associatedCup.makeVisible();}
-                } else {
-                    Lid newLid = associatedCup.getLid();
-                    newLid.centerX(MARGIN, this.width*BLOCKSIZE);
-                    newLid.moveVerticallyTo(MARGIN + (this.height - newHeight)*BLOCKSIZE);
-                    if (this.visible) {newLid.makeVisible();}
-                }
-                this.heightOfItems.add(newHeight);
-                this.orderOfItems.add(stringCL + index);
+                TowerItem newItem = new TowerItem(isCup, index, BLOCKSIZE, MARGIN, this.width, this.height);
+                newItem.setHeightReached(newHeight);
+                if (this.visible) {newItem.makeVisible();}
+                this.orderOfItems.add(newItem);
                 this.ok = true;
             } else {errorMessage = "Adding the new item will result in an overflow of the tower's frame.";}
         } else {errorMessage = "Either the item already exists, the given size for the item is nonpositive or it is greater than the current allowed width.";}
@@ -196,19 +187,16 @@ public class Tower {
     }
 
     private void pop() {
-        int totalItems = this.orderOfItems.size();
-        if (totalItems > 0) {
-            String lastItem = this.orderOfItems.getLast();
-            int lastIndex = this.getItemIndex(lastItem);
+        if (!this.orderOfItems.isEmpty()) {
+            TowerItem lastItem = this.orderOfItems.getLast();
+            int lastIndex = lastItem.getIndex();
 
-            if (this.isCup(lastItem)) this.cups.get(lastIndex).makeInvisible();
-            else this.cups.get(lastIndex).makeLidInvisible();
+            lastItem.makeInvisible();
             // in case there is not the cup or lid to keep saving the cup associated
-            if (!this.orderOfItems.containsAll(Arrays.asList("C" + lastIndex, "L" + lastIndex))) {
-                this.cups.remove(lastIndex);
+            if (!(this.hasItem(lastIndex, true) && this.hasItem(lastIndex, false))) {
+                lastItem.deleteAssociatedCup();
             }
             this.orderOfItems.removeLast();
-            this.heightOfItems.removeLast();
             this.ok = true;
         } else {
             this.showMessage("Cannot pop items from an empty Tower.");
@@ -216,23 +204,22 @@ public class Tower {
     }
 
     private void removeItem(int index, boolean isCup) {
-        String stringCL = (isCup ? "C" : "L");
-        if (this.hasItem(stringCL + index)) {
+        if (this.hasItem(index, isCup)) {
             boolean itemFound = false;
-            String lastItem; int lastIndex;
-            List<String> items = new ArrayList<>();
-            boolean cuplidded = this.isLidded(index);
+            TowerItem lastItem; int lastIndex;
+            List<TowerItem> items = new ArrayList<>();
             do {
                 lastItem = this.orderOfItems.getLast();
-                lastIndex = this.getItemIndex(lastItem);
-                if (lastItem.equals(stringCL + index)) {itemFound = true;}
+                lastIndex = lastItem.getIndex();
+                if ((lastItem.isCup() == isCup) && (lastItem.getIndex() == index)) {itemFound = true;}
                 else {items.add(lastItem);}
                 // this is why the while is used instead of .subList and .indexOf
                 this.pop();
             } while (!itemFound);
 
             int limit = 0;
-            if (cuplidded) {
+            boolean cupLidded = this.isItemLidded(index);
+            if (cupLidded) {
                 if (isCup) {limit = 1;} // dont reinsert the last lid removed if the cup removed was lidded
                 else {this.pop();} // remove the cup associated
             }
@@ -317,7 +304,7 @@ public class Tower {
         int itemIndex;
         for (String item : this.orderOfItems) {
             itemIndex = this.getItemIndex(item);
-            if (this.isCup(item) && this.isLidded(itemIndex)) {
+            if (this.isCup(item) && this.isItemLidded(itemIndex)) {
                 liddedCups.add(itemIndex);
             }
         }
