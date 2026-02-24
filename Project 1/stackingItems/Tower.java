@@ -10,7 +10,7 @@ import java.util.*;
 import javax.swing.JOptionPane;
 
 
-public class TowerV2 {
+public class Tower {
     private int width;
     private int height;
     private boolean visible;
@@ -23,7 +23,7 @@ public class TowerV2 {
     private boolean showMessages = true; // ------------------------------------------------------
 
     // width in terms of i, this.width in terms of 2i-1, height and maxHeight in terms of i
-    public TowerV2(int width, int maxHeight) {
+    public Tower(int width, int maxHeight) {
         if ((width > 0) && (maxHeight > 0)) {
             this.width = 2*width - 1;
             this.height = maxHeight;
@@ -107,13 +107,13 @@ public class TowerV2 {
         return hasItem;
     }
 
-    private TowerItem getItem(int index, boolean isCup) { // -------------**************+++++++++++++++++\\\\\\\\\\\\\\\\
-        TowerItem itemFound = null;
+    private int indexOfItem(int index, boolean isCup) {
+        int itemFound = -1;
         int j = 0;
-        while (itemFound == null && (j < this.orderOfItems.size())) {
+        while (itemFound == -1 && (j < this.orderOfItems.size())) {
             TowerItem item = this.orderOfItems.get(j);
             if ((item.isCup() == isCup) && (item.getIndex() == index)) {
-                itemFound = item;
+                itemFound = j;
             }
             j++;
         }
@@ -144,12 +144,12 @@ public class TowerV2 {
         return heightReachedByNewItem;
     }
 
-    // MISSING ---------------------------------------------------------------**************************++\\\\\\\\\\\\\\\\\\
     private boolean isItemLidded(int index) {
         boolean isItemLidded = false;
-        int cupIndex = this.orderOfItems.indexOf("C" + index);
+        int cupIndex = this.indexOfItem(index, true);
         if (cupIndex >= 0 && this.orderOfItems.size() > cupIndex + 1) {
-            isItemLidded = this.orderOfItems.get(cupIndex+1).equals("L" + index);
+            TowerItem itemAfterCup = this.orderOfItems.get(cupIndex + 1);
+            isItemLidded = !itemAfterCup.isCup() && itemAfterCup.getIndex() == index;
         }
         return isItemLidded;
     }
@@ -225,9 +225,9 @@ public class TowerV2 {
             }
             while (items.size() > limit) {
                 lastItem = items.getLast();
-                lastIndex = this.getItemIndex(lastItem);
+                lastIndex = lastItem.getIndex();
 
-                if (this.isCup(lastItem)) {this.pushCup(lastIndex);}
+                if (lastItem.isCup()) {this.pushCup(lastIndex);}
                 else {this.pushLid(lastIndex);}
                 items.removeLast();
             }
@@ -241,13 +241,13 @@ public class TowerV2 {
         boolean existsItem = false;
         int j = this.orderOfItems.size() - 1;
         while (!existsItem && (j >= 0)) {
-            existsItem = this.isCup(this.orderOfItems.get(j)) == isCup;
+            existsItem = this.orderOfItems.get(j).isCup() == isCup;
             j--;
         }
         
         if (existsItem) {
-            String itemToRemove = this.orderOfItems.get(++j);
-            this.removeItem(this.getItemIndex(itemToRemove), isCup);
+            TowerItem itemToRemove = this.orderOfItems.get(++j);
+            this.removeItem(itemToRemove.getIndex(), isCup);
         } else {
             String itemType = (isCup ? "cup" : "lid");
             this.showMessage("There are no " + itemType + "s to pop.");
@@ -292,9 +292,9 @@ public class TowerV2 {
         int totalItems = this.orderOfItems.size();
         String[][] stackingItems = new String[totalItems][2];
         for (int i=0; i<totalItems; i++) {
-            String item = this.orderOfItems.get(i);
-            String stringCL = (this.isCup(item) ? "cup" : "lid");
-            stackingItems[i] = new String[]{stringCL, item.substring(1)};
+            TowerItem item = this.orderOfItems.get(i);
+            String stringCL = (item.isCup() ? "cup" : "lid");
+            stackingItems[i] = new String[]{stringCL, item.getIndex() + ""};
         }
         return stackingItems;
     }
@@ -302,9 +302,9 @@ public class TowerV2 {
     public int[] liddedCups() {
         List<Integer> liddedCups = new ArrayList<>();
         int itemIndex;
-        for (String item : this.orderOfItems) {
-            itemIndex = this.getItemIndex(item);
-            if (this.isCup(item) && this.isItemLidded(itemIndex)) {
+        for (TowerItem item : this.orderOfItems) {
+            itemIndex = item.getIndex();
+            if (item.isCup() && this.isItemLidded(itemIndex)) {
                 liddedCups.add(itemIndex);
             }
         }
@@ -313,50 +313,59 @@ public class TowerV2 {
 
     // SHOULD THE LIDDED CUPS CONDITION BE APPLIED HERE ??????????????----------------***************\\\\\\\\\\\\\\\\
     public void reverseTower() {
-        // List<Integer> heightOfItemsCopy = new ArrayList<>(this.heightOfItems);
-        List<String> orderOfItemsCopy = new ArrayList<>(this.orderOfItems);
-        this.clear();
+        if (!this.orderOfItems.isEmpty()) {
+            List<TowerItem> orderOfItemsCopy = new ArrayList<>(this.orderOfItems);
+            this.clear();
 
-        int j = orderOfItemsCopy.size() - 1;
-        String item = orderOfItemsCopy.get(j);
-        int newHeight = this.heightReachedByNewItem(this.getItemIndex(item), this.isCup(item));
-        while ((newHeight < this.height) && (j >= 0)) {
-            this.pushItem(this.getItemIndex(item), this.isCup(item));
-            j--;
-            if (j >= 0) {
-                item = orderOfItemsCopy.get(j);
-                newHeight = this.heightReachedByNewItem(this.getItemIndex(item), this.isCup(item));
+            int j = orderOfItemsCopy.size() - 1;
+            TowerItem item = orderOfItemsCopy.get(j);
+            int newHeight = this.heightReachedByNewItem(item.getIndex(), item.isCup());
+            while ((newHeight <= this.height) && (j >= 0)) {
+                this.pushItem(item.getIndex(), item.isCup());
+                j--;
+                if (j >= 0) {
+                    item = orderOfItemsCopy.get(j);
+                    newHeight = this.heightReachedByNewItem(item.getIndex(), item.isCup());
+                }
             }
         }
         this.ok = true;
     }
 
     public void orderTower() {
-        List<String> itemsDescendingOrder = new ArrayList<>(this.orderOfItems);
-        Collections.sort(itemsDescendingOrder, Collections.reverseOrder());
-        this.clear();
+        if (!this.orderOfItems.isEmpty()) {
+            List<TowerItem> itemsDescendingOrder = new ArrayList<>(this.orderOfItems);
+            itemsDescendingOrder.sort((a, b) -> Integer.compare(b.getIndex(), a.getIndex()));
+            this.clear();
 
-        int j = 0;
-        String item;
-        int itemIndex;
-        boolean isCup;
-        int newHeight = 0;
-        while ((j < itemsDescendingOrder.size()) && (newHeight < this.height)) {
-            item = itemsDescendingOrder.get(j);
-            itemIndex = this.getItemIndex(item);
-            isCup = this.isCup(item);
-            newHeight = this.heightReachedByNewItem(itemIndex, isCup);
-            // in descending order, the l comes before the c, so if the cup is before the lid, we push the cup
-            if ((!isCup) && (itemsDescendingOrder.indexOf("C" + itemIndex) >= 0)) {
-                this.pushCup(itemIndex);
+            int j = 0;
+            TowerItem item;
+            int itemIndex;
+            boolean isCup;
+            int newHeight = 0;
+            while ((j < itemsDescendingOrder.size()) && (newHeight <= this.height)) {
+                item = itemsDescendingOrder.get(j);
+                itemIndex = item.getIndex();
+                isCup = item.isCup();
+                
+                // in descending order, the l comes before the c, so if the cup is before the lid, we push the cup
+                if (!isCup && itemsDescendingOrder.size() > j + 1) {
+                    TowerItem nextItem = itemsDescendingOrder.get(j+1);
+                    if (nextItem.getIndex() == itemIndex && nextItem.isCup()) {
+                        newHeight = this.heightReachedByNewItem(itemIndex, true);
+                        if (newHeight <= this.height) {
+                            this.pushCup(itemIndex);
+                            j++;
+                        }
+                    }
+                }
                 newHeight = this.heightReachedByNewItem(itemIndex, isCup);
-                j++;
+                if (newHeight <= this.height) {
+                    this.pushItem(itemIndex, isCup);
+                    j++;
+                }
             }
-            if (newHeight < this.height) {
-                this.pushItem(itemIndex, isCup);
-                j++;
-            }
-        }
+        } 
         this.ok = true;
     }
 }

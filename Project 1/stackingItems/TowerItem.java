@@ -88,8 +88,3 @@ public class TowerItem {
         associatedCups.remove(this.index);
     }
 }
-
-/*
-créate a TowerItem class? Use dependency if yes {
-	isLidded
-}, pop could be a one-liner, etc. */

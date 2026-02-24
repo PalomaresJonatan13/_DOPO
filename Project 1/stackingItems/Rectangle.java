@@ -6,8 +6,6 @@ import java.awt.*;
  * @author  Michael Kolling and David J. Barnes (Modified)
  * @version 1.0  (15 July 2000)()
  */
-
-import java.util.*; 
  
 public class Rectangle{
 
@@ -58,11 +56,11 @@ public class Rectangle{
     }
     
     public void moveHorizontallyTo(int x) { // ------------------------------------------------------
-        this.slowMoveHorizontal(x - this.xPosition);
+        this.moveHorizontal(x - this.xPosition);
     }
 
     public void moveVerticallyTo(int y) { // ------------------------------------------------------
-        this.slowMoveVertical(y - this.yPosition);
+        this.moveVertical(y - this.yPosition);
     }
 
     public void moveTo(int x, int y) { // ------------------------------------------------------
