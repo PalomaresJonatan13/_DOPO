@@ -1,5 +1,7 @@
 import java.util.*;
 
+
+// LIDDED CUPS SHOULD LOOK DIFFERENT
 public class TowerItem {
     private boolean isCup;
     private int index;
@@ -86,5 +88,19 @@ public class TowerItem {
 
     public void deleteAssociatedCup() {
         associatedCups.remove(this.index);
+    }
+
+    public static boolean isAValidItem(String[] item) {
+        boolean isValid = false;
+        if (item.length == 2) {
+            if (item[0].equals("cup") || item[0].equals("lid")) {
+                try {
+                    if (Integer.parseInt(item[1]) > 0) {
+                        isValid = true;
+                    }
+                } catch (NumberFormatException e) {}
+            } 
+        }
+        return isValid;
     }
 }

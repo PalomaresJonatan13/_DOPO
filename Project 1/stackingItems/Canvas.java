@@ -216,8 +216,8 @@ public class Canvas{
         }
 
 		public void draw(Graphics2D graphic){ // ------------------------------------------------------
-			if (color != null) {
-                setForegroundColor(color);
+			if (this.color != null) {
+                setForegroundColor(this.color);
             } else {
                 setForegroundColor(colorString);
             }

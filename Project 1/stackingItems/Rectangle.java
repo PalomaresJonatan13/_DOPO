@@ -15,7 +15,7 @@ public class Rectangle{
     private int width;
     private int xPosition;
     private int yPosition;
-    private String color;
+    private Color color;
     private boolean isVisible;
 
     /**
@@ -26,7 +26,7 @@ public class Rectangle{
         width = 40;
         xPosition = 70;
         yPosition = 15;
-        color = "magenta";
+        color = Color.magenta;
         isVisible = false;
     }
 
@@ -35,7 +35,7 @@ public class Rectangle{
         this.height = height;
         this.xPosition = 0;
         this.yPosition = 0;
-        this.color = "black";
+        this.color = Color.black;
         this.isVisible = false;
     }
     
@@ -194,13 +194,9 @@ public class Rectangle{
      * @param color the new color. Valid colors are "red", "yellow", "blue", "green",
      * "magenta" and "black".
      */
-    public void changeColor(String newColor){
+    public void changeColor(Color newColor){
         color = newColor;
         draw();
-    }
-
-    public void changeColor(Color color) { // ------------------------------------------------------
-        this.draw(color);
     }
 
     /*
@@ -208,16 +204,6 @@ public class Rectangle{
      */
 
     private void draw() {
-        if(isVisible) {
-            Canvas canvas = Canvas.getCanvas();
-            canvas.draw(this, color,
-                new java.awt.Rectangle(xPosition, yPosition, 
-                                       width, height));
-            canvas.wait(10);
-        }
-    }
-
-    private void draw(Color color) { // ------------------------------------------------------
         if(isVisible) {
             Canvas canvas = Canvas.getCanvas();
             canvas.draw(this, color,

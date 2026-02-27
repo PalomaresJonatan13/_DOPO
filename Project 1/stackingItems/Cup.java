@@ -17,6 +17,9 @@ public class Cup {
     private Lid lid;
     private int blockSize;
     private static final Random RANDOM = new Random();
+    private static final Color[] _COLORS = {
+        hexColor("#132A13"), hexColor("#31572C"), hexColor("#4F772D"), hexColor("#90A955"), hexColor("#ECF39E"), hexColor("#1B998B"), hexColor("#2D3047"), hexColor("#BB6B00"), hexColor("#452103"), hexColor("#8C7051"), hexColor("#690500"), hexColor("#053C5E"), hexColor("#F0E5D8"), hexColor("#000000"), hexColor("#84BCDA"), hexColor("#ECC30B"), hexColor("#46237A"), hexColor("#403D58"), hexColor("#4E598C"), hexColor("#D5BF86")
+    };
 
     public Cup(int index, int blockSize) {
         this.index = index;
@@ -43,10 +46,8 @@ public class Cup {
     }
 
     private void setColor() {
-        float hue = RANDOM.nextFloat();
-        float saturation = RANDOM.nextFloat();
-        float brightness = RANDOM.nextFloat();
-        this.color = Color.getHSBColor(hue, saturation, brightness);
+        int colorIndex = RANDOM.nextInt(_COLORS.length);
+        this.color = _COLORS[colorIndex];
     }
     
     public int size() {
@@ -97,5 +98,13 @@ public class Cup {
 
     public void makeLidInvisible() {
         this.lid.makeInvisible();
+    }
+
+    private static Color hexColor(String hex) {
+        return new Color(
+            Integer.valueOf(hex.substring(1, 3), 16),
+            Integer.valueOf(hex.substring(3, 5), 16),
+            Integer.valueOf(hex.substring(5, 7), 16)
+        );
     }
 }
