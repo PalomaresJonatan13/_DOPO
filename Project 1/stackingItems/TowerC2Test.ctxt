@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=TowerC2Test
+comment1.params=expectedItems\ expectedHeights
+comment1.target=void\ assertTowerState(java.lang.String[][],\ int[])
+comment2.params=
+comment2.target=void\ setUp()
+comment3.params=
+comment3.target=void\ tearDown()
+comment3.text=\r\n\ \ \ \ @Test\r\n\ \ \ \ public\ void\ ()\ {\r\n\ \ \ \ \ \ \ \ //\r\n\ \ \ \ }\r\n
+numComments=4

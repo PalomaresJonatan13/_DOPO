@@ -20,8 +20,6 @@ public class Tower {
     private static int MARGIN = 20;
     private static int BLOCKSIZE = 20;
 
-    private boolean showMessages = true; // ------------------------------------------------------
-
     // width in terms of i, this.width in terms of 2i-1, height and maxHeight in terms of i
     public Tower(int width, int maxHeight) {
         if ((width > 0) && (maxHeight > 0)) {
@@ -36,15 +34,13 @@ public class Tower {
             this.frame.makeVisible();
         } else {
             String message = "`width` and `height` must be positive natural numbers.";
-            this.showMessage(message);
+            this.reportFail(message);
             throw new IllegalArgumentException(message);
         }
     }
 
     public Tower(int cups) {
-        int width = 2*cups - 1;
-        int height = (int) Math.pow(cups, 2);
-        this(width, height);
+        this(cups, (int) Math.pow(cups, 2));
 
         for (int i=1; i<=cups; i++) {
             this.pushCup(i);
@@ -55,15 +51,11 @@ public class Tower {
         return this.ok;
     }
 
-    public void setShowMessages(boolean showMessages) { // ------------------------------------------------------
-        this.showMessages = showMessages;
-    }
-
-    private void showMessage(String message) {
+    private void reportFail(String message) {
         if (this.visible) { // ------------------------------------------------------
-            if (this.showMessages) JOptionPane.showMessageDialog(null, message);
-            this.ok = false;
+            JOptionPane.showMessageDialog(null, message);
         }
+        this.ok = false;
     }
     
     public void exit() {
@@ -84,7 +76,7 @@ public class Tower {
 
     public void makeVisible() {
         if (this.height() > this.height) {
-            this.showMessage("Cannot make visible because the tower is overflowed.");
+            this.reportFail("Cannot make visible because the tower is overflowed.");
         } else {
             this.frame.makeVisible();
             for (TowerItem item : this.orderOfItems) {
@@ -102,6 +94,10 @@ public class Tower {
         }
         this.visible = false;
         this.ok = true;
+    }
+
+    public boolean isVisible() {
+        return this.visible;
     }
 
     private int positionOfItem(int index, boolean isCup) {
@@ -168,7 +164,7 @@ public class Tower {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
-    private void pushItem(int index, boolean isCup, boolean showMessage) {
+    private void pushItem(int index, boolean isCup) {
         if (!this.hasItem(index, isCup) && (index > 0) && (2*index-1 <= this.width)) {
             // this is the height the new item will reach
             int newHeight = this.heightReachedByNewItem(index, isCup);
@@ -178,16 +174,12 @@ public class Tower {
                 if (this.visible) {newItem.makeVisible();}
                 this.orderOfItems.add(newItem);
                 this.ok = true;
-            } else if (showMessage) {
-                this.showMessage("Adding the new item will result in an overflow of the tower's frame.");
+            } else {
+                this.reportFail("Adding the new item will result in an overflow of the tower's frame.");
             }
-        } else if (showMessage) {
-            this.showMessage("Either the item already exists, the given size for the item is nonpositive or it is greater than the current allowed width.");
+        } else {
+            this.reportFail("Either the item already exists, the given size for the item is nonpositive or it is greater than the current allowed width.");
         }
-    }
-
-    private void pushItem(int index, boolean isCup) {
-        this.pushItem(index, isCup, true);
     }
 
     private void pop() {
@@ -203,7 +195,7 @@ public class Tower {
             this.orderOfItems.removeLast();
             this.ok = true;
         } else {
-            this.showMessage("Cannot pop items from an empty Tower.");
+            this.reportFail("Cannot pop items from an empty Tower.");
         }
     }
 
@@ -215,7 +207,7 @@ public class Tower {
             }
             this.ok = true;
         } else {
-            this.showMessage("The item from which to start removing does not belong to the Tower.");
+            this.reportFail("The item from which to start removing does not belong to the Tower.");
         }
     }
 
@@ -226,14 +218,15 @@ public class Tower {
             }
             this.ok = true;
         } else {
-            this.showMessage("The given position to remove from should be greater than or equal to 0 and less than the number of items in the Tower.");
+            this.reportFail("The given position to remove from should be greater than or equal to 0 and less than the number of items in the Tower.");
         }
     }
 
     private void removeItem(int index, boolean isCup) {
         if (this.hasItem(index, isCup)) {
             int itemPosition = this.positionOfItem(index, isCup);
-            List<TowerItem> itemsAfterItem = this.orderOfItems.subList(itemPosition + 1, this.orderOfItems.size());
+            List<TowerItem> itemsSubList = this.orderOfItems.subList(itemPosition + 1, this.orderOfItems.size());
+            List<TowerItem> itemsAfterItem = new ArrayList<>(itemsSubList);
             this.removeStartingAtItem(index, isCup);
 
             int limit = 0;
@@ -251,7 +244,7 @@ public class Tower {
             }
             this.ok = true;
         } else {
-            this.showMessage("The desired item to be removed does not belong to the Tower.");
+            this.reportFail("The desired item to be removed does not belong to the Tower.");
         }
     }
 
@@ -268,7 +261,7 @@ public class Tower {
             this.removeItem(itemToRemove.getIndex(), isCup);
         } else {
             String itemType = (isCup ? "cup" : "lid");
-            this.showMessage("There are no " + itemType + "s to pop.");
+            this.reportFail("There are no " + itemType + "s to pop.");
         }
     }
 
@@ -330,7 +323,7 @@ public class Tower {
     }
 
     // SHOULD THE LIDDED CUPS CONDITION BE APPLIED HERE ??????????????----------------***************\\\\\\\\\\\\\\\\
-    public void reverseTower() { // IF A MESSAGE IS SUPPOSED TO BE DISPLAYED, USE THE OVERLOADED METHOD pushItem WITH showMessage = false
+    public void reverseTower() { // IF A MESSAGE IS SUPPOSED TO BE DISPLAYED, USE THE OVERLOADED METHOD pushItem WITH reportFail = false
         if (!this.orderOfItems.isEmpty()) {
             List<TowerItem> orderOfItemsCopy = new ArrayList<>(this.orderOfItems);
             this.clear();
@@ -350,7 +343,7 @@ public class Tower {
         this.ok = true;
     }
 
-    public void orderTower() { // IF A MESSAGE IS SUPPOSED TO BE DISPLAYED, USE THE OVERLOADED METHOD pushItem WITH showMessage = false
+    public void orderTower() { // IF A MESSAGE IS SUPPOSED TO BE DISPLAYED, USE THE OVERLOADED METHOD pushItem WITH reportFail = false
         if (!this.orderOfItems.isEmpty()) {
             List<TowerItem> itemsDescendingOrder = new ArrayList<>(this.orderOfItems);
             itemsDescendingOrder.sort((a, b) -> Integer.compare(b.getIndex(), a.getIndex()));
@@ -405,48 +398,51 @@ public class Tower {
             List<TowerItem> orderOfItemsCopy = new ArrayList<>(this.orderOfItems);
             this.removeFromPosition(position);
             this.pushItem(item.getIndex(), item.isCup());
-            for (int j=position; j<orderOfItemsCopy.size(); j++) {
+
+            this.ok = true;
+            int j = position;
+            while (j < orderOfItemsCopy.size() && this.ok()) {
                 TowerItem itemToReinsert = orderOfItemsCopy.get(j);
                 this.pushItem(itemToReinsert.getIndex(), itemToReinsert.isCup());
+                j++;
             }
 
-            if (this.visible && this.height() > this.height) {
-                this.showMessage("Cannot insert the item in the given position because the resulting order will overflow the tower's frame.");
+            if (!this.ok()) {
+                this.reportFail("Cannot insert the item in the given position because the resulting order will overflow the tower's frame.");
                 this.restoreOrderOfItems(orderOfItemsCopy);
-            } else {this.ok = true;}
+            }
         } else {
-            this.showMessage("The given position to insert should be greater than or equal to 0 and less than or equal to the number of items in the Tower.");
+            this.reportFail("The given position to insert should be greater than or equal to 0 and less than or equal to the number of items in the Tower.");
         }
     }
 
+    // should include the interaction for lidded cups
     private void swapItems(int index1, boolean isCup1, int index2, boolean isCup2) {
         int position1 = this.positionOfItem(index1, isCup1);
         int position2 = this.positionOfItem(index2, isCup2);
         if (position1 >= 0 && position2 >= 0) {
             if (position1 != position2) {
-                int higherPos = Math.max(position1, position2);
-                int lowerPos = Math.min(position1, position2);
+                TowerItem item1 = this.orderOfItems.get(position1);
+                TowerItem item2 = this.orderOfItems.get(position2);
                 List<TowerItem> orderOfItemsCopy = new ArrayList<>(this.orderOfItems);
 
-                this.removeFromPosition(position1);
-                this.pushItem(index2, isCup2, false);
-                for (int j=lowerPos+1; j<higherPos; j++) {
-                    TowerItem item = orderOfItemsCopy.get(j);
-                    this.pushItem(item.getIndex(), item.isCup(), false);
-                }
-                this.pushItem(index1, isCup1, false);
-                for (int j=higherPos+1; j<orderOfItemsCopy.size(); j++) {
-                    TowerItem item = orderOfItemsCopy.get(j);
-                    this.pushItem(item.getIndex(), item.isCup(), false);
+                this.removeItem(index1, isCup1);
+                this.removeItem(index2, isCup2);
+                if (position1 < position2) {
+                    this.insert(item2, position1);
+                    this.insert(item1, position2);
+                } else {
+                    this.insert(item1, position2);
+                    this.insert(item2, position1);
                 }
 
-                if (this.visible && this.height() > this.height) {
-                    this.showMessage("Cannot swap the given items because the resulting order will overflow the tower's frame.");
+                if (!this.ok()) {
                     this.restoreOrderOfItems(orderOfItemsCopy);
-                } else {this.ok = true;}
+                    this.reportFail("Cannot swap the given items because the resulting order will overflow the tower's frame.");
+                }
             } else {this.ok = true;}
         } else {
-            this.showMessage("The given items to swap do not both belong to the Tower.");
+            this.reportFail("The given items to swap do not both belong to the Tower.");
         }
     }
 
@@ -458,18 +454,19 @@ public class Tower {
             int index2 = Integer.parseInt(item2[1]);
             this.swapItems(index1, isCup1, index2, isCup2);
         } else {
-            this.showMessage("The given items to swap are not valid. They should be string arrays of length 2, where the first element is either `cup` or `lid` and the second element is a positive integer representing the size of the item.");
+            this.reportFail("The given items to swap are not valid. They should be string arrays of length 2, where the first element is either `cup` or `lid` and the second element is a positive integer representing the size of the item.");
         }
     }
 
     public void cover() {
-        for (TowerItem item : this.orderOfItems) {
-            if (item.isCup() && !this.isItemLidded(item.getIndex())) {
-                int positionOfLid = this.positionOfItem(item.getIndex(), false);
+        for (TowerItem item : new ArrayList<>(this.orderOfItems)) {
+            int itemIndex = item.getIndex();
+            if (item.isCup() && !this.isItemLidded(itemIndex)) {
+                int positionOfLid = this.positionOfItem(itemIndex, false);
                 if (positionOfLid >= 0) {
                     TowerItem lid = this.orderOfItems.get(positionOfLid);
-                    this.removeLid(item.getIndex());
-                    int positionOfCup = this.positionOfItem(item.getIndex(), true);
+                    this.removeLid(itemIndex);
+                    int positionOfCup = this.positionOfItem(itemIndex, true);
                     this.insert(lid, positionOfCup + 1);
                 }
             }
