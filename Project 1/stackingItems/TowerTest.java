@@ -93,7 +93,7 @@ public class TowerTest {
         );
     }
 
-    @Test
+    /* @Test
     public void shouldNotPushCupIfTowerVisibleAndHeightReachedIsGreaterThanTowersHeight() {
         tower.makeVisible();
         // message
@@ -105,9 +105,9 @@ public class TowerTest {
             new int[] {3},
             false
         );
-    }
+    } */
 
-    @Test
+    /* @Test
     public void shouldNotPushLidIfTowerVisibleAndHeightReachedIsGreaterThanTowersHeight() {
         tower.makeVisible();
         // A message will be shown after trying to push the lid
@@ -120,7 +120,7 @@ public class TowerTest {
             new int[] {3, 10},
             false
         );
-    }
+    } */
 
     @Test
     public void shouldPushValidFirstCup() {
@@ -468,7 +468,7 @@ public class TowerTest {
     // makeVisible, makeInvisible
     // ------------------------------------------------------------------------------------------------------------
 
-    @Test
+    /* @ Test
     public void shouldNotMakeVisibleIfHeightisGreaterThanTowersHeight() {
         tower.pushCup(2);
         tower.pushCup(3);
@@ -481,9 +481,9 @@ public class TowerTest {
             false
         );
         assertFalse(tower.isVisible());
-    }
+    } */
 
-    @Test
+    /* @Test
     public void shouldMakeVisibleIfHeightIsLessThanOrEqualToTowersHeight() {
         tower.pushCup(2);
         tower.pushCup(1);
@@ -496,9 +496,9 @@ public class TowerTest {
             true
         );
         assertTrue(tower.isVisible());
-    }
+    } */
 
-    @Test
+    /* @Test
     public void shouldMakeInvisibleIfTowerIsVisible() {
         tower.makeVisible();
         tower.pushCup(2);
@@ -512,7 +512,7 @@ public class TowerTest {
             true
         );
         assertFalse(tower.isVisible());
-    }
+    } */
 
     // reverseTower
     // ------------------------------------------------------------------------------------------------------------

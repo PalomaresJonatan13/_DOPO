@@ -31,7 +31,7 @@ public class Tower {
             this.frame = new TowerFrame(this.width*BLOCKSIZE, this.height*BLOCKSIZE, BLOCKSIZE, MARGIN);
 
             Canvas.getCanvas(this.width*BLOCKSIZE + 2*MARGIN, this.height*BLOCKSIZE + 2*MARGIN);
-            this.frame.makeVisible();
+            this.makeVisible();
         } else {
             String message = "`width` and `height` must be positive natural numbers.";
             this.reportFail(message);
@@ -408,8 +408,8 @@ public class Tower {
             }
 
             if (!this.ok()) {
-                this.reportFail("Cannot insert the item in the given position because the resulting order will overflow the tower's frame.");
                 this.restoreOrderOfItems(orderOfItemsCopy);
+                this.reportFail("Cannot insert the item in the given position because the resulting order will overflow the tower's frame.");
             }
         } else {
             this.reportFail("The given position to insert should be greater than or equal to 0 and less than or equal to the number of items in the Tower.");
@@ -459,7 +459,10 @@ public class Tower {
     }
 
     public void cover() {
-        for (TowerItem item : new ArrayList<>(this.orderOfItems)) {
+        List<TowerItem> orderOfItemsCopy = new ArrayList<>(this.orderOfItems);
+        int j = 0;
+        while (j < orderOfItemsCopy.size() && this.ok()) {
+            TowerItem item = orderOfItemsCopy.get(j);
             int itemIndex = item.getIndex();
             if (item.isCup() && !this.isItemLidded(itemIndex)) {
                 int positionOfLid = this.positionOfItem(itemIndex, false);
@@ -470,7 +473,11 @@ public class Tower {
                     this.insert(lid, positionOfCup + 1);
                 }
             }
+            j++;
         }
-        this.ok = true;
+        if (!this.ok()) {
+            this.restoreOrderOfItems(orderOfItemsCopy);
+            this.reportFail("Couldn't cover the cups because it would result in an overflow.");
+        }
     }
 }

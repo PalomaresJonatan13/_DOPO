@@ -130,6 +130,22 @@ public class TowerC2Test {
     // cover    
     // ------------------------------------------------------------------------------------------------------------
 
+    /* @Test
+    public void shouldNotCoverIfVisibleAndNewHeightIsGreaterThanTowersHeight() {
+        tower.makeVisible();
+        tower.pushLid(3);
+        tower.pushLid(4);
+        tower.pushCup(4);
+        tower.pushCup(3);
+        tower.cover();
+
+        assertTowerState(
+            new String[][] {{"lid", "3"}, {"lid", "4"}, {"cup", "4"}, {"cup", "3"}},
+            new int[] {1, 2, 9, 8},
+            false
+        );
+    } */
+
     @Test
     public void shouldCoverIfThereAreNoCupsWithTheirLids() {
         tower.pushLid(1);

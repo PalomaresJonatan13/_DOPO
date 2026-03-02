@@ -28,11 +28,11 @@ public class TowerFrame {
         this.height = height;
         this.space = space;
         this.margin = margin;
-        this.createBorder();
+        this.createBorders();
         this.createTicks();
     }
 
-    private void createBorder() {
+    private void createBorders() {
         this.leftBorder = new Rectangle(THICKNESS, this.height + 1);
         this.leftBorder.moveTo(this.margin - 1, this.margin);
 
