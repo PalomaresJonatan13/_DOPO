@@ -5,7 +5,7 @@ import java.awt.Color;
 
 public class Lid extends TowerItem {
     private Rectangle base;
-    private Circle liddedDistinctive;
+    private Circle[] lidShapes;
 
     private Lid(int index, Color color, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
         this.blockSize = blockSize;
@@ -16,11 +16,9 @@ public class Lid extends TowerItem {
         this.index = index;
         this.color = color;
         this.isCup = false;
-        this.isVisible = false;
-        this.isLidded = false;
         this.createBase();
 
-        this.setHeightReached(this.height());
+        this.setHeightReached(-1);
         this.centerX();
     }
 
@@ -36,8 +34,11 @@ public class Lid extends TowerItem {
         this.base = new Rectangle(this.width()*this.blockSize, this.blockSize);
         this.base.changeColor(this.color);
 
-        this.liddedDistinctive = new Circle(this.blockSize/2);
-        this.liddedDistinctive.changeColor(this.color);
+        this.lidShapes = new Circle[2];
+        this.lidShapes[0] = new Circle(this.blockSize/3);
+        this.lidShapes[1] = new Circle(this.blockSize/3);
+        this.lidShapes[0].changeColor(Color.WHITE);
+        this.lidShapes[1].changeColor(Color.BLACK);
     }
 
     public void setColor(Color color) {
@@ -46,7 +47,8 @@ public class Lid extends TowerItem {
             cup.setColor(color);
         }
         this.base.changeColor(color);
-        this.liddedDistinctive.changeColor(color);
+        this.lidShapes[0].changeColor(Color.WHITE);
+        this.lidShapes[1].changeColor(Color.BLACK);
     }
 
     public String toString() {
@@ -71,10 +73,14 @@ public class Lid extends TowerItem {
 
         if (this.heightReached == cup.getHeightReached() + 1) {
             this.isLidded = true;
-            if (this.isVisible) this.liddedDistinctive.makeVisible();
+            if (this.isVisible) {
+                this.lidShapes[0].makeVisible();
+                this.lidShapes[1].makeVisible();
+            }
         } else {
             this.isLidded = false;
-            this.liddedDistinctive.makeInvisible();
+            this.lidShapes[0].makeInvisible();
+            this.lidShapes[1].makeInvisible();
         }
         if (this.isLidded != lastState) cup.updateLiddedState();
 
@@ -98,21 +104,29 @@ public class Lid extends TowerItem {
     private void centerX() {
         int newX = this.towerMargin + (this.towerWidth - this.width())*this.blockSize/2;
         this.base.moveHorizontallyTo(newX);
-        this.liddedDistinctive.moveHorizontallyTo(newX);
+        this.lidShapes[0].moveHorizontallyTo(newX + this.blockSize/2);
+        this.lidShapes[1].moveHorizontallyTo(newX + 5*this.blockSize/6);
     }
 
     protected void moveVerticallyTo(int y) {
         this.base.moveVerticallyTo(y);
-        this.liddedDistinctive.moveVerticallyTo(y);
+        this.lidShapes[0].moveVerticallyTo(y + this.blockSize/2);
+        this.lidShapes[1].moveVerticallyTo(y + this.blockSize/2);
     }
 
     public void makeVisible() {
         this.base.makeVisible();
-        if (this.isLidded) this.liddedDistinctive.makeVisible();
+        if (this.isLidded) {
+            this.lidShapes[0].makeVisible();
+            this.lidShapes[1].makeVisible();
+        }
+        this.isVisible = true;
     }
 
     public void makeInvisible() {
         this.base.makeInvisible();
-        this.liddedDistinctive.makeInvisible();
+        this.lidShapes[0].makeInvisible();
+        this.lidShapes[1].makeInvisible();
+        this.isVisible = false;
     }
 }

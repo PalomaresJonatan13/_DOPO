@@ -10,14 +10,6 @@ public class Cup extends TowerItem {
     private Rectangle right;
     private Lid lid;
     private static HashMap<Integer, Cup> ActiveCups = new HashMap<>();
-    private static final Random RANDOM = new Random();
-    private static final Color[] _COLORS = {
-        hexColor("#000000"), hexColor("#053C5E"), hexColor("#132A13"), hexColor("#1B998B"),
-        hexColor("#2D3047"), hexColor("#31572C"), hexColor("#403D58"), hexColor("#452103"),
-        hexColor("#46237A"), hexColor("#4E598C"), hexColor("#4F772D"), hexColor("#690500"),
-        hexColor("#84BCDA"), hexColor("#8C7051"), hexColor("#90A955"), hexColor("#BB6B00"),
-        hexColor("#D5BF86"), hexColor("#ECC30B"), hexColor("#ECF39E"), hexColor("#F0E5D8")
-    };
 
     private Cup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
         this.blockSize = blockSize;
@@ -27,12 +19,11 @@ public class Cup extends TowerItem {
 
         this.index = index;
         this.isCup = true;
-        this.isVisible = false;
         this.isLidded = false;
         this.setColor();
         this.createSides();
 
-        this.setHeightReached(this.height());
+        this.setHeightReached(-1);
         this.centerX();
 
         ActiveCups.put(index, this);
@@ -63,13 +54,12 @@ public class Cup extends TowerItem {
     }
 
     private void setColor() {
-        int colorIndex = RANDOM.nextInt(_COLORS.length);
-        this.color = _COLORS[colorIndex];
+        this.color = TowerItem.randomItemColor();
     }
 
     public void setColor(Color color) {
         if (this.color != color) {
-            if (Arrays.asList(_COLORS).contains(color)) {
+            if (Arrays.asList(TowerItem._COLORS).contains(color)) {
                 this.color = color;
 
                 this.base.changeColor(this.color);
@@ -78,7 +68,7 @@ public class Cup extends TowerItem {
 
                 this.lid.setColor(color);
             } else {
-                throw new IllegalArgumentException("invalid color");
+                throw new IllegalArgumentException("Invalid color");
             }
         }
     }
@@ -152,20 +142,14 @@ public class Cup extends TowerItem {
         this.base.makeVisible();
         this.left.makeVisible();
         this.right.makeVisible();
+        this.isVisible = true;
     }
 
     public void makeInvisible() {
         this.base.makeInvisible();
         this.left.makeInvisible();
         this.right.makeInvisible();
-    }
-
-    private static Color hexColor(String hex) {
-        return new Color(
-            Integer.valueOf(hex.substring(1, 3), 16),
-            Integer.valueOf(hex.substring(3, 5), 16),
-            Integer.valueOf(hex.substring(5, 7), 16)
-        );
+        this.isVisible = false;
     }
 
     public static void clearActiveCups() {
