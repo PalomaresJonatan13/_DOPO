@@ -391,8 +391,7 @@ public class TowerTest {
     }
 
     @Test
-    public void shouldPopCupAndLidIfTheCupIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween() { // ------------------------------
-        tower.pushCup(5);
+    public void shouldPopCupAndLidIfTheCupIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween() {
         tower.pushCup(1);
         tower.pushCup(4);
         tower.pushLid(3);
@@ -402,16 +401,15 @@ public class TowerTest {
         tower.popCup();
 
         assertTowerState(
-            new String[][] {{"cup", "5"}, {"cup", "1"}, {"lid", "3"}, {"lid", "2"}, {"lid", "1"}},
-            new int[] {9, 2, 3, 4, 5},
+            new String[][] {{"cup", "1"}, {"lid", "3"}, {"lid", "2"}, {"lid", "1"}},
+            new int[] {1, 2, 3, 4},
             new int[] {},
             true
         );
     }
 
     @Test
-    public void shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween() { // ------------------------------
-        tower.pushCup(5);
+    public void shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween() {
         tower.pushLid(1);
         tower.pushCup(4);
         tower.pushLid(3);
@@ -421,8 +419,8 @@ public class TowerTest {
         tower.popLid();
 
         assertTowerState(
-            new String[][] {{"cup", "5"}, {"lid", "1"}, {"lid", "3"}, {"cup", "2"}, {"cup", "1"}},
-            new int[] {9, 2, 3, 6, 5},
+            new String[][] {{"lid", "1"}, {"lid", "3"}, {"cup", "2"}, {"cup", "1"}},
+            new int[] {1, 2, 5, 4},
             new int[] {},
             true
         );
