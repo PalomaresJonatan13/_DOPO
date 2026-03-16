@@ -29,7 +29,8 @@ public class Forest{
     }
 
     public void someThings(){   
-
+        Thing beard = new Tree(this, 10, 10);
+        Thing soul = new Tree(this, 15, 15);
     }
     
     public int neighborsEquals(int r, int c){
@@ -56,7 +57,12 @@ public class Forest{
     
    
     public void ticTac(){
-
+        for (int j=0; j<this.getSize(); j++) {
+            for (int k=0; k<this.getSize(); k++) {
+                Thing thing = this.places[j][k];
+                if (thing != null) this.places[j][k].ticTac();
+            }
+        }
     }
 
 }
