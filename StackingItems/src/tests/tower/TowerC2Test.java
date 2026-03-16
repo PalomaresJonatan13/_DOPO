@@ -306,7 +306,7 @@ public class TowerC2Test {
             new int[] {1},
             true
         );
-        System.out.println(result.length);
+        
         assertTrue(result.length > 0);
         if (result.length > 0) {
             int lastHeight = tower.height();
