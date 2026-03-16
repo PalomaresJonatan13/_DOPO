@@ -12,7 +12,6 @@ comment13.params=index\ isCup
 comment13.target=int\ heightReachedByNewItem(int,\ boolean)
 comment14.params=
 comment14.target=int[]\ heightReachedByItems()
-comment14.text=\ private\ boolean\ isLidCoveringCup(int\ index)\ {\ //\ the\ lid\ must\ be\ the\ last\ item\ in\ the\ tower\r\n\ \ \ \ \ \ \ \ boolean\ isCovering\ \=\ false;\r\n\ \ \ \ \ \ \ \ int\ lidIndex\ \=\ this.positionOfItem(index,\ false);\r\n\ \ \ \ \ \ \ \ int\ cupIndex\ \=\ this.positionOfItem(index,\ true);\r\n\ \ \ \ \ \ \ \ if\ (lidIndex\ >\=\ 0\ &&\ cupIndex\ >\=\ 0)\ {\r\n\ \ \ \ \ \ \ \ \ \ \ \ Lid\ lid\ \=\ (Lid)\ this.towerItems.get(lidIndex);\r\n\ \ \ \ \ \ \ \ \ \ \ \ Cup\ cup\ \=\ (Cup)\ this.towerItems.get(cupIndex);\r\n\ \ \ \ \ \ \ \ \ \ \ \ isCovering\ \=\ cup.getHeightReached()\ +\ 1\ \=\=\ lid.getHeightReached();\r\n\ \ \ \ \ \ \ \ }\r\n\ \ \ \ \ \ \ \ return\ isCovering;\r\n}
 comment15.params=newItem
 comment15.target=void\ adjustColorForNewItem(TowerItem)
 comment16.params=index\ isCup
