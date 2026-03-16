@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=LivingThing
+comment1.params=
+comment1.target=LivingThing()
+comment1.text=Create\ a\ new\ LivingThing\n\ \n
+comment2.params=
+comment2.target=boolean\ step()
+comment2.text=The\ LivingThing\ makes\ one\ step\n\ \n
+comment3.params=
+comment3.target=int\ getEnergy()
+comment3.text=Returns\ the\ energy\n\ \ \ \ @return\ \n
+comment4.params=
+comment4.target=boolean\ isLivingThing()
+comment4.text=It's\ an\ LivingThing\n
+numComments=5
