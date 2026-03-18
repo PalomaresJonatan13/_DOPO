@@ -64,6 +64,7 @@ public class Tree extends LivingThing implements Thing{
      */
     public void ticTac(){
         tictac++;
+        // System.out.println(tictac);
         color=(tictac % 4==0? Color.PINK:
                tictac % 4==1? Color.GREEN:
                tictac % 4==2? Color.ORANGE:

@@ -5,9 +5,11 @@ import java.util.*;
 public class Forest{
     static private int SIZE=25;
     private Thing[][] places;
+    private int tictac;
     
     public Forest() {
         places=new Thing[SIZE][SIZE];
+        tictac = 0;
         for (int r=0;r<SIZE;r++){
             for (int c=0;c<SIZE;c++){
                 places[r][c]=null;
@@ -29,8 +31,11 @@ public class Forest{
     }
 
     public void someThings(){   
-        Thing beard = new Tree(this, 10, 10);
-        Thing soul = new Tree(this, 15, 15);
+        Tree beard = new Tree(this, 10, 10);
+        Tree soul = new Tree(this, 15, 15);
+
+        Squirrel scrat = new Squirrel(this, 2, 3);
+        Squirrel sandy = new Squirrel(this, 4, 4);
     }
     
     public int neighborsEquals(int r, int c){
@@ -54,9 +59,14 @@ public class Forest{
     private boolean inForest(int r, int c){
         return ((0<=r) && (r<SIZE) && (0<=c) && (c<SIZE));
     }
+
+    public int getTictac() {
+        return this.tictac;
+    }
     
    
     public void ticTac(){
+        this.tictac++;
         for (int j=0; j<this.getSize(); j++) {
             for (int k=0; k<this.getSize(); k++) {
                 Thing thing = this.places[j][k];
