@@ -36,6 +36,12 @@ public class Forest{
 
         Squirrel scrat = new Squirrel(this, 2, 3);
         Squirrel sandy = new Squirrel(this, 4, 4);
+
+        Shadow thief = new Shadow(this, 5, 20);
+        Shadow lass = new Shadow(this, 20, 12);
+
+        CursedTree palomares = new CursedTree(this, 21, 17);
+        CursedTree castaneda = new CursedTree(this, 8, 6);
     }
     
     public int neighborsEquals(int r, int c){
@@ -49,6 +55,27 @@ public class Forest{
             }
         }
         return num;
+    }
+
+    public static List<Integer[]> neighborCells(Forest forest, int row, int column, int distance) {
+        List<Integer[]> neighborCells = new ArrayList<>();
+        int forestSize = forest.getSize();
+
+        for(int dr=-1; dr<2; dr++){
+            for (int dc=-1; dc<2; dc++){
+                int dr_ = dr * distance;
+                int dc_ = dc * distance;
+                if (
+                    (dr_!=0 || dc_!=0) &&
+                    ((0<=row+dr_) && (row+dr_<forestSize)) &&
+                    ((0<=column+dc_) && (column+dc_<forestSize))
+                    // (this.forest.getThing(this.row+dr, this.column+dc) == null)
+                ) {
+                    neighborCells.add(new Integer[] {row+dr_, column+dc_});
+                };
+            }
+        }
+        return neighborCells;
     }
    
 

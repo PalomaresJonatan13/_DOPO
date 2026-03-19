@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ForestGUI extends JFrame{  
     public static final int SIDE=20;
@@ -80,14 +82,21 @@ class PhotoForest extends JPanel{
         }
         for (int f=0;f<=theForest.getSize();f++){
             g.drawLine(0,f*ForestGUI.SIDE,theForest.getSize()*ForestGUI.SIDE,f*ForestGUI.SIDE);
-        }       
+        }
+        List<Integer> shadowAffected = new ArrayList<>();
         for (int f=0;f<theForest.getSize();f++){
             for(int c=0;c<theForest.getSize();c++){
                 if (theForest.getThing(f,c)!=null){
                     g.setColor(theForest.getThing(f,c).getColor());
-                    if (theForest.getThing(f,c).shape()==Thing.SQUARE){                  
-                        g.fillRoundRect(ForestGUI.SIDE*c+1,ForestGUI.SIDE*f+1,ForestGUI.SIDE-2,ForestGUI.SIDE-2,2,2);   
-                    }else {
+                    int shape = theForest.getThing(f, c).shape();
+                    if (shape!=Thing.ROUND){                  
+                        g.fillRoundRect(ForestGUI.SIDE*c+1,ForestGUI.SIDE*f+1,ForestGUI.SIDE-2,ForestGUI.SIDE-2,2,2);  
+                        if (shape == Thing.SHADOW) {
+                            shadowAffected.add(f);
+                            g.setColor(new Color(0, 0, 0, 120));
+                            g.fillRect(1,ForestGUI.SIDE*f+1,ForestGUI.SIDE*c-2,ForestGUI.SIDE-2);
+                        } 
+                    } else {
                         g.fillOval(ForestGUI.SIDE*c+1,ForestGUI.SIDE*f+1,ForestGUI.SIDE-2,ForestGUI.SIDE-2);
                     }
                     if (theForest.getThing(f,c).isLivingThing()){
@@ -97,7 +106,11 @@ class PhotoForest extends JPanel{
                         } else {
                             g.drawString("~",ForestGUI.SIDE*c+6,ForestGUI.SIDE*f+17);
                         }
-                    }    
+                    }
+                }
+                if (shadowAffected.contains(f)) {
+                    g.setColor(new Color(0, 0, 0, 120));
+                    g.fillRect(ForestGUI.SIDE*c+1,ForestGUI.SIDE*f+1,ForestGUI.SIDE-1,ForestGUI.SIDE-2);
                 }
             }
         }

@@ -14,6 +14,8 @@ public class Squirrel extends LivingThing implements Thing {
         RANDOM = new Random();
     }
 
+    // maybe unit tests using trees as obstacles to prevent Squirrels to move everywhere and reproduce
+    // multiple times for the same tic-tac
     public Squirrel(Forest forest, int row, int column){
         this.forest = forest;
         this.row = row;
@@ -48,17 +50,17 @@ public class Squirrel extends LivingThing implements Thing {
     public void ticTac() {
         if (this.tictac+1 > this.forest.getTictac()) return;
         this.tictac++;
-
-        if (!this.dead) {
-            this.changeColor(40, tictac);
-            if (this.tictac % 2 == 0) {
-                for (int j=0; j<5; j++) this.step();
-            }
+        
+        boolean ok = !this.dead;
+        if (ok) {
+            this.changeColor(40, Math.min(tictac, 40));
+            int steps = (int) Math.floor(2.5 + (this.tictac%2)*0.5);
+            for (int j=0; j<steps; j++) ok = this.step();
             if (this.tictac % 4 == 0){
                 this.years+=1;
             }
         }
-        if (this.years == 10) this.die();
+        if (!ok) this.die();
         else {
             this.reproduce();
             this.move();
@@ -69,7 +71,7 @@ public class Squirrel extends LivingThing implements Thing {
     // they have no longer one intermediate empty cell
     private int reproduce() {
         int reproduced = 0;
-        List<Integer[]> neighborCells = this.neighborCells(2);
+        List<Integer[]> neighborCells = Forest.neighborCells(this.forest, this.row, this.column, 2);
         for (Integer[] neighborCell : neighborCells) {
             int r = neighborCell[0];
             int c = neighborCell[1];
@@ -88,7 +90,7 @@ public class Squirrel extends LivingThing implements Thing {
     }
 
     private void move() {
-        List<Integer[]> neighborCells = this.neighborCells(1);
+        List<Integer[]> neighborCells = Forest.neighborCells(this.forest, this.row, this.column, 1);
         Thing cellThing = this;
         Integer[] newPosition = new Integer[]{-1, -1};
         while (cellThing != null && !neighborCells.isEmpty()) {
@@ -104,27 +106,6 @@ public class Squirrel extends LivingThing implements Thing {
             this.column = newPosition[1];
             this.forest.setThing(this.row, this.column, this);
         }
-    }
-
-    private List<Integer[]> neighborCells(int distance) {
-        List<Integer[]> neighborCells = new ArrayList<>();
-        int forestSize = this.forest.getSize();
-
-        for(int dr=-1; dr<2; dr++){
-            for (int dc=-1; dc<2; dc++){
-                int dr_ = dr * distance;
-                int dc_ = dc * distance;
-                if (
-                    (dr_!=0 || dc_!=0) &&
-                    ((0<=this.row+dr_) && (this.row+dr_<forestSize)) &&
-                    ((0<=this.column+dc_) && (this.column+dc_<forestSize))
-                    // (this.forest.getThing(this.row+dr, this.column+dc) == null)
-                ) {
-                    neighborCells.add(new Integer[] {this.row+dr_, this.column+dc_});
-                };
-            }
-        }
-        return neighborCells;
     }
 
     public void die(){

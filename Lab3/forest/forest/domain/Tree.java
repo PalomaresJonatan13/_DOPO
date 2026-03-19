@@ -21,7 +21,7 @@ public class Tree extends LivingThing implements Thing{
     public Tree(Forest forest,int row, int column){
         this.forest=forest;
         this.row=row;
-        this.column=column; 
+        this.column=column;
         this.color=Color.PINK;
         this.season=0;
         this.tictac=0;
@@ -79,7 +79,7 @@ public class Tree extends LivingThing implements Thing{
             }
         }
     }
-      
+    
     /**Die
      */
     public void die(){
