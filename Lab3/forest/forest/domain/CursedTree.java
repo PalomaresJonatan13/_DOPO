@@ -34,7 +34,7 @@ public class CursedTree extends Tree {
             for (Integer[] neighborCell : neighborCells) {
                 Thing neighbor = this.forest.getThing(neighborCell[0], neighborCell[1]);
                 if ((neighbor != null) && (neighbor.isLivingThing())) {
-                    for (int j=0; j<50; j++) ((LivingThing) neighbor).step();
+                    for (int j=0; j<30; j++) ((LivingThing) neighbor).step();
                 }
             }
         }

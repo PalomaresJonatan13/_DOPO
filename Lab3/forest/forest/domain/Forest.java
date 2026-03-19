@@ -42,6 +42,9 @@ public class Forest{
 
         CursedTree palomares = new CursedTree(this, 21, 17);
         CursedTree castaneda = new CursedTree(this, 8, 6);
+
+        BlackHole jonatan = new BlackHole(this, 16, 11);
+        BlackHole santiago = new BlackHole(this, 6, 23);
     }
     
     public int neighborsEquals(int r, int c){
