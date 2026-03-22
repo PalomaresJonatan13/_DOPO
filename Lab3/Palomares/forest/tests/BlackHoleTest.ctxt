@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=BlackHoleTest
+comment1.params=
+comment1.target=void\ setUp()
+comment2.params=
+comment2.target=void\ shouldNotAffectAnObjectWithAShapeDifferentFromSquare()
+comment3.params=
+comment3.target=void\ shouldDissapearIfThereAreNoThingsToAffectAfter12TicTacs()
+comment4.params=
+comment4.target=void\ shouldDeleteItself30PercentOfTheTimeIfThereIsANeighborThatCanBeAffected()
+comment5.params=
+comment5.target=void\ shouldDeleteItselfAndReplaceANeighborWithABlackHole22_5PercentOfTheTime()
+comment6.params=
+comment6.target=void\ shouldDeleteItselfAndANeighbor7_5PercentOfTheTime()
+numComments=7

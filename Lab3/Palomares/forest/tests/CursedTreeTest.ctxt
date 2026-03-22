@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=CursedTreeTest
+comment1.params=
+comment1.target=void\ setUp()
+comment2.params=
+comment2.target=void\ shouldDecreaseEnergyOfOtherLivingThing()
+comment3.params=
+comment3.target=void\ shouldAffectLivingThingsInAnyDirection()
+comment4.params=
+comment4.target=void\ shouldKillStaticLivingThingsInAnyDirectionAfter4TicTacs()
+numComments=5

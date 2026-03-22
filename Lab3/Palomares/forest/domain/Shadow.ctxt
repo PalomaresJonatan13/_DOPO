@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=Shadow
+comment1.params=forest\ row\ column
+comment1.target=Shadow(Forest,\ int,\ int)
+comment2.params=
+comment2.target=int\ shape()
+comment3.params=
+comment3.target=void\ ticTac()
+numComments=4
