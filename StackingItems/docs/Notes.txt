@@ -1,0 +1,28 @@
+boolean attributes 'removable' (hierarchical, fearful), 'cupDependent' (fearful, maybe not necessary since it would be in .onPush), 'inverted' (crazy)
+
+
+Cup, Lid -> TowerItem (abstract)
+OpenerCup, HierarchicalCup -> Cup
+FearfulLid, CrazyLid -> Lid
+
+
+OpenerCup (push): calls stackingItems, and calls .pop over all lids at the top (maybe a try/catch, because of the fearful lid), and then in Tower getCup and add it to towerItems
+HierarchicalCup (push): stackingItems, getCup, swaps with smaller items (loop).
+Fearful (push): check if the cup is in activeItems
+Crazy (cover): easy ...
+
+
+Create an exception class, or several of them
+overload getCup and getLid, to have getCup(int index), and return null if the cup does not exist.
+Crete a static method for TowerItem to get the TowerItem based on the array representation.
+
+
+use .onPush, .onPop, .onRemove, .onCover, instead of .push, .pop, .remove, .cover
+
+
+for the Cup and Lid constructors -> as the cup and lid exist or dont exist together, and as there is just one active cup and active lid per index, then: for Cup.getCup, check if the index is in ActiveItems, if it is, return that cup, if it is not, create one, add it to ActiveItems and then return the cup; for Lid.getLid is similar.
+
+
+the cup will no longer have a lid as an attribute, and .getLid will became .lid, and will look for the lid in activeItems, which could be null. If THIS is not in activeItems, then the .lid or .cup must return null.
+
+In TowerItem -> protected static HashMap<Integer, TowerItem[]> ActiveItems, where the first tower item in the array is the cup and the second is the lid. This will replace ActiveCups
