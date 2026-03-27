@@ -8,8 +8,6 @@ public class Cup extends TowerItem {
     private Rectangle base;
     private Rectangle left;
     private Rectangle right;
-    private Lid lid;
-    private static HashMap<Integer, Cup> ActiveCups = new HashMap<>();
 
     private Cup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
         this.blockSize = blockSize;
@@ -26,14 +24,41 @@ public class Cup extends TowerItem {
         this.setHeightReached(-1);
         this.centerX();
 
-        ActiveCups.put(index, this);
+        this.activate();
+    }
+
+    public void activate() {
+        if (activeItems.containsKey(this.index)) {
+            activeItems.get(index).put("cup", this);
+        } else {
+            HashMap<String, TowerItem> items = new HashMap<>();
+            items.put("cup", this);
+            items.put("lid", null);
+            activeItems.put(this.index, items);
+        }
+        this.isActive = true;
     }
 
     public static Cup getCup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        Cup cup = findCup(index);
-        if (cup == null) {
+        Cup cup = null;
+        HashMap<String, TowerItem> associatedItems = activeItems.get(index);
+
+        if (associatedItems == null || associatedItems.get("cup") == null) {
             cup = new Cup(index, blockSize, towerMargin, towerWidth, towerHeight);
-            Lid.getLid(index, blockSize, towerMargin, towerWidth, towerHeight);
+            Lid lid = cup.lid();
+            if (lid != null) {
+                cup.setColor(lid.getColor());
+            }
+        } else {
+            cup = (Cup) associatedItems.get("cup");
+        }
+        return cup;
+    }
+
+    public static Cup getCup(int index) {
+        Cup cup = null;
+        if (activeItems.containsKey(index)) {
+            cup = (Cup) activeItems.get(index).get("cup");
         }
         return cup;
     }
@@ -53,10 +78,6 @@ public class Cup extends TowerItem {
         this.right.moveHorizontallyTo(sideLengthPx - this.blockSize);
     }
 
-    private void setColor() {
-        this.color = TowerItem.randomItemColor();
-    }
-
     public void setColor(Color color) {
         if (this.color != color) {
             if (Arrays.asList(TowerItem._COLORS).contains(color)) {
@@ -66,7 +87,8 @@ public class Cup extends TowerItem {
                 this.left.changeColor(this.color);
                 this.right.changeColor(this.color);
 
-                this.lid.setColor(color);
+                Lid lid = this.lid();
+                if (lid != null) lid.setColor(color);
             } else {
                 throw new IllegalArgumentException("Invalid color");
             }
@@ -85,34 +107,44 @@ public class Cup extends TowerItem {
         return this.width();
     }
 
-    public Lid getLid() {
-        return this.lid;
+    public Lid lid() {
+        Lid lid = null;
+        if (this.isActive) {
+            lid = (Lid) activeItems.get(this.index).get("lid");
+        }
+        return lid;
     }
 
     public void setLid(Lid lid) {
         if (lid.getIndex() == this.index) {
-            this.lid = lid;
+            activeItems.get(this.index).put("lid", lid);
         } else {
             throw new IllegalArgumentException("The new lid must have the same index as the cup");
         }
     }
 
     public boolean updateLiddedState() {
-        Lid lid = this.getLid();
-        boolean lastState = this.isLidded;
+        Lid lid = this.lid();
+        if (lid != null) {
+            boolean lastState = this.isLidded;
 
-        this.isLidded = this.heightReached + 1 == lid.getHeightReached();
-        if (this.isLidded != lastState) lid.updateLiddedState();
+            this.isLidded = this.heightReached + 1 == lid.getHeightReached();
+            if (this.isLidded != lastState) lid.updateLiddedState();
+        } else this.isLidded = false;
 
         return this.isLidded;
     }
 
-    public static Cup findCup(int index) {
-        return ActiveCups.get(index);
-    }
-
     public void deactivate() {
-        ActiveCups.remove(this.getIndex());
+        if (this.isActive) {
+            TowerItem associatedLid = activeItems.get(this.index).get("lid");
+            if (associatedLid == null) {
+                activeItems.remove(this.index);
+            } else {
+                activeItems.get(this.index).put("cup", null);
+            }
+            this.isActive = false;
+        }
     }
 
     /* public void setHeightReached(int heightReached) {
@@ -150,9 +182,5 @@ public class Cup extends TowerItem {
         this.left.makeInvisible();
         this.right.makeInvisible();
         this.isVisible = false;
-    }
-
-    public static void clearActiveCups() {
-        ActiveCups.clear();
     }
 }

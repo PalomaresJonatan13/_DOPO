@@ -29,7 +29,7 @@ public class Tower {
 
             Canvas.getCanvas(this.width*BLOCKSIZE + 2*MARGIN, this.height*BLOCKSIZE + 2*MARGIN);
             this.makeVisible();
-            Cup.clearActiveCups();
+            TowerItem.clearActiveItems();
         } else {
             String message = "`width` and `height` must be positive natural numbers.";
             this.reportFail(message);
@@ -185,6 +185,7 @@ public class Tower {
 
                 this.towerItems.add(newItem);
                 newItem.updateLiddedState(); // -----------------------
+                newItem.activate();
                 this.ok = true;
             } else {
                 throw new IllegalStateException("Adding the new item will result in an overflow of the tower's frame.");
@@ -197,13 +198,9 @@ public class Tower {
     private void pop() {
         if (!this.towerItems.isEmpty()) {
             TowerItem lastItem = this.towerItems.getLast();
-            int lastIndex = lastItem.getIndex();
 
             lastItem.makeInvisible();
-            // in case there is not the cup or lid to keep saving the cup associated
-            if (!(this.hasItem(lastIndex, true) && this.hasItem(lastIndex, false))) {
-                lastItem.deactivate();
-            }
+            lastItem.deactivate();
             this.towerItems.removeLast();
             this.ok = true;
         } else {
@@ -554,7 +551,12 @@ public class Tower {
                 if (item.isCup()) {
                     this.pushCup(itemIndex);
                     int positionOfLid = this.positionOfItem(itemIndex, false);
-                    int positionOfLidInCopy = towerItemsCopy.indexOf(((Cup) item).getLid());
+                    int positionOfLidInCopy = -1;
+                    for (TowerItem itemInCopy : towerItemsCopy) {
+                        if (itemInCopy.toString().equals("Lid("+itemIndex+")")) {
+                            positionOfLidInCopy = towerItemsCopy.indexOf(itemInCopy);
+                        }
+                    }
                     if (positionOfLid >= 0) {
                         this.removeLid(itemIndex);
                         this.pushLid(itemIndex);

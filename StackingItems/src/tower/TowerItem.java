@@ -1,7 +1,7 @@
 package tower;
 
 import java.awt.Color;
-import java.util.Random;
+import java.util.*;
 
 
 public abstract class TowerItem {
@@ -11,6 +11,7 @@ public abstract class TowerItem {
     protected boolean isCup;
     protected boolean isVisible = false;
     protected boolean isLidded = false;
+    protected boolean isActive = false;
 
     protected int blockSize;
     protected int towerMargin;
@@ -25,6 +26,7 @@ public abstract class TowerItem {
         hexColor("#84BCDA"), hexColor("#8C7051"), hexColor("#90A955"), hexColor("#BB6B00"),
         hexColor("#D5BF86"), hexColor("#ECC30B"), hexColor("#ECF39E"), hexColor("#F0E5D8")
     };
+    protected static HashMap<Integer, HashMap<String, TowerItem>> activeItems = new HashMap<>();
 
     public abstract int height();
     protected abstract void moveVerticallyTo(int y);
@@ -34,6 +36,13 @@ public abstract class TowerItem {
     public abstract void deactivate();
     public abstract String[] asArray();
     public abstract boolean updateLiddedState();
+    public abstract void activate();
+
+    
+
+    protected void setColor() {
+        this.color = randomItemColor();
+    }
 
     public int getIndex() {
         return this.index;
@@ -100,5 +109,32 @@ public abstract class TowerItem {
             color = _COLORS[colorIndex];
         }
         return color;
+    }
+
+    public static void clearActiveItems() {
+        Set<Integer> indexes = new HashSet<>(activeItems.keySet());
+        for (Integer index : indexes) {
+            HashMap<String, TowerItem> items = activeItems.get(index);
+            TowerItem cup = items.get("cup");
+            if (cup != null) cup.deactivate();
+
+            if (activeItems.containsKey(index)) {
+                TowerItem lid = items.get("lid");
+                lid.deactivate();
+            }
+        }
+    }
+
+    public static TowerItem fromArray(String[] array) {
+        TowerItem towerItem = null;
+        if (isAValidItem(array)) {
+            int index = Integer.parseInt(array[1]);
+            if (activeItems.containsKey(index)) {
+                towerItem = activeItems.get(index).get(array[0]);
+            }
+        } else {
+            throw new IllegalArgumentException("The given array is not a valid array representation of a tower item. It should be a string array of length 2, where the first element is either `cup` or `lid` and the second element is a positive integer representing the size of the item.");
+        }
+        return towerItem;
     }
 }

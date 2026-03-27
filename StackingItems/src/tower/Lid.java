@@ -2,32 +2,64 @@ package tower;
 import shapes.*;
 
 import java.awt.Color;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class Lid extends TowerItem {
     private Rectangle base;
     private Circle[] lidShapes;
 
-    private Lid(int index, Color color, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+    private Lid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
         this.blockSize = blockSize;
         this.towerMargin = towerMargin;
         this.towerWidth = towerWidth;
         this.towerHeight = towerHeight;
 
         this.index = index;
-        this.color = color;
         this.isCup = false;
+        this.setColor();
         this.createBase();
 
         this.setHeightReached(-1);
         this.centerX();
+
+        this.activate();
     }
 
     public static Lid getLid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        Cup cup = Cup.getCup(index, blockSize, towerMargin, towerWidth, towerHeight);
-        if (cup.getLid() == null) {
-            cup.setLid(new Lid(cup.index, cup.color, cup.blockSize, cup.towerMargin, cup.towerWidth, cup.towerHeight));
+        Lid lid = null;
+        HashMap<String, TowerItem> associatedItems = activeItems.get(index);
+
+        if (associatedItems == null || associatedItems.get("lid") == null) {
+            lid = new Lid(index, blockSize, towerMargin, towerWidth, towerHeight);
+            Cup cup = lid.cup();
+            if (cup != null) {
+                lid.setColor(cup.getColor());
+            }
+        } else {
+            lid = (Lid) associatedItems.get("lid");
         }
-        return cup.getLid();
+        return lid;
+    }
+
+    public static Lid getLid(int index) {
+        Lid lid = null;
+        if (activeItems.containsKey(index)) {
+            lid = (Lid) activeItems.get(index).get("lid");
+        }
+        return lid;
+    }
+
+    public void activate() {
+        if (activeItems.containsKey(this.index)) {
+            activeItems.get(index).put("lid", this);
+        } else {
+            HashMap<String, TowerItem> items = new HashMap<>();
+            items.put("cup", null);
+            items.put("lid", this);
+            activeItems.put(this.index, items);
+        }
+        this.isActive = true;
     }
 
     private void createBase() {
@@ -42,13 +74,18 @@ public class Lid extends TowerItem {
     }
 
     public void setColor(Color color) {
-        Cup cup = this.getCup();
-        if (cup.getColor() != color) {
-            cup.setColor(color);
+        if (this.color != color) {
+            if (Arrays.asList(TowerItem._COLORS).contains(color)) {
+                this.color = color;
+
+                this.base.changeColor(color);
+
+                Cup cup = this.cup();
+                if (cup != null) cup.setColor(color);
+            } else {
+                throw new IllegalArgumentException("Invalid color");
+            }
         }
-        this.base.changeColor(color);
-        this.lidShapes[0].changeColor(Color.WHITE);
-        this.lidShapes[1].changeColor(Color.BLACK);
     }
 
     public String toString() {
@@ -63,42 +100,47 @@ public class Lid extends TowerItem {
         return 1;
     }
 
-    public Cup getCup() {
-        return Cup.findCup(this.index);
+    public Cup cup() {
+        Cup cup = null;
+        if (this.isActive) {
+            cup = (Cup) activeItems.get(this.index).get("cup");
+        }
+        return cup;
     }
 
     public boolean updateLiddedState() {
-        Cup cup = this.getCup();
-        boolean lastState = this.isLidded;
+        Cup cup = this.cup();
+        if (cup != null) {
+            boolean lastState = this.isLidded;
 
-        if (this.heightReached == cup.getHeightReached() + 1) {
-            this.isLidded = true;
-            if (this.isVisible) {
-                this.lidShapes[0].makeVisible();
-                this.lidShapes[1].makeVisible();
+            if (this.heightReached == cup.getHeightReached() + 1) {
+                this.isLidded = true;
+                if (this.isVisible) {
+                    this.lidShapes[0].makeVisible();
+                    this.lidShapes[1].makeVisible();
+                }
+            } else {
+                this.isLidded = false;
+                this.lidShapes[0].makeInvisible();
+                this.lidShapes[1].makeInvisible();
             }
-        } else {
-            this.isLidded = false;
-            this.lidShapes[0].makeInvisible();
-            this.lidShapes[1].makeInvisible();
-        }
-        if (this.isLidded != lastState) cup.updateLiddedState();
+            if (this.isLidded != lastState) cup.updateLiddedState();
+        } else this.isLidded = false;
 
         return this.isLidded;
     }
 
     public void deactivate() {
-        this.getCup().deactivate();
-    }
-
-    /* public void setHeightReached(int heightReached) {
-        this.heightReached = heightReached;
-        this.moveTo(heightReached - this.height());
-        Cup cup = this.getCup();
-        if (cup.getHeightReached() != heightReached - 1) { // they will move together
-            cup.setHeightReached(heightReached);
+        if (this.isActive) {
+            TowerItem associatedCup = activeItems.get(this.index).get("cup");
+            if (associatedCup == null) {
+                activeItems.remove(this.index);
+            } else {
+                activeItems.get(this.index).put("lid", null);
+            }
+            this.isActive = false;
         }
-    } */
+    }
 
     // this is in terms of pixels
     private void centerX() {
