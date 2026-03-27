@@ -8,7 +8,6 @@ public abstract class TowerItem {
     protected int index;
     protected Color color;
     protected int heightReached;
-    protected boolean isCup;
     protected boolean isVisible = false;
     protected boolean isLidded = false;
     protected boolean isActive = false;
@@ -28,21 +27,26 @@ public abstract class TowerItem {
     };
     protected static HashMap<Integer, HashMap<String, TowerItem>> activeItems = new HashMap<>();
 
-    public abstract int height();
-    protected abstract void moveVerticallyTo(int y);
-    public abstract void makeVisible();
-    public abstract void makeInvisible();
-    public abstract void setColor(Color color);
-    public abstract void deactivate();
-    public abstract String[] asArray();
-    public abstract boolean updateLiddedState();
-    public abstract void activate();
+    protected TowerItem(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+        this.blockSize = blockSize;
+        this.towerMargin = towerMargin;
+        this.towerWidth = towerWidth;
+        this.towerHeight = towerHeight;
 
-    
+        this.index = index;
+        this.isLidded = false;
+        this.setColor();
+        this.createSides();
 
-    protected void setColor() {
-        this.color = randomItemColor();
+        this.setHeightReached(-1);
+        this.centerX();
+
+        this.activate();
     }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
     public int getIndex() {
         return this.index;
@@ -50,6 +54,14 @@ public abstract class TowerItem {
 
     public int width() {
         return 2 * this.index - 1;
+    }
+
+    public Color getColor() {
+        return this.color;
+    }
+
+    protected void setColor() {
+        this.color = randomItemColor();
     }
 
     public int getHeightReached() {
@@ -61,18 +73,36 @@ public abstract class TowerItem {
         this.moveTo(heightReached - this.height());
     }
 
-    public boolean isCup() {
-        return this.isCup;
-    }
-
-    public Color getColor() {
-        return this.color;
-    }
+    public void onPush()   { /* empty */ };
+    public void onPop()    { /* empty */ };
+    public void onRemove() { /* empty */ };
+    public void onCover()  { /* empty */ };
 
     protected void moveTo(int y) {
         int bottomOfTower = this.towerMargin + this.towerHeight*this.blockSize;
         this.moveVerticallyTo(bottomOfTower - (y + this.height())*this.blockSize);
     }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    public abstract void activate();
+    public abstract void deactivate();
+    public abstract boolean isCup();
+    public abstract int height();
+    public abstract String[] asArray();
+    public abstract boolean updateLiddedState();
+    public abstract void setColor(Color color);
+    public abstract void makeVisible();
+    public abstract void makeInvisible();
+    protected abstract void createSides();
+    protected abstract void centerX();
+    protected abstract void moveVerticallyTo(int y);
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
     public static boolean isAValidItem(String[] item) {
         boolean isValid = false;
@@ -88,27 +118,17 @@ public abstract class TowerItem {
         return isValid;
     }
 
-    private static Color hexColor(String hex) {
-        return new Color(
-            Integer.valueOf(hex.substring(1, 3), 16),
-            Integer.valueOf(hex.substring(3, 5), 16),
-            Integer.valueOf(hex.substring(5, 7), 16)
-        );
-    }
-
-    public static Color randomItemColor() {
-        int colorIndex = RANDOM.nextInt(_COLORS.length);
-        return _COLORS[colorIndex];
-    }
-
-    public static Color randomItemColor(Color differentColor) {
-        int colorIndex = RANDOM.nextInt(_COLORS.length);
-        Color color = _COLORS[colorIndex];
-        while (color == differentColor) {
-            colorIndex = RANDOM.nextInt(_COLORS.length);
-            color = _COLORS[colorIndex];
+    public static TowerItem fromArray(String[] array) {
+        TowerItem towerItem = null;
+        if (isAValidItem(array)) {
+            int index = Integer.parseInt(array[1]);
+            if (activeItems.containsKey(index)) {
+                towerItem = activeItems.get(index).get(array[0]);
+            }
+        } else {
+            throw new IllegalArgumentException("The given array is not a valid array representation of a tower item. It should be a string array of length 2, where the first element is either `cup` or `lid` and the second element is a positive integer representing the size of the item.");
         }
-        return color;
+        return towerItem;
     }
 
     public static void clearActiveItems() {
@@ -125,16 +145,30 @@ public abstract class TowerItem {
         }
     }
 
-    public static TowerItem fromArray(String[] array) {
-        TowerItem towerItem = null;
-        if (isAValidItem(array)) {
-            int index = Integer.parseInt(array[1]);
-            if (activeItems.containsKey(index)) {
-                towerItem = activeItems.get(index).get(array[0]);
-            }
-        } else {
-            throw new IllegalArgumentException("The given array is not a valid array representation of a tower item. It should be a string array of length 2, where the first element is either `cup` or `lid` and the second element is a positive integer representing the size of the item.");
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    public static Color randomItemColor() {
+        int colorIndex = RANDOM.nextInt(_COLORS.length);
+        return _COLORS[colorIndex];
+    }
+
+    public static Color randomItemColor(Color differentColor) {
+        int colorIndex = RANDOM.nextInt(_COLORS.length);
+        Color color = _COLORS[colorIndex];
+        while (color == differentColor) {
+            colorIndex = RANDOM.nextInt(_COLORS.length);
+            color = _COLORS[colorIndex];
         }
-        return towerItem;
+        return color;
+    }
+
+    private static Color hexColor(String hex) {
+        return new Color(
+            Integer.valueOf(hex.substring(1, 3), 16),
+            Integer.valueOf(hex.substring(3, 5), 16),
+            Integer.valueOf(hex.substring(5, 7), 16)
+        );
     }
 }

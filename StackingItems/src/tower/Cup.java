@@ -9,34 +9,8 @@ public class Cup extends TowerItem {
     private Rectangle left;
     private Rectangle right;
 
-    private Cup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        this.blockSize = blockSize;
-        this.towerMargin = towerMargin;
-        this.towerWidth = towerWidth;
-        this.towerHeight = towerHeight;
-
-        this.index = index;
-        this.isCup = true;
-        this.isLidded = false;
-        this.setColor();
-        this.createSides();
-
-        this.setHeightReached(-1);
-        this.centerX();
-
-        this.activate();
-    }
-
-    public void activate() {
-        if (activeItems.containsKey(this.index)) {
-            activeItems.get(index).put("cup", this);
-        } else {
-            HashMap<String, TowerItem> items = new HashMap<>();
-            items.put("cup", this);
-            items.put("lid", null);
-            activeItems.put(this.index, items);
-        }
-        this.isActive = true;
+    protected Cup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+        super(index, blockSize, towerMargin, towerWidth, towerHeight);
     }
 
     public static Cup getCup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
@@ -63,19 +37,72 @@ public class Cup extends TowerItem {
         return cup;
     }
 
-    private void createSides() {
-        // the sides will overlap, but it wont matter
-        int sideLengthPx = this.width()*this.blockSize;
-        this.base = new Rectangle(sideLengthPx, this.blockSize);
-        this.left = new Rectangle(this.blockSize, sideLengthPx);
-        this.right = new Rectangle(this.blockSize, sideLengthPx);
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
-        this.base.changeColor(this.color);
-        this.left.changeColor(this.color);
-        this.right.changeColor(this.color);
+    public void activate() {
+        if (activeItems.containsKey(this.index)) {
+            activeItems.get(index).put("cup", this);
+        } else {
+            HashMap<String, TowerItem> items = new HashMap<>();
+            items.put("cup", this);
+            items.put("lid", null);
+            activeItems.put(this.index, items);
+        }
+        this.isActive = true;
+    }
 
-        this.base.moveVerticallyTo(sideLengthPx - this.blockSize);
-        this.right.moveHorizontallyTo(sideLengthPx - this.blockSize);
+    public void deactivate() {
+        if (this.isActive) {
+            TowerItem associatedLid = activeItems.get(this.index).get("lid");
+            if (associatedLid == null) {
+                activeItems.remove(this.index);
+            } else {
+                activeItems.get(this.index).put("cup", null);
+            }
+            this.isActive = false;
+        }
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    public boolean isCup() {
+        return true;
+    }
+
+    public int height() {
+        return this.width();
+    }
+
+    public String toString() {
+        return "Cup(" + this.index + ")";
+    }
+
+    public String[] asArray() {
+        return new String[]{"cup", this.index+""};
+    }
+
+    public Lid lid() {
+        Lid lid = null;
+        if (this.isActive) {
+            lid = (Lid) activeItems.get(this.index).get("lid");
+        }
+        return lid;
+    }
+
+    public boolean updateLiddedState() {
+        Lid lid = this.lid();
+        if (lid != null) {
+            boolean lastState = this.isLidded;
+
+            this.isLidded = this.heightReached + 1 == lid.getHeightReached();
+            if (this.isLidded != lastState) lid.updateLiddedState();
+        } else this.isLidded = false;
+
+        return this.isLidded;
     }
 
     public void setColor(Color color) {
@@ -95,81 +122,6 @@ public class Cup extends TowerItem {
         }
     }
 
-    public String toString() {
-        return "Cup(" + this.index + ")";
-    }
-
-    public String[] asArray() {
-        return new String[]{"cup", this.index+""};
-    }
-
-    public int height() {
-        return this.width();
-    }
-
-    public Lid lid() {
-        Lid lid = null;
-        if (this.isActive) {
-            lid = (Lid) activeItems.get(this.index).get("lid");
-        }
-        return lid;
-    }
-
-    public void setLid(Lid lid) {
-        if (lid.getIndex() == this.index) {
-            activeItems.get(this.index).put("lid", lid);
-        } else {
-            throw new IllegalArgumentException("The new lid must have the same index as the cup");
-        }
-    }
-
-    public boolean updateLiddedState() {
-        Lid lid = this.lid();
-        if (lid != null) {
-            boolean lastState = this.isLidded;
-
-            this.isLidded = this.heightReached + 1 == lid.getHeightReached();
-            if (this.isLidded != lastState) lid.updateLiddedState();
-        } else this.isLidded = false;
-
-        return this.isLidded;
-    }
-
-    public void deactivate() {
-        if (this.isActive) {
-            TowerItem associatedLid = activeItems.get(this.index).get("lid");
-            if (associatedLid == null) {
-                activeItems.remove(this.index);
-            } else {
-                activeItems.get(this.index).put("cup", null);
-            }
-            this.isActive = false;
-        }
-    }
-
-    /* public void setHeightReached(int heightReached) {
-        this.heightReached = heightReached;
-        this.moveTo(heightReached - this.height());
-        Lid lid = this.getLid();
-        if (lid.getHeightReached() != heightReached + 1) { // they will move together
-            lid.setHeightReached(heightReached);
-        }
-    } */
-
-    // this is in terms of pixels
-    private void centerX() {
-        int newX = this.towerMargin + (this.towerWidth - this.width())*this.blockSize/2;
-        this.base.moveHorizontallyTo(newX);
-        this.left.moveHorizontallyTo(newX);
-        this.right.moveHorizontallyTo(newX + (this.width() - 1)*this.blockSize);
-    }
-
-    protected void moveVerticallyTo(int y) {
-        this.base.moveVerticallyTo(y + (this.height() - 1)*this.blockSize);
-        this.left.moveVerticallyTo(y);
-        this.right.moveVerticallyTo(y);
-    }
-
     public void makeVisible() {
         this.base.makeVisible();
         this.left.makeVisible();
@@ -182,5 +134,38 @@ public class Cup extends TowerItem {
         this.left.makeInvisible();
         this.right.makeInvisible();
         this.isVisible = false;
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    protected void createSides() {
+        // the sides will overlap, but it wont matter
+        int sideLengthPx = this.width()*this.blockSize;
+        this.base = new Rectangle(sideLengthPx, this.blockSize);
+        this.left = new Rectangle(this.blockSize, sideLengthPx);
+        this.right = new Rectangle(this.blockSize, sideLengthPx);
+
+        this.base.changeColor(this.color);
+        this.left.changeColor(this.color);
+        this.right.changeColor(this.color);
+
+        this.base.moveVerticallyTo(sideLengthPx - this.blockSize);
+        this.right.moveHorizontallyTo(sideLengthPx - this.blockSize);
+    }
+
+    // this is in terms of pixels
+    protected void centerX() {
+        int newX = this.towerMargin + (this.towerWidth - this.width())*this.blockSize/2;
+        this.base.moveHorizontallyTo(newX);
+        this.left.moveHorizontallyTo(newX);
+        this.right.moveHorizontallyTo(newX + (this.width() - 1)*this.blockSize);
+    }
+
+    protected void moveVerticallyTo(int y) {
+        this.base.moveVerticallyTo(y + (this.height() - 1)*this.blockSize);
+        this.left.moveVerticallyTo(y);
+        this.right.moveVerticallyTo(y);
     }
 }

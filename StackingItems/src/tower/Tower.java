@@ -11,9 +11,9 @@ public class Tower {
     private int height;
     private boolean visible;
     private boolean ok;
+    private TowerFrame frame;
     private List<TowerItem> towerItems;
     private HashMap<Integer, Color> itemColors = new HashMap<>();
-    private TowerFrame frame;
     private static int MARGIN = 20;
     private static int BLOCKSIZE = 20;
 
@@ -184,7 +184,7 @@ public class Tower {
                 if (this.visible) {newItem.makeVisible();}
 
                 this.towerItems.add(newItem);
-                newItem.updateLiddedState(); // -----------------------
+                newItem.updateLiddedState();
                 newItem.activate();
                 this.ok = true;
             } else {
@@ -449,7 +449,6 @@ public class Tower {
         }
     }
 
-    // should include the interaction for lidded cups
     private void swapItems(int index1, boolean isCup1, int index2, boolean isCup2) {
         int position1 = this.positionOfItem(index1, isCup1);
         int position2 = this.positionOfItem(index2, isCup2);
