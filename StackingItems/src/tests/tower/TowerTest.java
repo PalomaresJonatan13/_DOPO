@@ -2,7 +2,7 @@ package tests.tower;
 import tower.*;
 
 import static org.junit.Assert.*;
-// import java.beans.Transient;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,21 +11,20 @@ import org.junit.Test;
 public class TowerTest {
     private Tower tower;
 
-    private void assertTowerState(String[][] expectedItems, int[] expectedHeights,
-                                    int[] expectedLiddedCups, boolean expectedOk) {
-        assertArrayEquals(expectedItems, tower.stackingItems());
-        assertArrayEquals(expectedHeights, tower.heightReachedByItems());
-        assertArrayEquals(expectedLiddedCups, tower.liddedCups());
-        assertEquals(expectedOk, tower.ok());
-    }
-
     @Before
     public void setUp() {
         tower = new Tower(5, 10);
         tower.makeInvisible();
     }
 
+    @After
+    public void tearDown() {
+        tower.makeInvisible();
+    }
+
     // pushCup, pushLid
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
     @Test
@@ -33,7 +32,8 @@ public class TowerTest {
         tower.pushCup(2);
         tower.pushCup(2);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "2"}},
             new int[] {3},
             new int[] {},
@@ -46,7 +46,8 @@ public class TowerTest {
         tower.pushLid(2);
         tower.pushLid(2);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "2"}},
             new int[] {1},
             new int[] {},
@@ -58,7 +59,8 @@ public class TowerTest {
     public void shouldNotPushCupWithNonpositiveIndex() {
         tower.pushCup(0);
         
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {},
             new int[] {},
             new int[] {},
@@ -70,7 +72,8 @@ public class TowerTest {
     public void shouldNotPushLidWithNonpositiveIndex() {
         tower.pushLid(0);
         
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {},
             new int[] {},
             new int[] {},
@@ -82,7 +85,8 @@ public class TowerTest {
     public void shouldNotPushCupWithIndexGreaterThanWidth() {
         tower.pushCup(6);
         
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {},
             new int[] {},
             new int[] {},
@@ -94,7 +98,8 @@ public class TowerTest {
     public void shouldNotPushLidWithIndexGreaterThanWidth() {
         tower.pushLid(6);
         
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {},
             new int[] {},
             new int[] {},
@@ -102,40 +107,12 @@ public class TowerTest {
         );
     }
 
-    /* @Test
-    public void shouldNotPushCupIfTowerVisibleAndHeightReachedIsGreaterThanTowersHeight() {
-        tower.makeVisible();
-        // message
-        tower.pushCup(2);
-        tower.pushCup(5); // this will reach height 12
-        
-        assertTowerState(
-            new String[][] {{"cup", "2"}},
-            new int[] {3},
-            false
-        );
-    } */
-
-    /* @Test
-    public void shouldNotPushLidIfTowerVisibleAndHeightReachedIsGreaterThanTowersHeight() {
-        tower.makeVisible();
-        // A message will be shown after trying to push the lid
-        tower.pushCup(2);
-        tower.pushCup(4);
-        tower.pushLid(5);
-        
-        assertTowerState(
-            new String[][] {{"cup", "2"}, {"cup", "4"}},
-            new int[] {3, 10},
-            false
-        );
-    } */
-
     @Test
     public void shouldPushValidFirstCup() {
         tower.pushCup(2);
         
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "2"}},
             new int[] {3},
             new int[] {},
@@ -147,7 +124,8 @@ public class TowerTest {
     public void shouldPushValidFirstLid() {
         tower.pushLid(2);
         
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "2"}},
             new int[] {1},
             new int[] {},
@@ -162,7 +140,8 @@ public class TowerTest {
         tower.pushCup(1);
         tower.pushCup(3);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "4"}, {"cup", "2"}, {"cup", "1"}, {"cup", "3"}},
             new int[] {7, 4, 3, 9},
             new int[] {},
@@ -177,7 +156,8 @@ public class TowerTest {
         tower.pushCup(1);
         tower.pushLid(2);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "3"}, {"cup", "2"}, {"cup", "1"}, {"lid", "2"}},
             new int[] {5, 4, 3, 5},
             new int[] {2},
@@ -192,7 +172,8 @@ public class TowerTest {
         tower.pushCup(5);
         tower.pushCup(2);
         
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "1"}, {"cup", "5"}, {"cup", "2"}},
             new int[] {1, 10, 5},
             new int[] {},
@@ -207,7 +188,8 @@ public class TowerTest {
         tower.pushCup(5);
         tower.pushLid(2);
         
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "1"}, {"cup", "5"}, {"lid", "2"}},
             new int[] {1, 10, 3},
             new int[] {},
@@ -221,7 +203,8 @@ public class TowerTest {
         tower.pushLid(1);
         tower.pushCup(4);
         
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "2"}, {"lid", "1"}, {"cup", "4"}},
             new int[] {3, 2, 10},
             new int[] {},
@@ -235,7 +218,8 @@ public class TowerTest {
         tower.pushLid(1);
         tower.pushLid(4);
         
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "2"}, {"lid", "1"}, {"lid", "4"}},
             new int[] {3, 2, 4},
             new int[] {},
@@ -251,7 +235,8 @@ public class TowerTest {
         tower.pushCup(2);
         tower.pushLid(4);
         
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "1"}, {"cup", "4"}, {"lid", "3"}, {"cup", "2"}, {"lid", "4"}},
             new int[] {1, 8, 3, 6, 9},
             new int[] {4},
@@ -260,6 +245,8 @@ public class TowerTest {
     }
     
     // popCup, popLid
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
     @Test
@@ -270,7 +257,8 @@ public class TowerTest {
         tower.pushLid(3);
         tower.popCup();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "4"}, {"lid", "2"}, {"lid", "3"}},
             new int[] {1, 2, 3},
             new int[] {},
@@ -286,7 +274,8 @@ public class TowerTest {
         tower.pushCup(3);
         tower.popLid();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "4"}, {"cup", "2"}, {"cup", "3"}},
             new int[] {7, 4, 9},
             new int[] {},
@@ -302,7 +291,8 @@ public class TowerTest {
         tower.pushLid(5);
         tower.popCup();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "4"}, {"lid", "2"}, {"lid", "5"}},
             new int[] {7, 2, 8},
             new int[] {},
@@ -318,7 +308,8 @@ public class TowerTest {
         tower.pushCup(2);
         tower.popLid();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "1"}, {"lid", "3"}, {"cup", "2"}},
             new int[] {1, 2, 5},
             new int[] {},
@@ -334,7 +325,8 @@ public class TowerTest {
         tower.pushCup(3);
         tower.popCup();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "4"}, {"lid", "2"}, {"lid", "5"}},
             new int[] {1, 2, 3},
             new int[] {},
@@ -350,7 +342,8 @@ public class TowerTest {
         tower.pushLid(4);
         tower.popLid();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "1"}, {"cup", "3"}, {"cup", "2"}},
             new int[] {1, 6, 5},
             new int[] {},
@@ -366,7 +359,8 @@ public class TowerTest {
         tower.pushLid(4);
         tower.popCup();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "2"}, {"lid", "4"}},
             new int[] {1, 2},
             new int[] {},
@@ -382,7 +376,8 @@ public class TowerTest {
         tower.pushCup(2);
         tower.popLid();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "5"}, {"cup", "2"}},
             new int[] {9, 4},
             new int[] {},
@@ -400,7 +395,8 @@ public class TowerTest {
         tower.pushLid(1);
         tower.popCup();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "1"}, {"lid", "3"}, {"lid", "2"}, {"lid", "1"}},
             new int[] {1, 2, 3, 4},
             new int[] {},
@@ -418,7 +414,8 @@ public class TowerTest {
         tower.pushCup(1);
         tower.popLid();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "1"}, {"lid", "3"}, {"cup", "2"}, {"cup", "1"}},
             new int[] {1, 2, 5, 4},
             new int[] {},
@@ -429,6 +426,8 @@ public class TowerTest {
 
     // removeCup, removeLid
     // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
     @Test
     public void shouldNotRemoveCupIfTheCupIsNotInTheTower() {
@@ -437,7 +436,8 @@ public class TowerTest {
         tower.pushLid(5);
         tower.removeCup(2);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "4"}, {"lid", "2"}, {"lid", "5"}},
             new int[] {7, 2, 8},
             new int[] {},
@@ -452,7 +452,8 @@ public class TowerTest {
         tower.pushCup(2);
         tower.removeLid(3);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "1"}, {"cup", "3"}, {"cup", "2"}},
             new int[] {1, 6, 5},
             new int[] {},
@@ -470,7 +471,8 @@ public class TowerTest {
         tower.pushLid(4);
         tower.removeCup(2);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "3"}, {"lid", "1"}, {"cup", "1"}, {"lid", "4"}},
             new int[] {5, 2, 3, 6},
             new int[] {},
@@ -488,7 +490,8 @@ public class TowerTest {
         tower.pushLid(4);
         tower.removeLid(1);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "3"}, {"cup", "2"}, {"cup", "1"}, {"lid", "4"}},
             new int[] {5, 4, 3, 6},
             new int[] {},
@@ -504,7 +507,8 @@ public class TowerTest {
         tower.pushCup(1);
         tower.removeCup(1);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "3"}, {"lid", "1"}, {"cup", "2"}},
             new int[] {5, 2, 5},
             new int[] {},
@@ -521,7 +525,8 @@ public class TowerTest {
         tower.pushLid(4);
         tower.removeLid(4);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "3"}, {"lid", "1"}, {"cup", "2"}, {"cup", "1"}},
             new int[] {5, 2, 5, 4},
             new int[] {},
@@ -538,7 +543,8 @@ public class TowerTest {
         tower.pushCup(1);
         tower.removeCup(3);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "2"}, {"lid", "4"}, {"cup", "1"}},
             new int[] {1, 2, 3},
             new int[] {},
@@ -555,7 +561,8 @@ public class TowerTest {
         tower.pushLid(1);
         tower.removeLid(3);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "5"}, {"cup", "2"}, {"lid", "1"}},
             new int[] {9, 4, 3},
             new int[] {},
@@ -573,7 +580,8 @@ public class TowerTest {
         tower.pushCup(1);
         tower.removeCup(4);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "5"}, {"lid", "3"}, {"lid", "2"}, {"cup", "1"}},
             new int[] {9, 2, 3, 4},
             new int[] {},
@@ -591,7 +599,8 @@ public class TowerTest {
         tower.pushCup(1);
         tower.removeLid(4);
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "5"}, {"lid", "3"}, {"cup", "2"}, {"cup", "1"}},
             new int[] {9, 2, 5, 4},
             new int[] {},
@@ -600,6 +609,8 @@ public class TowerTest {
     }
 
     // height
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
     @Test
@@ -648,63 +659,17 @@ public class TowerTest {
         assertEquals(true, tower.ok());
     }
 
-    // makeVisible, makeInvisible
-    // ------------------------------------------------------------------------------------------------------------
-
-    /* @ Test
-    public void shouldNotMakeVisibleIfHeightisGreaterThanTowersHeight() {
-        tower.pushCup(2);
-        tower.pushCup(3);
-        tower.pushCup(4);
-        tower.makeVisible();
-
-        assertTowerState(
-            new String[][] {{"cup", "2"}, {"cup", "3"}, {"cup", "4"}},
-            new int[] {3, 8, 15},
-            false
-        );
-        assertFalse(tower.isVisible());
-    } */
-
-    /* @Test
-    public void shouldMakeVisibleIfHeightIsLessThanOrEqualToTowersHeight() {
-        tower.pushCup(2);
-        tower.pushCup(1);
-        tower.pushCup(3);
-        tower.makeVisible();
-
-        assertTowerState(
-            new String[][] {{"cup", "2"}, {"cup", "1"}, {"cup", "3"}},
-            new int[] {3, 2, 8},
-            true
-        );
-        assertTrue(tower.isVisible());
-    } */
-
-    /* @Test
-    public void shouldMakeInvisibleIfTowerIsVisible() {
-        tower.makeVisible();
-        tower.pushCup(2);
-        tower.pushCup(1);
-        tower.pushCup(3);
-        tower.makeInvisible();
-
-        assertTowerState(
-            new String[][] {{"cup", "2"}, {"cup", "1"}, {"cup", "3"}},
-            new int[] {3, 2, 8},
-            true
-        );
-        assertFalse(tower.isVisible());
-    } */
-
     // reverseTower
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
     @Test
     public void shouldReverseTowerIfTheTowerIsEmpty() {
         tower.reverseTower();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {},
             new int[] {},
             new int[] {},
@@ -721,7 +686,8 @@ public class TowerTest {
         tower.pushCup(1);
         tower.reverseTower();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "1"}, {"cup", "2"}, {"cup", "3"}},
             new int[] {1, 4, 9},
             new int[] {},
@@ -737,7 +703,8 @@ public class TowerTest {
         tower.pushCup(2);
         tower.reverseTower();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "2"}, {"cup", "1"}, {"cup", "4"}},
             new int[] {3, 2, 10},
             new int[] {},
@@ -755,7 +722,8 @@ public class TowerTest {
         tower.pushLid(4);
         tower.reverseTower();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "4"}, {"lid", "3"}, {"lid", "2"}, {"cup", "1"}, {"cup", "3"}, {"cup", "2"}},
             new int[] {1, 2, 3, 4, 9, 8},
             new int[] {},
@@ -765,12 +733,15 @@ public class TowerTest {
 
     // orderTower
     // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
     @Test
     public void shouldOrderTowerIfTheTowerIsEmpty() {
         tower.orderTower();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {},
             new int[] {},
             new int[] {},
@@ -788,7 +759,8 @@ public class TowerTest {
         tower.pushCup(2);
         tower.orderTower();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "3"}, {"lid", "3"}, {"cup", "2"}, {"lid", "2"}},
             new int[] {5, 6, 9, 10},
             new int[] {2, 3},
@@ -831,7 +803,8 @@ public class TowerTest {
         tower.pushLid(3);
         tower.orderTower();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "3"}, {"lid", "3"}, {"cup", "2"}, {"lid", "2"}},
             new int[] {5, 6, 9, 10},
             new int[] {2, 3},
@@ -849,16 +822,12 @@ public class TowerTest {
         tower.pushLid(4);
         tower.orderTower();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "4"}, {"cup", "3"}, {"lid", "3"}, {"lid", "2"}, {"cup", "1"}, {"lid", "1"}},
             new int[] {1, 6, 7, 8, 9, 10},
             new int[] {1, 3},
             true
         );
-    }
-
-    @After
-    public void tearDown() {
-        //
     }
 }

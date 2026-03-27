@@ -41,7 +41,7 @@ public class Lid extends TowerItem {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
-    public void activate() {
+    public void enable() {
         if (activeItems.containsKey(this.index)) {
             activeItems.get(index).put("lid", this);
         } else {
@@ -53,7 +53,7 @@ public class Lid extends TowerItem {
         this.isActive = true;
     }
 
-    public void deactivate() {
+    public void disable() {
         if (this.isActive) {
             TowerItem associatedCup = activeItems.get(this.index).get("cup");
             if (associatedCup == null) {
@@ -61,6 +61,7 @@ public class Lid extends TowerItem {
             } else {
                 activeItems.get(this.index).put("lid", null);
             }
+            this.makeInvisible();
             this.isActive = false;
         }
     }

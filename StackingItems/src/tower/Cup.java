@@ -41,7 +41,7 @@ public class Cup extends TowerItem {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
-    public void activate() {
+    public void enable() {
         if (activeItems.containsKey(this.index)) {
             activeItems.get(index).put("cup", this);
         } else {
@@ -53,7 +53,7 @@ public class Cup extends TowerItem {
         this.isActive = true;
     }
 
-    public void deactivate() {
+    public void disable() {
         if (this.isActive) {
             TowerItem associatedLid = activeItems.get(this.index).get("lid");
             if (associatedLid == null) {
@@ -61,6 +61,7 @@ public class Cup extends TowerItem {
             } else {
                 activeItems.get(this.index).put("cup", null);
             }
+            this.makeInvisible();
             this.isActive = false;
         }
     }

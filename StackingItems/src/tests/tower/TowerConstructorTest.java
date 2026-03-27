@@ -2,12 +2,13 @@ package tests.tower;
 import tower.*;
 
 import static org.junit.Assert.*;
-// import java.beans.Transient;
 import org.junit.Test;
 
 
 public class TowerConstructorTest {
     // Tower constructor
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
     @Test
@@ -24,9 +25,12 @@ public class TowerConstructorTest {
     public void shouldCreateTowerWithPositiveDimensions() {
         Tower tower = new Tower(5, 10);
         assertTrue(tower.ok());
+        tower.makeInvisible();
     }
 
     // TowerC2 constructor
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
     @Test
@@ -43,5 +47,6 @@ public class TowerConstructorTest {
     public void shouldCreateTowerWithSeveralCups() {
         Tower tower = new Tower(5);
         assertTrue(tower.ok());
+        tower.makeInvisible();
     }
 }

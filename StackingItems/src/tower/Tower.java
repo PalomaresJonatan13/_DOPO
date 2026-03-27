@@ -10,6 +10,7 @@ public class Tower {
     private int width;
     private int height;
     private boolean visible;
+    private boolean visibleItems;
     private boolean ok;
     private TowerFrame frame;
     private List<TowerItem> towerItems;
@@ -23,6 +24,7 @@ public class Tower {
             this.width = 2*width - 1;
             this.height = maxHeight;
             this.visible = true;
+            this.visibleItems = true;
             this.ok = true;
             this.towerItems = new ArrayList<>(); 
             this.frame = new TowerFrame(this.width*BLOCKSIZE, this.height*BLOCKSIZE, BLOCKSIZE, MARGIN);
@@ -76,25 +78,35 @@ public class Tower {
         return maxHeight;
     }
 
+    private void makeItemsVisible() {
+        for (TowerItem item : this.towerItems) {
+            item.makeVisible();
+        }
+        this.visibleItems = true;
+        this.visible = true;
+    }
+
+    private void makeItemsInvisible() {
+        for (TowerItem item : this.towerItems) {
+            item.makeInvisible();
+        }
+        this.visibleItems = false;
+        this.visible = false;
+    }
+
     public void makeVisible() {
-        if (this.height() > this.height) {
-            this.reportFail("Cannot make visible because the tower is overflowed.");
-        } else {
+        if (this.height() <= this.height) {
             this.frame.makeVisible();
-            for (TowerItem item : this.towerItems) {
-                item.makeVisible();
-            }
-            this.visible = true;
+            this.makeItemsVisible();
             this.ok = true;
+        } else {
+            this.reportFail("Cannot make visible because the tower is overflowed.");
         }
     }
 
     public void makeInvisible() {
         this.frame.makeInvisible();
-        for (TowerItem item : this.towerItems) {
-            item.makeInvisible();
-        }
-        this.visible = false;
+        this.makeItemsInvisible();
         this.ok = true;
     }
 
@@ -181,11 +193,11 @@ public class Tower {
                 }
                 newItem.setColor(this.itemColors.get(index));
                 newItem.setHeightReached(newHeight);
-                if (this.visible) {newItem.makeVisible();}
+                if (this.visibleItems) newItem.makeVisible();
 
                 this.towerItems.add(newItem);
                 newItem.updateLiddedState();
-                newItem.activate();
+                newItem.enable();
                 this.ok = true;
             } else {
                 throw new IllegalStateException("Adding the new item will result in an overflow of the tower's frame.");
@@ -199,8 +211,7 @@ public class Tower {
         if (!this.towerItems.isEmpty()) {
             TowerItem lastItem = this.towerItems.getLast();
 
-            lastItem.makeInvisible();
-            lastItem.deactivate();
+            lastItem.disable();
             this.towerItems.removeLast();
             this.ok = true;
         } else {
@@ -242,6 +253,8 @@ public class Tower {
             List<TowerItem> itemsAfterItem = new ArrayList<>(itemsSubList);
             this.removeStartingAtItem(index, isLidded || isCup);
 
+            boolean isVisible = this.visibleItems;
+            this.visibleItems = false;
             TowerItem lastItem;
             while (!itemsAfterItem.isEmpty()) {
                 lastItem = itemsAfterItem.getFirst();
@@ -250,6 +263,7 @@ public class Tower {
                 }
                 itemsAfterItem.removeFirst();
             }
+            if (isVisible) this.makeItemsVisible();
             this.ok = true;
         } else {
             throw new IllegalArgumentException("The desired item to be removed does not belong to the Tower.");
@@ -357,6 +371,8 @@ public class Tower {
         if (!this.towerItems.isEmpty()) {
             List<TowerItem> towerItemsCopy = new ArrayList<>(this.towerItems);
             this.clear();
+            boolean isVisible = this.visibleItems;
+            this.visibleItems = false;
 
             int j = towerItemsCopy.size() - 1;
             TowerItem item = towerItemsCopy.get(j);
@@ -369,6 +385,7 @@ public class Tower {
                     newHeight = this.heightReachedByNewItem(item.getIndex(), item.isCup());
                 }
             }
+            if (isVisible) this.makeItemsVisible();
         }
         this.ok = true;
     }
@@ -378,6 +395,8 @@ public class Tower {
             List<TowerItem> itemsDescendingOrder = new ArrayList<>(this.towerItems);
             itemsDescendingOrder.sort((a, b) -> Integer.compare(b.getIndex(), a.getIndex()));
             this.clear();
+            boolean isVisible = this.visibleItems;
+            this.visibleItems = false;
 
             int j = 0;
             TowerItem item;
@@ -406,6 +425,7 @@ public class Tower {
                     j++;
                 }
             }
+            if (isVisible) this.makeItemsVisible();
         } 
         this.ok = true;
     }
@@ -416,9 +436,12 @@ public class Tower {
 
     private void restoreOrderOfItems(List<TowerItem> copy) {
         this.clear();
+        boolean isVisible = this.visibleItems;
+        this.visibleItems = false;
         for (TowerItem item : copy) {
             this.pushItem(item.getIndex(), item.isCup());
         }
+        if (isVisible) this.makeItemsVisible();
     }
 
     private void insert(int index, boolean isCup, int position) {
@@ -431,6 +454,8 @@ public class Tower {
                 if (itemAtPosition.updateLiddedState() && !itemAtPosition.isCup()) position--;
 
                 this.removeFromPosition(position);
+                boolean isVisible = this.visibleItems;
+                this.visibleItems = false;
                 this.pushItem(index, isCup);
 
                 this.ok = true;
@@ -440,6 +465,7 @@ public class Tower {
                     this.pushItem(itemToReinsert.getIndex(), itemToReinsert.isCup());
                     j++;
                 }
+                if (isVisible) this.makeItemsVisible();
             } catch (Exception e) {
                 this.restoreOrderOfItems(towerItemsCopy);
                 throw new IllegalStateException("Cannot insert the item in the given position because the resulting order will overflow the tower's frame.");
@@ -468,6 +494,9 @@ public class Tower {
                     boolean item2IsLidded = item2.updateLiddedState();
                     if (item1IsLidded && !isCup1) { position1--; isCup1 = true; }
                     if (item2IsLidded && !isCup2) { position2--; isCup2 = true; }
+
+                    boolean isVisible = this.visibleItems;
+                    this.visibleItems = false;
                     this.removeItem(index1, isCup1);
                     this.removeItem(index2, isCup2);
 
@@ -478,6 +507,7 @@ public class Tower {
                     }
                     this.insert(index1, isCup1, position2);
                     if (item1IsLidded) this.insert(index1, false, position2+1);
+                    if (isVisible) this.makeItemsVisible();
                 } catch (Exception e) {
                     this.restoreOrderOfItems(towerItemsCopy);
                     throw new IllegalStateException("Cannot swap the given items because the resulting order will overflow the tower's frame.");
@@ -510,6 +540,8 @@ public class Tower {
         List<TowerItem> towerItemsCopy = new ArrayList<>(this.towerItems);
         TowerItem firstItem = null;
         TowerItem secondItem = null;
+        boolean isVisible = this.visibleItems;
+        this.visibleItems = false;
 
         int j = 0;
         while (j < this.numberOfItems() && !heightReduced) {
@@ -529,6 +561,7 @@ public class Tower {
             }
             j++;
         }
+        if (isVisible) this.makeItemsVisible();
 
         this.ok = true;
         return (heightReduced ?
@@ -543,12 +576,14 @@ public class Tower {
         List<Integer> lidsExtracted = new ArrayList<>();
 
         try {
+            boolean isVisible = this.visibleItems;
+            this.visibleItems = false;
             int j = 0;
             while (j < towerItemsCopy.size() && this.ok()) {
                 TowerItem item = towerItemsCopy.get(j);
                 int itemIndex = item.getIndex();
                 if (item.isCup()) {
-                    this.pushCup(itemIndex);
+                    this.pushItem(itemIndex, true);
                     int positionOfLid = this.positionOfItem(itemIndex, false);
                     int positionOfLidInCopy = -1;
                     for (TowerItem itemInCopy : towerItemsCopy) {
@@ -557,17 +592,18 @@ public class Tower {
                         }
                     }
                     if (positionOfLid >= 0) {
-                        this.removeLid(itemIndex);
-                        this.pushLid(itemIndex);
+                        this.removeItem(itemIndex, false);
+                        this.pushItem(itemIndex, false);
                     } else if (positionOfLidInCopy >= 0) {
-                        this.pushLid(itemIndex);
+                        this.pushItem(itemIndex, false);
                         lidsExtracted.add(itemIndex);
                     }
                 } else if (!lidsExtracted.contains(itemIndex)) {
-                    this.pushLid(itemIndex);
+                    this.pushItem(itemIndex, false);
                 }
                 j++;
             }
+            if (isVisible) this.makeItemsVisible();
         } catch (Exception e) {
             this.restoreOrderOfItems(towerItemsCopy);
             this.reportFail("Couldn't cover the cups because it would result in an overflow.");

@@ -2,7 +2,7 @@ package tests.tower;
 import tower.*;
 
 import static org.junit.Assert.*;
-// import java.beans.Transient;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,21 +11,20 @@ import org.junit.Test;
 public class TowerC2Test {
     private Tower tower;
 
-    private void assertTowerState(String[][] expectedItems, int[] expectedHeights,
-                                    int[] expectedLiddedCups, boolean expectedOk) {
-        assertArrayEquals(expectedItems, tower.stackingItems());
-        assertArrayEquals(expectedHeights, tower.heightReachedByItems());
-        assertArrayEquals(expectedLiddedCups, tower.liddedCups());
-        assertEquals(expectedOk, tower.ok());
-    }
-
     @Before
     public void setUp() {
         tower = new Tower(5, 10);
         tower.makeInvisible();
     }
 
+    @After
+    public void tearDown() {
+        tower.makeInvisible();
+    }
+
     // swap
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
     @Test
@@ -37,7 +36,8 @@ public class TowerC2Test {
             new String[] {"l", "3", "whatever"}
         );
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "2"}, {"cup", "3"}},
             new int[] {1, 6},
             new int[] {},
@@ -54,31 +54,14 @@ public class TowerC2Test {
             new String[] {"lid", "2"}
         );
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "2"}, {"cup", "3"}},
             new int[] {1, 6},
             new int[] {},
             false
         );
     }
-
-    /* @Test
-    public void shouldNotSwapIfVisibleAndNewHeightIsGreaterThanTowersHeight() {
-        tower.makeVisible();
-        tower.pushLid(1);
-        tower.pushCup(4);
-        tower.pushCup(3);
-        tower.swap(
-            new String[] {"lid", "1"},
-            new String[] {"cup", "3"}
-        );
-
-        assertTowerState(
-            new String[][] {{"lid", "1"}, {"cup", "4"}, {"cup", "3"}},
-            new int[] {1, 8, 7},
-            false
-        );
-    } */
 
     @Test
     public void shouldSwapItemsIfTheyAreTheSame() {
@@ -90,31 +73,14 @@ public class TowerC2Test {
             new String[] {"cup", "3"}
         );
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "1"}, {"cup", "4"}, {"cup", "3"}},
             new int[] {1, 8, 7},
             new int[] {},
             true
         );
     }
-
-    /* @Test
-    public void shouldSwapDifferentItemsIfTheyAreInAVisibleTowerAndNewHeightIsLessThanOrEqualToTowersHeight() {
-        tower.makeVisible();
-        tower.pushLid(1);
-        tower.pushCup(4);
-        tower.pushCup(2);
-        tower.swap(
-            new String[] {"lid", "1"},
-            new String[] {"cup", "2"}
-        );
-
-        assertTowerState(
-            new String[][] {{"cup", "2"}, {"cup", "4"}, {"lid", "1"}},
-            new int[] {3, 10, 5},
-            true
-        );
-    } */
 
     @Test
     public void shouldSwapIfTheOrderOfTheItemsIsNotTheSameAsInTheTower() {
@@ -126,7 +92,8 @@ public class TowerC2Test {
             new String[] {"lid", "1"}
         );
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "2"}, {"cup", "4"}, {"lid", "1"}},
             new int[] {3, 10, 5},
             new int[] {},
@@ -146,7 +113,8 @@ public class TowerC2Test {
             new String[] {"lid", "1"}
         );
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "2"}, {"lid", "2"}, {"lid", "4"}, {"lid", "1"}, {"lid", "3"}},
             new int[] {3, 4, 5, 6, 7},
             new int[] {2},
@@ -166,7 +134,8 @@ public class TowerC2Test {
             new String[] {"lid", "1"}
         );
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "2"}, {"lid", "2"}, {"lid", "4"}, {"lid", "1"}, {"lid", "3"}},
             new int[] {3, 4, 5, 6, 7},
             new int[] {2},
@@ -187,7 +156,8 @@ public class TowerC2Test {
             new String[] {"lid", "1"}
         );
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "2"}, {"lid", "2"}, {"lid", "4"}, {"lid", "1"}, {"cup", "1"}, {"lid", "3"}},
             new int[] {3, 4, 5, 6, 7, 8},
             new int[] {2},
@@ -208,7 +178,8 @@ public class TowerC2Test {
             new String[] {"lid", "1"}
         );
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "2"}, {"lid", "2"}, {"lid", "4"}, {"cup", "1"}, {"lid", "1"}, {"lid", "3"}},
             new int[] {3, 4, 5, 6, 7, 8},
             new int[] {1, 2},
@@ -228,7 +199,8 @@ public class TowerC2Test {
             new String[] {"lid", "1"}
         );
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "3"}, {"lid", "3"}, {"lid", "4"}, {"cup", "1"}, {"lid", "1"}},
             new int[] {5, 6, 7, 8, 9},
             new int[] {1, 3},
@@ -249,7 +221,8 @@ public class TowerC2Test {
             new String[] {"lid", "1"}
         );
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "3"}, {"lid", "3"}, {"lid", "4"}, {"cup", "2"}, {"cup", "1"}, {"lid", "1"}},
             new int[] {5, 6, 7, 10, 9, 10},
             new int[] {1, 3},
@@ -259,13 +232,16 @@ public class TowerC2Test {
 
     // swapToReduce  
     // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
     @Test
     public void shouldReturnEmptyArrayWhenAttemptingToSwapToReduceTheHeightIfTheTowerIsEmpty() {
         String[][] result = tower.swapToReduce();
 
         assertEquals(0, result.length);
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {},
             new int[] {},
             new int[] {},
@@ -282,7 +258,8 @@ public class TowerC2Test {
         String[][] result = tower.swapToReduce();
 
         assertEquals(0, result.length);
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "1"}, {"cup", "5"}, {"cup", "2"}, {"cup", "3"}},
             new int[] {1, 10, 5, 10},
             new int[] {},
@@ -300,7 +277,8 @@ public class TowerC2Test {
         tower.pushCup(2);
         String[][] result = tower.swapToReduce();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "4"}, {"lid", "3"}, {"cup", "1"}, {"lid", "1"}, {"lid", "2"}, {"cup", "2"}},
             new int[] {7, 2, 3, 4, 5, 8},
             new int[] {1},
@@ -317,34 +295,21 @@ public class TowerC2Test {
 
     // cover    
     // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
     @Test
     public void shouldCoverIfTheTowerIsEmpty() {
         tower.cover();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {},
             new int[] {},
             new int[] {},
             true
         );
     }
-
-    /* @Test
-    public void shouldNotCoverIfVisibleAndNewHeightIsGreaterThanTowersHeight() {
-        tower.makeVisible();
-        tower.pushLid(3);
-        tower.pushLid(4);
-        tower.pushCup(4);
-        tower.pushCup(3);
-        tower.cover();
-
-        assertTowerState(
-            new String[][] {{"lid", "3"}, {"lid", "4"}, {"cup", "4"}, {"cup", "3"}},
-            new int[] {1, 2, 9, 8},
-            false
-        );
-    } */
 
     @Test
     public void shouldCoverIfThereAreNoCupsWithTheirLids() {
@@ -353,7 +318,8 @@ public class TowerC2Test {
         tower.pushCup(2);
         tower.cover();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"lid", "1"}, {"cup", "3"}, {"cup", "2"}},
             new int[] {1, 6, 5},
             new int[] {},
@@ -371,7 +337,8 @@ public class TowerC2Test {
         tower.pushLid(5);
         tower.cover();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "4"}, {"cup", "1"}, {"cup", "3"}, {"lid", "3"}, {"lid", "2"}, {"lid", "5"}},
             new int[] {7, 2, 7, 8, 9, 10},
             new int[] {3},
@@ -387,23 +354,12 @@ public class TowerC2Test {
         tower.pushLid(2);
         tower.cover();
 
-        assertTowerState(
+        TestUtils.assertTowerState(
+            tower,
             new String[][] {{"cup", "2"}, {"lid", "2"}, {"cup", "1"}, {"cup", "3"}},
             new int[] {3, 4, 5, 10},
             new int[] {2},
             true
         );
    }
-
-/*
-    @Test
-    public void () {
-        //
-    }
-*/
-
-    @After
-    public void tearDown() {
-        //
-    }
 }

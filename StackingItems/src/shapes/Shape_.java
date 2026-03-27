@@ -8,9 +8,16 @@ public abstract class Shape_ {
     protected Color color;
     protected boolean isVisible;
 
-    public abstract int getWidth();
-    public abstract int getHeight();
-    protected abstract void draw();
+    protected Shape_() {
+        this.xPosition = 0;
+        this.yPosition = 0;
+        this.color = Color.BLACK;
+        this.isVisible = false;
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
     public int getX() {
         return this.xPosition;
@@ -18,6 +25,33 @@ public abstract class Shape_ {
 
     public int getY() {
         return this.yPosition;
+    }
+
+    public void changeColor(Color newColor){
+        color = newColor;
+        this.draw();
+    }
+
+    public void makeVisible(){
+        isVisible = true;
+        this.draw();
+    }
+    
+    public void makeInvisible(){
+        this.erase();
+        isVisible = false;
+    }
+
+    public void moveHorizontally(int distance){
+        this.erase();
+        this.xPosition += distance;
+        this.draw();
+    }
+
+    public void moveVertically(int distance){
+        this.erase();
+        this.yPosition += distance;
+        this.draw();
     }
     
     public void moveHorizontallyTo(int x) {
@@ -33,35 +67,20 @@ public abstract class Shape_ {
         this.moveVerticallyTo(y);
     }
 
-    public void moveHorizontally(int distance){
-        erase();
-        xPosition += distance;
-        draw();
-    }
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
-    public void moveVertically(int distance){
-        erase();
-        yPosition += distance;
-        draw();
-    }
+    public abstract int getWidth();
+    public abstract int getHeight();
+    protected abstract void draw();
 
-    public void makeVisible(){
-        isVisible = true;
-        draw();
-    }
-    
-    public void makeInvisible(){
-        erase();
-        isVisible = false;
-    }
-    
-    public void changeColor(Color newColor){
-        color = newColor;
-        draw();
-    }
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
     protected void erase(){
-        if(isVisible) {
+        if(this.isVisible) {
             Canvas canvas = Canvas.getCanvas();
             canvas.erase(this);
         }

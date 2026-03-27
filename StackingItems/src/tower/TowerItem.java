@@ -41,7 +41,7 @@ public abstract class TowerItem {
         this.setHeightReached(-1);
         this.centerX();
 
-        this.activate();
+        this.enable();
     }
 
     // ------------------------------------------------------------------------------------------------------------
@@ -73,10 +73,10 @@ public abstract class TowerItem {
         this.moveTo(heightReached - this.height());
     }
 
-    public void onPush()   { /* empty */ };
-    public void onPop()    { /* empty */ };
-    public void onRemove() { /* empty */ };
-    public void onCover()  { /* empty */ };
+    public void onPush()   { /* EMPTY */ };
+    public void onPop()    { /* EMPTY */ };
+    public void onRemove() { /* EMPTY */ };
+    public void onCover()  { /* EMPTY */ };
 
     protected void moveTo(int y) {
         int bottomOfTower = this.towerMargin + this.towerHeight*this.blockSize;
@@ -87,8 +87,8 @@ public abstract class TowerItem {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
-    public abstract void activate();
-    public abstract void deactivate();
+    public abstract void enable();
+    public abstract void disable();
     public abstract boolean isCup();
     public abstract int height();
     public abstract String[] asArray();
@@ -136,11 +136,11 @@ public abstract class TowerItem {
         for (Integer index : indexes) {
             HashMap<String, TowerItem> items = activeItems.get(index);
             TowerItem cup = items.get("cup");
-            if (cup != null) cup.deactivate();
+            if (cup != null) cup.disable();
 
             if (activeItems.containsKey(index)) {
                 TowerItem lid = items.get("lid");
-                lid.deactivate();
+                lid.disable();
             }
         }
     }

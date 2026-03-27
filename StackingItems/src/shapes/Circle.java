@@ -1,31 +1,24 @@
 package shapes;
 
-import java.awt.Color;
 import java.awt.geom.*;
-
-/**
- * A circle that can be manipulated and that draws itself on a canvas.
- * 
- * @author  Michael Kolling and David J. Barnes
- * @version 1.0.  (15 July 2000) 
- */
 
 public class Circle extends Shape_ {
     private int radius;
     
     public Circle(int radius) {
+        super();
         this.radius = radius;
-        this.xPosition = 0;
-        this.yPosition = 0;
-        this.color = Color.BLACK;
-        this.isVisible = false;
     }
 
-    public int getWidth() { // ------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    public int getWidth() {
         return this.diameter();
     }
 
-    public int getHeight() { // ------------
+    public int getHeight() {
         return this.diameter();
     }
 
@@ -37,12 +30,22 @@ public class Circle extends Shape_ {
         return 2 * this.radius;
     }
 
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
     protected void draw(){
-        if(isVisible) {
+        if(this.isVisible) {
             Canvas canvas = Canvas.getCanvas();
-            canvas.draw(this, color, 
-                new Ellipse2D.Double(xPosition - this.radius, yPosition - this.radius, 
-                this.diameter(), this.diameter()));
+            int xCoord = this.xPosition - this.radius;
+            int yCoord = this.yPosition - this.radius;
+            canvas.draw(
+                this,
+                this.color, 
+                new Ellipse2D.Double(
+                    xCoord, yCoord, this.diameter(), this.diameter()
+                )
+            );
             canvas.wait(10);
         }
     }
