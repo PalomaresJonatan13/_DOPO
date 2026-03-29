@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.*;
 
 
-public abstract class TowerItem {
+abstract class TowerItem {
     protected int index;
     protected Color color;
     protected int heightReached;
@@ -38,7 +38,7 @@ public abstract class TowerItem {
         this.setColor();
         this.createSides();
 
-        this.setHeightReached(-1);
+        this.setHeightReached(0);
         this.centerX();
 
         this.enable();
@@ -69,8 +69,12 @@ public abstract class TowerItem {
     }
 
     public void setHeightReached(int heightReached) {
-        this.heightReached = heightReached;
-        this.moveTo(heightReached - this.height());
+        if (heightReached >= 0) {
+            this.heightReached = heightReached;
+            this.moveTo(heightReached - this.height());
+        } else {
+            throw new IllegalStateException("The value given must be non-negative.");
+        }
     }
 
     public void onPush()   { /* EMPTY */ };

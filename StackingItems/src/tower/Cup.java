@@ -4,7 +4,7 @@ import shapes.*;
 import java.util.*;
 import java.awt.Color;
 
-public class Cup extends TowerItem {
+class Cup extends TowerItem {
     private Rectangle base;
     private Rectangle left;
     private Rectangle right;
@@ -42,15 +42,17 @@ public class Cup extends TowerItem {
     // ------------------------------------------------------------------------------------------------------------
 
     public void enable() {
-        if (activeItems.containsKey(this.index)) {
-            activeItems.get(index).put("cup", this);
-        } else {
-            HashMap<String, TowerItem> items = new HashMap<>();
-            items.put("cup", this);
-            items.put("lid", null);
-            activeItems.put(this.index, items);
+        if (!this.isActive) {
+            if (activeItems.containsKey(this.index)) {
+                activeItems.get(index).put("cup", this);
+            } else {
+                HashMap<String, TowerItem> items = new HashMap<>();
+                items.put("cup", this);
+                items.put("lid", null);
+                activeItems.put(this.index, items);
+            }
+            this.isActive = true;
         }
-        this.isActive = true;
     }
 
     public void disable() {
@@ -118,16 +120,20 @@ public class Cup extends TowerItem {
                 Lid lid = this.lid();
                 if (lid != null) lid.setColor(color);
             } else {
-                throw new IllegalArgumentException("Invalid color");
+                throw new IllegalArgumentException("Invalid color.");
             }
         }
     }
 
     public void makeVisible() {
-        this.base.makeVisible();
-        this.left.makeVisible();
-        this.right.makeVisible();
-        this.isVisible = true;
+        if (this.isActive) {
+            this.base.makeVisible();
+            this.left.makeVisible();
+            this.right.makeVisible();
+            this.isVisible = true;
+        } else {
+            throw new IllegalStateException("Cannot make the cup visible if it is not active.");
+        }
     }
 
     public void makeInvisible() {

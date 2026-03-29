@@ -5,7 +5,7 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class Lid extends TowerItem {
+class Lid extends TowerItem {
     private Rectangle base;
     private Circle[] lidShapes;
 
@@ -42,15 +42,17 @@ public class Lid extends TowerItem {
     // ------------------------------------------------------------------------------------------------------------
 
     public void enable() {
-        if (activeItems.containsKey(this.index)) {
-            activeItems.get(index).put("lid", this);
-        } else {
-            HashMap<String, TowerItem> items = new HashMap<>();
-            items.put("cup", null);
-            items.put("lid", this);
-            activeItems.put(this.index, items);
+        if (!this.isActive) {
+            if (activeItems.containsKey(this.index)) {
+                activeItems.get(index).put("lid", this);
+            } else {
+                HashMap<String, TowerItem> items = new HashMap<>();
+                items.put("cup", null);
+                items.put("lid", this);
+                activeItems.put(this.index, items);
+            }
+            this.isActive = true;
         }
-        this.isActive = true;
     }
 
     public void disable() {
@@ -132,12 +134,16 @@ public class Lid extends TowerItem {
     }
 
     public void makeVisible() {
-        this.base.makeVisible();
-        if (this.isLidded) {
-            this.lidShapes[0].makeVisible();
-            this.lidShapes[1].makeVisible();
+        if (this.isActive) {
+            this.base.makeVisible();
+            if (this.isLidded) {
+                this.lidShapes[0].makeVisible();
+                this.lidShapes[1].makeVisible();
+            }
+            this.isVisible = true;
+        } else {
+            throw new IllegalStateException("Cannot make the lid visible if it is not active.");
         }
-        this.isVisible = true;
     }
 
     public void makeInvisible() {

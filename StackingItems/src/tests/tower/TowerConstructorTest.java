@@ -1,5 +1,6 @@
 package tests.tower;
 import tower.*;
+import exceptions.*;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class TowerConstructorTest {
         try {
             new Tower(0, 0);
             fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
+        } catch (TowerArgumentException e) {
             assertTrue(true);
         }
     }
@@ -38,7 +39,7 @@ public class TowerConstructorTest {
         try {
             new Tower(0);
             fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
+        } catch (TowerArgumentException e) {
             assertTrue(true);
         }
     }

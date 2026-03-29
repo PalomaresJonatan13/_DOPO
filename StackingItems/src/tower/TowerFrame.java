@@ -3,19 +3,19 @@ import shapes.*;
 
 import java.util.*;
 
-// CONSIDER ADDING A VERTICAL PADDING TO THE FRAME
-public class TowerFrame {
+class TowerFrame {
     private Rectangle leftBorder;
     private Rectangle topBorder;
     private Rectangle rightBorder;
     private Rectangle bottomBorder;
     private List<Rectangle> ticks;
-    private static int THICKNESS = 1;
-    private static int TICKLENGTH = 5;
     private int width;
     private int height;
     private int space;
     private int margin;
+
+    private static int THICKNESS = 1;
+    private static int TICKLENGTH = 5;
 
     // width, height, space and margin in px
     public TowerFrame(int width, int height, int space, int margin) {
@@ -27,6 +27,36 @@ public class TowerFrame {
         this.createBorders();
         this.createTicks();
     }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    public void makeVisible() {
+        this.leftBorder.makeVisible();
+        // this.topBorder.makeVisible();
+        this.rightBorder.makeVisible();
+        this.bottomBorder.makeVisible();
+
+        for (Rectangle tick : this.ticks) {
+            tick.makeVisible();
+        }
+    }
+
+    public void makeInvisible() {
+        this.leftBorder.makeInvisible();
+        this.topBorder.makeInvisible();
+        this.rightBorder.makeInvisible();
+        this.bottomBorder.makeInvisible();
+
+        for (Rectangle tick : this.ticks) {
+            tick.makeInvisible();
+        }
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
     private void createBorders() {
         this.leftBorder = new Rectangle(THICKNESS, this.height + 1);
@@ -50,28 +80,6 @@ public class TowerFrame {
             int yPosition = this.margin + this.height - this.space*(i);
             tick.moveTo(xPosition, yPosition);
             this.ticks.add(tick);
-        }
-    }
-
-    public void makeVisible() {
-        this.leftBorder.makeVisible();
-        // this.topBorder.makeVisible();
-        this.rightBorder.makeVisible();
-        this.bottomBorder.makeVisible();
-
-        for (Rectangle tick : this.ticks) {
-            tick.makeVisible();
-        }
-    }
-
-    public void makeInvisible() {
-        this.leftBorder.makeInvisible();
-        this.topBorder.makeInvisible();
-        this.rightBorder.makeInvisible();
-        this.bottomBorder.makeInvisible();
-
-        for (Rectangle tick : this.ticks) {
-            tick.makeInvisible();
         }
     }
 }

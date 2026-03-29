@@ -1,5 +1,6 @@
 package tower;
 import shapes.*;
+import exceptions.*;
 
 import java.util.*;
 import java.awt.Color;
@@ -35,7 +36,7 @@ public class Tower {
         } else {
             String message = "`width` and `height` must be positive natural numbers.";
             this.reportFail(message);
-            throw new IllegalArgumentException(message);
+            throw new TowerArgumentException(message);
         }
     }
 
@@ -100,6 +101,7 @@ public class Tower {
             this.makeItemsVisible();
             this.ok = true;
         } else {
+            // wont be displayed because the tower is invisible.
             this.reportFail("Cannot make visible because the tower is overflowed.");
         }
     }
@@ -177,33 +179,42 @@ public class Tower {
         }
     }
 
-    private void pushItem(int index, boolean isCup) {
-        if (!this.hasItem(index, isCup) && (index > 0) && (2*index-1 <= this.width)) {
-            // this is the height the new item will reach
-            int newHeight = this.heightReachedByNewItem(index, isCup);
-            if (!((newHeight > this.height) && this.visible)) {
-                TowerItem newItem = (isCup ?
-                    Cup.getCup(index, BLOCKSIZE, MARGIN, this.width, this.height) :
-                    Lid.getLid(index, BLOCKSIZE, MARGIN, this.width, this.height)
-                );
+    private void pushItem(int index, boolean isCup) throws TowerException {
+        if (this.hasItem(index, isCup)) throw new TowerArgumentException("Push: The item already exists.");
+        if (index <= 0) throw new TowerArgumentException("Push: The index of the item must be positive");
+        if (2*index-1 > this.width || (isCup && 2*index-1 > this.height)) {
+            throw new TowerArgumentException("Push: The item's width cannot exceed the tower's width");
+        }
 
-                this.adjustColorForNewItem(newItem);
-                if (this.itemColors.get(index) == null) {
-                    this.itemColors.put(index, newItem.getColor());
-                }
-                newItem.setColor(this.itemColors.get(index));
-                newItem.setHeightReached(newHeight);
-                if (this.visibleItems) newItem.makeVisible();
+        int newHeight = this.heightReachedByNewItem(index, isCup);
+        if (!((newHeight > this.height) && this.visible)) {
+            TowerItem newItem = (isCup ?
+                Cup.getCup(index, BLOCKSIZE, MARGIN, this.width, this.height) :
+                Lid.getLid(index, BLOCKSIZE, MARGIN, this.width, this.height)
+            );
 
-                this.towerItems.add(newItem);
-                newItem.updateLiddedState();
-                newItem.enable();
-                this.ok = true;
-            } else {
-                throw new IllegalStateException("Adding the new item will result in an overflow of the tower's frame.");
+            this.adjustColorForNewItem(newItem);
+            if (this.itemColors.get(index) == null) {
+                this.itemColors.put(index, newItem.getColor());
             }
+            newItem.setColor(this.itemColors.get(index));
+            newItem.setHeightReached(newHeight);
+            if (this.visibleItems) newItem.makeVisible();
+
+            this.towerItems.add(newItem);
+            newItem.updateLiddedState();
+            newItem.enable();
+            this.ok = true;
         } else {
-            throw new IllegalArgumentException("Either the item already exists, the given size for the item is nonpositive or it is greater than the current allowed width.");
+            throw new TowerException(TowerException.OVERFLOW(index, isCup));
+        }
+    }
+
+    private void safePush(int index, boolean isCup) {
+        if (isCup) {
+            this.pushCup(index);
+        } else {
+            this.pushLid(index);
         }
     }
 
@@ -215,7 +226,7 @@ public class Tower {
             this.towerItems.removeLast();
             this.ok = true;
         } else {
-            throw new IllegalStateException("Cannot pop items from an empty Tower.");
+            throw new TowerStateException("Pop: Cannot pop items from an empty Tower.");
         }
     }
 
@@ -227,7 +238,7 @@ public class Tower {
             }
             this.ok = true;
         } else {
-            throw new IllegalArgumentException("The item from which to start removing does not belong to the Tower.");
+            throw new TowerArgumentException("Remove: The item from which to start removing does not belong to the Tower.");
         }
     }
 
@@ -238,7 +249,7 @@ public class Tower {
             }
             this.ok = true;
         } else {
-            throw new IllegalArgumentException("The given position to remove from should be greater than or equal to 0 and less than the number of items in the Tower.");
+            throw new TowerArgumentException("Remove: The given position to remove from should be greater than or equal to 0 and less than the number of items in the Tower.");
         }
     }
 
@@ -259,14 +270,14 @@ public class Tower {
             while (!itemsAfterItem.isEmpty()) {
                 lastItem = itemsAfterItem.getFirst();
                 if (!(isLidded && lastItem.getIndex() == index)) {
-                    this.pushItem(lastItem.getIndex(), lastItem.isCup());
+                    this.safePush(lastItem.getIndex(), lastItem.isCup());
                 }
                 itemsAfterItem.removeFirst();
             }
             if (isVisible) this.makeItemsVisible();
             this.ok = true;
         } else {
-            throw new IllegalArgumentException("The desired item to be removed does not belong to the Tower.");
+            throw new TowerArgumentException("Remove: The desired item to be removed does not belong to the Tower.");
         }
     }
 
@@ -283,14 +294,14 @@ public class Tower {
             this.removeItem(itemToRemove.getIndex(), isCup);
         } else {
             String itemType = (isCup ? "cup" : "lid");
-            throw new IllegalStateException("There are no " + itemType + "s to pop.");
+            throw new TowerStateException("Pop: There is no " + itemType + " to pop.");
         }
     }
 
     public void pushCup(int index) {
         try {
             this.pushItem(index, true);
-        } catch (Exception e) {
+        } catch (TowerException | TowerArgumentException e) {
             this.reportFail(e.getMessage());
         }
     }
@@ -298,7 +309,7 @@ public class Tower {
     public void popCup() {
         try {
             this.popItem(true);
-        } catch (Exception e) {
+        } catch (TowerStateException e) {
             this.reportFail(e.getMessage());
         }
     }
@@ -306,31 +317,31 @@ public class Tower {
     public void removeCup(int index) {
         try {
             this.removeItem(index, true);
-        } catch (Exception e) {
+        } catch (TowerArgumentException e) {
             this.reportFail(e.getMessage());
         }
     }
     
-    public void pushLid (int index) {
+    public void pushLid(int index) {
         try {
             this.pushItem(index, false);
-        } catch (Exception e) {
+        } catch (TowerException | TowerArgumentException e) {
             this.reportFail(e.getMessage());
         }
     }
     
-    public void popLid () {
+    public void popLid() {
         try {
             this.popItem(false);
-        } catch (Exception e) {
+        } catch (TowerStateException e) {
             this.reportFail(e.getMessage());
         }
     }
     
-    public void removeLid (int index) {
+    public void removeLid(int index) {
         try {
             this.removeItem(index, false);
-        } catch (Exception e) {
+        } catch (TowerArgumentException e) {
             this.reportFail(e.getMessage());
         }
     }
@@ -378,7 +389,7 @@ public class Tower {
             TowerItem item = towerItemsCopy.get(j);
             int newHeight = this.heightReachedByNewItem(item.getIndex(), item.isCup());
             while ((newHeight <= this.height) && (j >= 0)) {
-                this.pushItem(item.getIndex(), item.isCup());
+                this.safePush(item.getIndex(), item.isCup());
                 j--;
                 if (j >= 0) {
                     item = towerItemsCopy.get(j);
@@ -419,9 +430,10 @@ public class Tower {
                         }
                     }
                 }
+
                 newHeight = this.heightReachedByNewItem(itemIndex, isCup);
                 if (newHeight <= this.height) {
-                    this.pushItem(itemIndex, isCup);
+                    this.safePush(itemIndex, isCup);
                     j++;
                 }
             }
@@ -438,13 +450,18 @@ public class Tower {
         this.clear();
         boolean isVisible = this.visibleItems;
         this.visibleItems = false;
-        for (TowerItem item : copy) {
-            this.pushItem(item.getIndex(), item.isCup());
+
+        try {
+            for (TowerItem item : copy) {
+                this.pushItem(item.getIndex(), item.isCup());
+            }
+        } catch (TowerException e) {
+            throw new TowerArgumentException("Restore: The given list of TowerItems is not a valid copy (cannot push all the items in the copy given because there would be an overflow).");
         }
         if (isVisible) this.makeItemsVisible();
     }
 
-    private void insert(int index, boolean isCup, int position) {
+    private void insert(int index, boolean isCup, int position) throws TowerException {
         if (position == this.numberOfItems()) {
             this.pushItem(index, isCup);
         } else if (0 <= position && position < this.numberOfItems()) {
@@ -466,16 +483,16 @@ public class Tower {
                     j++;
                 }
                 if (isVisible) this.makeItemsVisible();
-            } catch (Exception e) {
+            } catch (TowerException e) {
                 this.restoreOrderOfItems(towerItemsCopy);
-                throw new IllegalStateException("Cannot insert the item in the given position because the resulting order will overflow the tower's frame.");
+                throw new TowerException(TowerException.OVERFLOW(index, isCup));
             }
         } else {
-            throw new IllegalArgumentException("The given position to insert should be greater than or equal to 0 and less than or equal to the number of items in the Tower.");
+            throw new TowerArgumentException("Insert: The given position to insert should be greater than or equal to 0 and less than or equal to the number of items in the Tower.");
         }
     }
 
-    private void swapItems(int index1, boolean isCup1, int index2, boolean isCup2) {
+    private void swapItems(int index1, boolean isCup1, int index2, boolean isCup2) throws TowerException {
         int position1 = this.positionOfItem(index1, isCup1);
         int position2 = this.positionOfItem(index2, isCup2);
         if (position1 >= 0 && position2 >= 0) {
@@ -508,13 +525,13 @@ public class Tower {
                     this.insert(index1, isCup1, position2);
                     if (item1IsLidded) this.insert(index1, false, position2+1);
                     if (isVisible) this.makeItemsVisible();
-                } catch (Exception e) {
+                } catch (TowerException e) {
                     this.restoreOrderOfItems(towerItemsCopy);
-                    throw new IllegalStateException("Cannot swap the given items because the resulting order will overflow the tower's frame.");
+                    throw new TowerException(TowerException.IMPOSSIBLE_SWAP(index1, isCup1, index2, isCup2));
                 }
             } else {this.ok = true;}
         } else {
-            throw new IllegalArgumentException("The given items to swap do not both belong to the Tower.");
+            throw new TowerArgumentException("Swap: The given items to swap do not both belong to the Tower.");
         }
     }
 
@@ -526,7 +543,7 @@ public class Tower {
             int index2 = Integer.parseInt(item2[1]);
             try {
                 this.swapItems(index1, isCup1, index2, isCup2);
-            } catch (Exception e) {
+            } catch (TowerException | TowerArgumentException e) {
                 this.reportFail(e.getMessage());
             }
         } else {
@@ -556,7 +573,9 @@ public class Tower {
                     );
                     heightReduced = this.height() < lastHeight;
                     this.restoreOrderOfItems(towerItemsCopy);
-                } catch (Exception e) {}
+                } catch (TowerException e) {
+                    /* If the swap operation is unsuccessful, we know that with that pair of items we dont get a reduction of the height, therefore, we continue with the next pair */
+                }
                 k++;
             }
             j++;
@@ -604,7 +623,7 @@ public class Tower {
                 j++;
             }
             if (isVisible) this.makeItemsVisible();
-        } catch (Exception e) {
+        } catch (TowerException e) {
             this.restoreOrderOfItems(towerItemsCopy);
             this.reportFail("Couldn't cover the cups because it would result in an overflow.");
         }
