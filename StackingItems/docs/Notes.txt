@@ -14,8 +14,7 @@ Crazy (cover): easy ...
 
 Create an exception class, or several of them
 
-other Cup: ...
-other Lid: ...
+other Cup: when it is removed, every item between it and the next item with greater index is removed too.
 
 
 use .onPush, .onPop, .onRemove, .onCover, instead of .push, .pop, .remove, .cover

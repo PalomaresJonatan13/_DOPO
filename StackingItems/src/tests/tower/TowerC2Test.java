@@ -64,6 +64,28 @@ public class TowerC2Test {
     }
 
     @Test
+    public void shouldNotSwapAnItemEnclosedByALiddedCupWithAnotherItem() {
+        tower.pushLid(1);
+        tower.pushLid(4);
+        tower.pushCup(2);
+        tower.pushCup(1);
+        tower.pushLid(2);
+        tower.pushLid(3);
+        tower.swap(
+            new String[] {"lid", "4"},
+            new String[] {"cup", "1"}
+        );
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "1"}, {"lid", "4"}, {"cup", "2"}, {"cup", "1"}, {"lid", "2"}, {"lid", "3"}},
+            new int[] {1, 2, 5, 4, 6, 7},
+            new int[] {2},
+            false
+        );
+    }
+
+    @Test
     public void shouldSwapItemsIfTheyAreTheSame() {
         tower.pushLid(1);
         tower.pushCup(4);
@@ -102,7 +124,7 @@ public class TowerC2Test {
     }
 
     @Test
-    public void shouldSwapALiddedCupWithAnotherItem() {
+    public void shouldSwapALiddedCupWithAnItemBeforeIt() {
         tower.pushLid(1);
         tower.pushLid(4);
         tower.pushCup(2);
@@ -123,7 +145,28 @@ public class TowerC2Test {
     }
 
     @Test
-    public void shouldSwapALidCoveringACupWithAnotherItem() {
+    public void shouldSwapALiddedCupWithAnItemAfterIt() {
+        tower.pushLid(1);
+        tower.pushCup(2);
+        tower.pushLid(2);
+        tower.pushLid(4);
+        tower.pushLid(3);
+        tower.swap(
+            new String[] {"cup", "2"},
+            new String[] {"lid", "3"}
+        );
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "1"}, {"lid", "3"}, {"lid", "4"}, {"cup", "2"}, {"lid", "2"}},
+            new int[] {1, 2, 3, 6, 7},
+            new int[] {2},
+            true
+        );
+    }
+
+    @Test
+    public void shouldSwapALidCoveringACupWithAnItemBeforeIt() {
         tower.pushLid(1);
         tower.pushLid(4);
         tower.pushCup(2);
@@ -138,6 +181,27 @@ public class TowerC2Test {
             tower,
             new String[][] {{"cup", "2"}, {"lid", "2"}, {"lid", "4"}, {"lid", "1"}, {"lid", "3"}},
             new int[] {3, 4, 5, 6, 7},
+            new int[] {2},
+            true
+        );
+    }
+
+    @Test
+    public void shouldSwapALidCoveringACupWithAnItemAfterIt() {
+        tower.pushLid(1);
+        tower.pushCup(2);
+        tower.pushLid(2);
+        tower.pushLid(4);
+        tower.pushLid(3);
+        tower.swap(
+            new String[] {"lid", "2"},
+            new String[] {"lid", "3"}
+        );
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "1"}, {"lid", "3"}, {"lid", "4"}, {"cup", "2"}, {"lid", "2"}},
+            new int[] {1, 2, 3, 6, 7},
             new int[] {2},
             true
         );
@@ -180,9 +244,9 @@ public class TowerC2Test {
 
         TestUtils.assertTowerState(
             tower,
-            new String[][] {{"cup", "2"}, {"lid", "2"}, {"lid", "4"}, {"cup", "1"}, {"lid", "1"}, {"lid", "3"}},
+            new String[][] {{"cup", "2"}, {"lid", "2"}, {"lid", "4"}, {"lid", "1"}, {"cup", "1"}, {"lid", "3"}},
             new int[] {3, 4, 5, 6, 7, 8},
-            new int[] {1, 2},
+            new int[] {2},
             true
         );
     }
@@ -214,7 +278,7 @@ public class TowerC2Test {
         tower.pushLid(1);
         tower.pushLid(4);
         tower.pushCup(3);
-        tower.pushCup(2);
+        tower.pushLid(2);
         tower.pushLid(3);
         tower.swap(
             new String[] {"lid", "3"},
@@ -223,8 +287,8 @@ public class TowerC2Test {
 
         TestUtils.assertTowerState(
             tower,
-            new String[][] {{"cup", "3"}, {"lid", "3"}, {"lid", "4"}, {"cup", "2"}, {"cup", "1"}, {"lid", "1"}},
-            new int[] {5, 6, 7, 10, 9, 10},
+            new String[][] {{"cup", "3"}, {"lid", "3"}, {"lid", "4"}, {"cup", "1"}, {"lid", "1"}, {"lid", "2"}},
+            new int[] {5, 6, 7, 8, 9, 10},
             new int[] {1, 3},
             true
         );

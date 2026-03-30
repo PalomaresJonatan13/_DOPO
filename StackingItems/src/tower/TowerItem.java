@@ -34,14 +34,27 @@ abstract class TowerItem {
         this.towerHeight = towerHeight;
 
         this.index = index;
-        this.isLidded = false;
         this.setColor();
         this.createSides();
 
         this.setHeightReached(0);
         this.centerX();
+    }
 
-        this.enable();
+    public static TowerItem getTowerItem(
+        int index, boolean isCup, int blockSize, int towerMargin, int towerWidth, int towerHeight
+    ) {
+        return (isCup ?
+            Cup.getCup(index, blockSize, towerMargin, towerHeight, towerHeight) :
+            Lid.getLid(index, blockSize, towerMargin, towerHeight, towerHeight)
+        );
+    }
+
+    public static TowerItem getTowerItem(int index, boolean isCup) {
+        return (isCup ?
+            Cup.getCup(index) :
+            Lid.getLid(index)
+        );
     }
 
     // ------------------------------------------------------------------------------------------------------------
@@ -77,10 +90,12 @@ abstract class TowerItem {
         }
     }
 
-    public void onPush()   { /* EMPTY */ };
-    public void onPop()    { /* EMPTY */ };
-    public void onRemove() { /* EMPTY */ };
-    public void onCover()  { /* EMPTY */ };
+    public TowerItem onPush(Tower tower)   {
+        return this;
+    };
+    public void onPop(Tower tower)    { /* EMPTY */ };
+    public void onRemove(Tower tower) { /* EMPTY */ };
+    public void onCover(Tower tower)  { /* EMPTY */ };
 
     protected void moveTo(int y) {
         int bottomOfTower = this.towerMargin + this.towerHeight*this.blockSize;
