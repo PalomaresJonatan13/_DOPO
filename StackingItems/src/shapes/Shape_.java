@@ -32,14 +32,18 @@ public abstract class Shape_ {
         this.draw();
     }
 
-    public void makeVisible(){
-        isVisible = true;
-        this.draw();
+    public void makeVisible() {
+        if (!this.isVisible) {
+            isVisible = true;
+            this.draw();
+        }
     }
     
     public void makeInvisible(){
-        this.erase();
-        isVisible = false;
+        if (this.isVisible) {
+            this.erase();
+            isVisible = false;
+        }
     }
 
     public void moveHorizontally(int distance){

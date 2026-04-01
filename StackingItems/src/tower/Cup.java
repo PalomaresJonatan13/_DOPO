@@ -2,23 +2,34 @@ package tower;
 import shapes.*;
 
 import java.util.*;
+
+import exceptions.TowerException;
+
 import java.awt.Color;
 
 class Cup extends TowerItem {
     private Rectangle base;
     private Rectangle left;
     private Rectangle right;
+    protected String type = NORMAL;
+
+    public static String NORMAL = "normal";
+    public static String OPENER = "opener";
+    public static String HIERARCHICAL = "hierarchical";
+    public static String[] types = {NORMAL, OPENER, HIERARCHICAL};
 
     protected Cup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        super(index, blockSize, towerMargin, towerWidth, towerHeight);
+        super(index, NORMAL, blockSize, towerMargin, towerWidth, towerHeight);
     }
 
-    public static Cup getCup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+    public static Cup getCup(int index, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
         Cup cup = null;
         HashMap<String, TowerItem> associatedItems = activeItems.get(index);
 
         if (associatedItems == null || associatedItems.get("cup") == null) {
-            cup = new Cup(index, blockSize, towerMargin, towerWidth, towerHeight);
+            if (type == NORMAL) cup = new Cup(index, blockSize, towerMargin, towerWidth, towerHeight);
+            else if (type == OPENER) cup = new OpenerCup(index, blockSize, towerMargin, towerWidth, towerHeight);
+            else if (type == HIERARCHICAL) cup = new HierarchicalCup(index, blockSize, towerMargin, towerWidth, towerHeight);
             Lid lid = cup.lid();
             if (lid != null) {
                 cup.setColor(lid.getColor());
@@ -27,6 +38,10 @@ class Cup extends TowerItem {
             cup = (Cup) associatedItems.get("cup");
         }
         return cup;
+    }
+
+    public static Cup getCup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+        return Cup.getCup(index, NORMAL, blockSize, towerMargin, towerWidth, towerHeight);
     }
 
     public static Cup getCup(int index) {
@@ -76,6 +91,10 @@ class Cup extends TowerItem {
         return true;
     }
 
+    public boolean isRemovable() {
+        return true;
+    }
+
     public int height() {
         return this.width();
     }
@@ -101,7 +120,8 @@ class Cup extends TowerItem {
         if (lid != null) {
             boolean lastState = this.isLidded;
 
-            this.isLidded = this.heightReached + 1 == lid.getHeightReached();
+            this.isLidded = lid.getHeightReached() == this.heightReached + 
+                (lid.isInverted() ? - this.height() : 1);
             if (this.isLidded != lastState) lid.updateLiddedState();
         } else this.isLidded = false;
 
@@ -175,4 +195,90 @@ class Cup extends TowerItem {
         this.left.moveVerticallyTo(y);
         this.right.moveVerticallyTo(y);
     }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    public static String[] getTypes() {
+        return types;
+    }
+
+    public static boolean isAValidType(String type) {
+        return Arrays.asList(types).contains(type);
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    private static class OpenerCup extends Cup {
+        protected OpenerCup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+            super(index, blockSize, towerMargin, towerWidth, towerHeight);
+            this.type = Cup.OPENER;
+        }
+
+        public String getType() {
+            return this.type;
+        }
+
+        public TowerItem onPush(Tower tower) {
+            tower.popCup();
+            // this.disable();
+            tower.pushCup(this.index);
+            TowerItem placeholder = Cup.getCup(this.index);
+
+            String[][] items = tower.stackingItems();
+            int j = items.length - 1;
+            boolean lidsToRemove = true;
+            while (j >= 0 && lidsToRemove) {
+                TowerItem item = TowerItem.fromArray(items[j]);
+                if (
+                    !item.isCup() &&
+                    item.getHeightReached() == placeholder.getHeightReached() - placeholder.height() &&
+                    item.isRemovable()
+                ) {
+                    tower.pop();
+                } else {
+                    lidsToRemove = false;
+                }
+                j--;
+            }
+            return placeholder;        
+        }
+    }
+
+    private static class HierarchicalCup extends Cup {
+        protected HierarchicalCup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+            super(index, blockSize, towerMargin, towerWidth, towerHeight);
+            this.type = Cup.HIERARCHICAL;
+        }
+
+        public String getType() {
+            return this.type;
+        }
+
+        public boolean isRemovable() {
+            return this.isRemovable;
+        }
+
+        public TowerItem onPush(Tower tower) throws TowerException {
+            tower.popCup();
+            // this.disable();
+
+            String[][] items = tower.stackingItems();
+            int j = items.length - 1;
+            boolean foundGreaterIndex = false;
+            while (j >= 0 && !foundGreaterIndex) {
+                TowerItem item = TowerItem.fromArray(items[j]);
+                foundGreaterIndex = item.getIndex() > this.index;
+                j--;
+            }
+            
+            tower.insert(this.index, true, NORMAL, ++j);
+            if (j == 0) this.isRemovable = false;
+            return Cup.getCup(this.index);
+        }
+    }
+
 }

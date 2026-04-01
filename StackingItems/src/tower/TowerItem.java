@@ -3,6 +3,8 @@ package tower;
 import java.awt.Color;
 import java.util.*;
 
+import exceptions.TowerException;
+
 
 abstract class TowerItem {
     protected int index;
@@ -11,6 +13,8 @@ abstract class TowerItem {
     protected boolean isVisible = false;
     protected boolean isLidded = false;
     protected boolean isActive = false;
+    protected boolean isRemovable = true;
+    protected String type;
 
     protected int blockSize;
     protected int towerMargin;
@@ -27,13 +31,14 @@ abstract class TowerItem {
     };
     protected static HashMap<Integer, HashMap<String, TowerItem>> activeItems = new HashMap<>();
 
-    protected TowerItem(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+    protected TowerItem(int index, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
         this.blockSize = blockSize;
         this.towerMargin = towerMargin;
         this.towerWidth = towerWidth;
         this.towerHeight = towerHeight;
 
         this.index = index;
+        this.type = type;
         this.setColor();
         this.createSides();
 
@@ -42,11 +47,20 @@ abstract class TowerItem {
     }
 
     public static TowerItem getTowerItem(
+        int index, boolean isCup, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight
+    ) {
+        return (isCup ?
+            Cup.getCup(index, type, blockSize, towerMargin, towerWidth, towerHeight) :
+            Lid.getLid(index, type, blockSize, towerMargin, towerWidth, towerHeight)
+        );
+    }
+
+    public static TowerItem getTowerItem(
         int index, boolean isCup, int blockSize, int towerMargin, int towerWidth, int towerHeight
     ) {
         return (isCup ?
-            Cup.getCup(index, blockSize, towerMargin, towerHeight, towerHeight) :
-            Lid.getLid(index, blockSize, towerMargin, towerHeight, towerHeight)
+            Cup.getCup(index, blockSize, towerMargin, towerWidth, towerHeight) :
+            Lid.getLid(index, blockSize, towerMargin, towerWidth, towerHeight)
         );
     }
 
@@ -63,6 +77,14 @@ abstract class TowerItem {
 
     public int getIndex() {
         return this.index;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public boolean isRemovable() {
+        return this.isRemovable;
     }
 
     public int width() {
@@ -90,7 +112,7 @@ abstract class TowerItem {
         }
     }
 
-    public TowerItem onPush(Tower tower)   {
+    public TowerItem onPush(Tower tower) throws TowerException {
         return this;
     };
     public void onPop(Tower tower)    { /* EMPTY */ };
@@ -135,6 +157,12 @@ abstract class TowerItem {
             } 
         }
         return isValid;
+    }
+
+    public static boolean isAValidType(boolean isCup, String type) {
+        return isCup ?
+            Cup.isAValidType(type) :
+            Lid.isAValidType(type);
     }
 
     public static TowerItem fromArray(String[] array) {

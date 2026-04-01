@@ -29,219 +29,77 @@ public class TowerTest {
 
     @Test
     public void shouldNotPushCupIfItAlreadyExists() {
-        tower.pushCup(2);
-        tower.pushCup(2);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "2"}},
-            new int[] {3},
-            new int[] {},
-            false
-        );
+        TestUtils.shouldNotPushCupIfItAlreadyExists(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldNotPushLidIfItAlreadyExists() {
-        tower.pushLid(2);
-        tower.pushLid(2);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"lid", "2"}},
-            new int[] {1},
-            new int[] {},
-            false
-        );
+        TestUtils.shouldNotPushLidIfItAlreadyExists(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldNotPushCupWithNonpositiveIndex() {
-        tower.pushCup(0);
-        
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {},
-            new int[] {},
-            new int[] {},
-            false
-        );
+        TestUtils.shouldNotPushCupWithNonpositiveIndex(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldNotPushLidWithNonpositiveIndex() {
-        tower.pushLid(0);
-        
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {},
-            new int[] {},
-            new int[] {},
-            false
-        );
+        TestUtils.shouldNotPushLidWithNonpositiveIndex(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldNotPushCupWithIndexGreaterThanWidth() {
-        tower.pushCup(6);
-        
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {},
-            new int[] {},
-            new int[] {},
-            false
-        );
+        TestUtils.shouldNotPushCupWithIndexGreaterThanWidth(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldNotPushLidWithIndexGreaterThanWidth() {
-        tower.pushLid(6);
-        
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {},
-            new int[] {},
-            new int[] {},
-            false
-        );
+        TestUtils.shouldNotPushLidWithIndexGreaterThanWidth(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPushValidFirstCup() {
-        tower.pushCup(2);
-        
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "2"}},
-            new int[] {3},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPushValidFirstCup(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPushValidFirstLid() {
-        tower.pushLid(2);
-        
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"lid", "2"}},
-            new int[] {1},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPushValidFirstLid(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPushValidCupAfterItemsWithLowerIndex() {
-        tower.pushCup(4);
-        tower.pushCup(2);
-        tower.pushCup(1);
-        tower.pushCup(3);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "4"}, {"cup", "2"}, {"cup", "1"}, {"cup", "3"}},
-            new int[] {7, 4, 3, 9},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPushValidCupAfterItemsWithLowerIndex(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPushValidLidAfterItemsWithLowerIndex() {
-        tower.pushCup(3);
-        tower.pushCup(2);
-        tower.pushCup(1);
-        tower.pushLid(2);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "3"}, {"cup", "2"}, {"cup", "1"}, {"lid", "2"}},
-            new int[] {5, 4, 3, 5},
-            new int[] {2},
-            true
-        );
+        TestUtils.shouldPushValidLidAfterItemsWithLowerIndex(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPushCupAfterBiggerCup() {
-        // last cup reached the towers height, but the new cup is smaller, so it should be pushed
-        tower.pushLid(1);
-        tower.pushCup(5);
-        tower.pushCup(2);
-        
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"lid", "1"}, {"cup", "5"}, {"cup", "2"}},
-            new int[] {1, 10, 5},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPushCupAfterBiggerCup(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPushLidAfterBiggerCup() {
-        // last cup reached the towers height, but the new lid is smaller, so it should be pushed
-        tower.pushLid(1);
-        tower.pushCup(5);
-        tower.pushLid(2);
-        
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"lid", "1"}, {"cup", "5"}, {"lid", "2"}},
-            new int[] {1, 10, 3},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPushLidAfterBiggerCup(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
     
     @Test
     public void shouldPushCupAfterLidOrSmallerCupIfNewHeightIsLessThanTowersHeight() {
-        tower.pushCup(2);
-        tower.pushLid(1);
-        tower.pushCup(4);
-        
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "2"}, {"lid", "1"}, {"cup", "4"}},
-            new int[] {3, 2, 10},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPushCupAfterLidOrSmallerCupIfNewHeightIsLessThanTowersHeight(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
     
     @Test
     public void shouldPushLidAfterLidOrSmallerCupIfNewHeightIsLessThanTowersHeight() {
-        tower.pushCup(2);
-        tower.pushLid(1);
-        tower.pushLid(4);
-        
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "2"}, {"lid", "1"}, {"lid", "4"}},
-            new int[] {3, 2, 4},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPushLidAfterLidOrSmallerCupIfNewHeightIsLessThanTowersHeight(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldCoverACupAfterPushingItsLidOnTopOfIt() {
-        tower.pushLid(1);
-        tower.pushCup(4);
-        tower.pushLid(3);
-        tower.pushCup(2);
-        tower.pushLid(4);
-        
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"lid", "1"}, {"cup", "4"}, {"lid", "3"}, {"cup", "2"}, {"lid", "4"}},
-            new int[] {1, 8, 3, 6, 9},
-            new int[] {4},
-            true
-        );
+        TestUtils.shouldCoverACupAfterPushingItsLidOnTopOfIt(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
     
     // popCup, popLid
@@ -251,176 +109,52 @@ public class TowerTest {
 
     @Test
     public void shouldNotPopCupIfThereAreNoCups() {
-        // add lids and try to pop a cup
-        tower.pushLid(4);
-        tower.pushLid(2);
-        tower.pushLid(3);
-        tower.popCup();
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"lid", "4"}, {"lid", "2"}, {"lid", "3"}},
-            new int[] {1, 2, 3},
-            new int[] {},
-            false
-        );
+        TestUtils.shouldNotPopCupIfThereAreNoCups(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldNotPopLidIfThereAreNoLids() {
-        // add cups and try to pop a lid
-        tower.pushCup(4);
-        tower.pushCup(2);
-        tower.pushCup(3);
-        tower.popLid();
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "4"}, {"cup", "2"}, {"cup", "3"}},
-            new int[] {7, 4, 9},
-            new int[] {},
-            false
-        );
+        TestUtils.shouldNotPopLidIfThereAreNoLids(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPopCupIfThereAreLidsAbove() {
-        tower.pushCup(4);
-        tower.pushCup(3);
-        tower.pushLid(2);
-        tower.pushLid(5);
-        tower.popCup();
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "4"}, {"lid", "2"}, {"lid", "5"}},
-            new int[] {7, 2, 8},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPopCupIfThereAreLidsAbove(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPopLidIfThereAreCupsAbove() {
-        tower.pushCup(1);
-        tower.pushLid(3);
-        tower.pushLid(4);
-        tower.pushCup(2);
-        tower.popLid();
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "1"}, {"lid", "3"}, {"cup", "2"}},
-            new int[] {1, 2, 5},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPopLidIfThereAreCupsAbove(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPopCupIfItIsTheLastItem() {
-        tower.pushLid(4);
-        tower.pushLid(2);
-        tower.pushLid(5);
-        tower.pushCup(3);
-        tower.popCup();
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"lid", "4"}, {"lid", "2"}, {"lid", "5"}},
-            new int[] {1, 2, 3},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPopCupIfItIsTheLastItem(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPopLidIfItIsTheLastItem() {
-        tower.pushCup(1);
-        tower.pushCup(3);
-        tower.pushCup(2);
-        tower.pushLid(4);
-        tower.popLid();
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "1"}, {"cup", "3"}, {"cup", "2"}},
-            new int[] {1, 6, 5},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPopLidIfItIsTheLastItem(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPopCupAndLidIfTheCupIsPoppedWhenTheyAreAttachedAndThereAreNoElementsInBetween() {
-        tower.pushLid(2);
-        tower.pushCup(3);
-        tower.pushLid(3);
-        tower.pushLid(4);
-        tower.popCup();
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"lid", "2"}, {"lid", "4"}},
-            new int[] {1, 2},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPopCupAndLidIfTheCupIsPoppedWhenTheyAreAttachedAndThereAreNoElementsInBetween(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreNoElementsInBetween() {
-        tower.pushCup(5);
-        tower.pushCup(3);
-        tower.pushLid(3);
-        tower.pushCup(2);
-        tower.popLid();
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "5"}, {"cup", "2"}},
-            new int[] {9, 4},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreNoElementsInBetween(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPopCupAndLidIfTheCupIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween() {
-        tower.pushCup(1);
-        tower.pushCup(4);
-        tower.pushLid(3);
-        tower.pushLid(2);
-        tower.pushLid(4);
-        tower.pushLid(1);
-        tower.popCup();
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "1"}, {"lid", "3"}, {"lid", "2"}, {"lid", "1"}},
-            new int[] {1, 2, 3, 4},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPopCupAndLidIfTheCupIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween() {
-        tower.pushLid(1);
-        tower.pushCup(4);
-        tower.pushLid(3);
-        tower.pushCup(2);
-        tower.pushLid(4);
-        tower.pushCup(1);
-        tower.popLid();
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"lid", "1"}, {"lid", "3"}, {"cup", "2"}, {"cup", "1"}},
-            new int[] {1, 2, 5, 4},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
 
@@ -431,181 +165,52 @@ public class TowerTest {
 
     @Test
     public void shouldNotRemoveCupIfTheCupIsNotInTheTower() {
-        tower.pushCup(4);
-        tower.pushLid(2);
-        tower.pushLid(5);
-        tower.removeCup(2);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "4"}, {"lid", "2"}, {"lid", "5"}},
-            new int[] {7, 2, 8},
-            new int[] {},
-            false
-        );
+        TestUtils.shouldNotRemoveCupIfTheCupIsNotInTheTower(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldNotRemoveLidIfTheLidIsNotInTheTower() {
-        tower.pushLid(1);
-        tower.pushCup(3);
-        tower.pushCup(2);
-        tower.removeLid(3);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"lid", "1"}, {"cup", "3"}, {"cup", "2"}},
-            new int[] {1, 6, 5},
-            new int[] {},
-            false
-        );
+        TestUtils.shouldNotRemoveLidIfTheLidIsNotInTheTower(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldRemoveCupIfTheCupIsNotTheLastItem() {
-        // add c3, l1, c2, c1, l4, then remove c2
-        tower.pushCup(3);
-        tower.pushLid(1);
-        tower.pushCup(2);
-        tower.pushCup(1);
-        tower.pushLid(4);
-        tower.removeCup(2);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "3"}, {"lid", "1"}, {"cup", "1"}, {"lid", "4"}},
-            new int[] {5, 2, 3, 6},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldRemoveCupIfTheCupIsNotTheLastItem(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldRemoveLidIfTheLidIsNotTheLastItem() {
-        // add c3, l1, c2, c1, l4, then remove l1
-        tower.pushCup(3);
-        tower.pushLid(1);
-        tower.pushCup(2);
-        tower.pushCup(1);
-        tower.pushLid(4);
-        tower.removeLid(1);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "3"}, {"cup", "2"}, {"cup", "1"}, {"lid", "4"}},
-            new int[] {5, 4, 3, 6},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldRemoveLidIfTheLidIsNotTheLastItem(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldRemoveCupIfTheCupIsTheLastItem() {
-        tower.pushCup(3);
-        tower.pushLid(1);
-        tower.pushCup(2);
-        tower.pushCup(1);
-        tower.removeCup(1);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "3"}, {"lid", "1"}, {"cup", "2"}},
-            new int[] {5, 2, 5},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldRemoveCupIfTheCupIsTheLastItem(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldRemoveLidIfTheLidIsTheLastItem() {
-        tower.pushCup(3);
-        tower.pushLid(1);
-        tower.pushCup(2);
-        tower.pushCup(1);
-        tower.pushLid(4);
-        tower.removeLid(4);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "3"}, {"lid", "1"}, {"cup", "2"}, {"cup", "1"}},
-            new int[] {5, 2, 5, 4},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldRemoveLidIfTheLidIsTheLastItem(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldRemoveCupAndLidIfTheCupIsRemovedWhenTheyAreAttachedAndThereAreNoElementsInBetween() {
-        tower.pushLid(2);
-        tower.pushCup(3);
-        tower.pushLid(3);
-        tower.pushLid(4);
-        tower.pushCup(1);
-        tower.removeCup(3);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"lid", "2"}, {"lid", "4"}, {"cup", "1"}},
-            new int[] {1, 2, 3},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldRemoveCupAndLidIfTheCupIsRemovedWhenTheyAreAttachedAndThereAreNoElementsInBetween(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldRemoveCupAndLidIfTheLidIsRemovedWhenTheyAreAttachedAndThereAreNoElementsInBetween() {
-        tower.pushCup(5);
-        tower.pushCup(3);
-        tower.pushLid(3);
-        tower.pushCup(2);
-        tower.pushLid(1);
-        tower.removeLid(3);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "5"}, {"cup", "2"}, {"lid", "1"}},
-            new int[] {9, 4, 3},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldRemoveCupAndLidIfTheLidIsRemovedWhenTheyAreAttachedAndThereAreNoElementsInBetween(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldRemoveCupAndLidIfTheCupIsRemovedWhenTheyAreAttachedAndThereAreElementsInBetween() {
-        tower.pushCup(5);
-        tower.pushCup(4);
-        tower.pushLid(3);
-        tower.pushLid(2);
-        tower.pushLid(4);
-        tower.pushCup(1);
-        tower.removeCup(4);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "5"}, {"lid", "3"}, {"lid", "2"}, {"cup", "1"}},
-            new int[] {9, 2, 3, 4},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldRemoveCupAndLidIfTheCupIsRemovedWhenTheyAreAttachedAndThereAreElementsInBetween(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     @Test
     public void shouldRemoveCupAndLidIfTheLidIsRemovedWhenTheyAreAttachedAndThereAreElementsInBetween() {
-        tower.pushCup(5);
-        tower.pushCup(4);
-        tower.pushLid(3);
-        tower.pushCup(2);
-        tower.pushLid(4);
-        tower.pushCup(1);
-        tower.removeLid(4);
-
-        TestUtils.assertTowerState(
-            tower,
-            new String[][] {{"cup", "5"}, {"lid", "3"}, {"cup", "2"}, {"cup", "1"}},
-            new int[] {9, 2, 5, 4},
-            new int[] {},
-            true
-        );
+        TestUtils.shouldRemoveCupAndLidIfTheLidIsRemovedWhenTheyAreAttachedAndThereAreElementsInBetween(tower, TestUtils.NORMAL_CUP, TestUtils.NORMAL_LID);
     }
 
     // height

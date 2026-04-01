@@ -5,20 +5,31 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import exceptions.TowerException;
+
 class Lid extends TowerItem {
-    private Rectangle base;
-    private Circle[] lidShapes;
+    protected Rectangle base;
+    protected Circle[] lidShapes;
+    protected String type = NORMAL;
+    protected boolean isInverted = false;
+
+    public static String NORMAL = "normal";
+    public static String FEARFUL = "fearful";
+    public static String CRAZY = "crazy";
+    private static String[] types = {NORMAL, FEARFUL, CRAZY};
 
     protected Lid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        super(index, blockSize, towerMargin, towerWidth, towerHeight);
+        super(index, NORMAL, blockSize, towerMargin, towerWidth, towerHeight);
     }
 
-    public static Lid getLid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+    public static Lid getLid(int index, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
         Lid lid = null;
         HashMap<String, TowerItem> associatedItems = activeItems.get(index);
 
         if (associatedItems == null || associatedItems.get("lid") == null) {
-            lid = new Lid(index, blockSize, towerMargin, towerWidth, towerHeight);
+            if (type == NORMAL) lid = new Lid(index, blockSize, towerMargin, towerWidth, towerHeight);
+            else if (type == FEARFUL) lid = new FearfulLid(index, blockSize, towerMargin, towerWidth, towerHeight);
+            else if (type == CRAZY) lid = new CrazyLid(index, blockSize, towerMargin, towerWidth, towerHeight);
             Cup cup = lid.cup();
             if (cup != null) {
                 lid.setColor(cup.getColor());
@@ -27,6 +38,10 @@ class Lid extends TowerItem {
             lid = (Lid) associatedItems.get("lid");
         }
         return lid;
+    }
+
+    public static Lid getLid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+        return Lid.getLid(index, NORMAL, blockSize, towerMargin, towerWidth, towerHeight);
     }
 
     public static Lid getLid(int index) {
@@ -76,6 +91,10 @@ class Lid extends TowerItem {
         return false;
     }
 
+    public boolean isInverted() {
+        return this.isInverted;
+    }
+
     public int height() {
         return 1;
     }
@@ -101,7 +120,8 @@ class Lid extends TowerItem {
         if (cup != null) {
             boolean lastState = this.isLidded;
 
-            if (this.heightReached == cup.getHeightReached() + 1) {
+            if (this.heightReached == cup.getHeightReached() +
+                    (this.isInverted ? - cup.height() : 1)) {
                 this.isLidded = true;
                 if (this.isVisible) {
                     this.lidShapes[0].makeVisible();
@@ -181,4 +201,91 @@ class Lid extends TowerItem {
         this.lidShapes[0].moveVerticallyTo(y + this.blockSize/2);
         this.lidShapes[1].moveVerticallyTo(y + this.blockSize/2);
     }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    public static String[] getTypes() {
+        return types;
+    }
+
+    public static boolean isAValidType(String type) {
+        return Arrays.asList(types).contains(type);
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    private static class FearfulLid extends Lid {
+        protected FearfulLid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+            super(index, blockSize, towerMargin, towerWidth, towerHeight);
+            this.type = Lid.FEARFUL;
+        }
+
+        public String getType() {
+            return this.type;
+        }
+
+        public TowerItem onPush(Tower tower) throws TowerException {
+            TowerItem placeholder = null;
+            HashMap<String, TowerItem> items = activeItems.get(this.index);
+            if (items != null && items.get("cup") != null) {
+                placeholder = this;
+            } else {
+                tower.popLid();
+                // this.disable();
+                throw new TowerException(TowerException.INVALID_PUSH_FEARFUL(index));
+            }
+            return placeholder;
+        }
+
+        public boolean updateLiddedState() { // called during pushItem
+            super.updateLiddedState();
+            this.isRemovable = !this.isLidded;
+            return this.isLidded;
+        }
+    }
+
+    private static class CrazyLid extends Lid {
+        protected CrazyLid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+            super(index, blockSize, towerMargin, towerWidth, towerHeight);
+            this.type = Lid.CRAZY;
+            this.isInverted = true;
+        }
+
+        public String getType() {
+            return this.type;
+        }
+        
+        public boolean isInverted() {
+            return this.isInverted;
+        }
+
+        public TowerItem onPush(Tower tower) throws TowerException {
+            tower.popLid();
+            // this.disable();
+
+            String[][] items = tower.stackingItems();
+            int j = items.length - 1;
+            int itemIndex = 0;
+            while (j >= 0 && itemIndex < this.index) {
+                TowerItem item = TowerItem.fromArray(items[j]);
+                itemIndex = item.getIndex();
+                if (itemIndex == this.index) {
+                    tower.insert(this.index, false, this.type, j);
+                }
+                j--;
+            }
+
+            TowerItem placeholder = Lid.getLid(this.index);
+            if (placeholder == null) {
+                tower.pushLid(this.index);
+                placeholder = Lid.getLid(this.index);
+            }
+            return placeholder;
+        }
+    }
+
 }
