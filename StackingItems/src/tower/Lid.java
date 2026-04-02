@@ -228,13 +228,17 @@ class Lid extends TowerItem {
             return this.type;
         }
 
+        public boolean isRemovable() {
+            return this.isRemovable;
+        }
+
         public TowerItem onPush(Tower tower) throws TowerException {
             TowerItem placeholder = null;
             HashMap<String, TowerItem> items = activeItems.get(this.index);
             if (items != null && items.get("cup") != null) {
                 placeholder = this;
             } else {
-                tower.popLid();
+                tower.pop();
                 // this.disable();
                 throw new TowerException(TowerException.INVALID_PUSH_FEARFUL(index));
             }
@@ -264,21 +268,28 @@ class Lid extends TowerItem {
         }
 
         public TowerItem onPush(Tower tower) throws TowerException {
-            tower.popLid();
+            tower.pop();
             // this.disable();
 
+            tower.pushLid(this.index);
+            // tower.makeVisible(); ///////
             String[][] items = tower.stackingItems();
-            int j = items.length - 1;
+            int j = items.length - 2;
             int itemIndex = 0;
             while (j >= 0 && itemIndex < this.index) {
                 TowerItem item = TowerItem.fromArray(items[j]);
                 itemIndex = item.getIndex();
-                if (itemIndex == this.index) {
+                if (itemIndex == this.index && item.updateLiddedState()) {
+                    tower.removeLid(this.index);
+                    tower.insert(this.index, true, item.getType(), j);
+                    // tower.makeVisible(); ///////
                     tower.insert(this.index, false, this.type, j);
+                    // tower.makeVisible(); ///////
+                    j = 0;
                 }
                 j--;
             }
-
+            // tower.makeVisible(); ///////
             TowerItem placeholder = Lid.getLid(this.index);
             if (placeholder == null) {
                 tower.pushLid(this.index);

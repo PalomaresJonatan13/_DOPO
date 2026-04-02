@@ -299,6 +299,28 @@ public class TowerC4Test {
         );
     }
 
+    // Pop
+    // -----------------------------------------------------------------------------------------------------------
+
+    /* @Test
+    public void shouldPop_________________________________________() {
+        tower.pushCup(5);
+        tower.pushCup(4);
+        tower.pushLid(3);
+        tower.pushLid(2);
+        tower.pushLid(4, TestUtils.CRAZY_LID);
+        tower.pushLid(5, TestUtils.CRAZY_LID);
+        tower.popCup();
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "5"}, {"cup", "5"}, {"lid", "3"}, {"lid", "2"}},
+            new int[] {1, 10, 3, 4},
+            new int[] {5},
+            true
+        );
+    } */
+
     // Opener Cup
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
@@ -311,6 +333,21 @@ public class TowerC4Test {
     public void shouldPushOpenerCupAndRemoveRemovableLidsThatDontLetItMove() {
         tower.pushCup(2);
         tower.pushLid(4);
+        tower.pushCup(3, TestUtils.OPENER_CUP);
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "2"}, {"cup", "3"}},
+            new int[] {3, 8},
+            new int[] {},
+            true
+        );
+    }
+
+    @Test
+    public void shouldPushOpenerCupAndRemoveItsAssociatedLidIfItDontLetItMove() {
+        tower.pushCup(2);
+        tower.pushLid(3);
         tower.pushCup(3, TestUtils.OPENER_CUP);
 
         TestUtils.assertTowerState(
@@ -359,17 +396,15 @@ public class TowerC4Test {
     }
 
     @Test
-    public void shouldPushOpenerCupAndDontRemoveALidIfItLetsTheCupMoves() {
-        tower.pushCup(4);
-        tower.pushCup(3);
-        tower.pushLid(2);
-        tower.pushLid(4);
-        tower.pushCup(1, TestUtils.OPENER_CUP);
+    public void shouldPushOpenerCupAndDontRemoveALidIfItLetsTheCupMove() {
+        tower.pushCup(2);
+        tower.pushLid(1);
+        tower.pushCup(4, TestUtils.OPENER_CUP);
 
         TestUtils.assertTowerState(
             tower,
-            new String[][] {{"cup", "4"}, {"cup", "3"}, {"lid", "2"}, {"cup", "1"}},
-            new int[] {7, 6, 3, 4},
+            new String[][] {{"cup", "2"}, {"lid", "1"}, {"cup", "4"}},
+            new int[] {3, 2, 10},
             new int[] {},
             true
         );
@@ -415,16 +450,16 @@ public class TowerC4Test {
     }
 
     @Test
-    public void shouldPushHierarchicalCupAndDontMoveElementOfSameIndex() {
+    public void shouldPushHierarchicalCupAndMoveElementOfSameIndex() {
         tower.pushCup(4);
         tower.pushLid(3);
         tower.pushCup(3, TestUtils.HIERARCHICAL_CUP);
 
         TestUtils.assertTowerState(
             tower,
-            new String[][] {{"cup", "4"}, {"lid", "3"}, {"cup", "3"}},
-            new int[] {7, 2, 7},
-            new int[] {},
+            new String[][] {{"cup", "4"}, {"cup", "3"}, {"lid", "3"}},
+            new int[] {7, 6, 7},
+            new int[] {3},
             true
         );
     }

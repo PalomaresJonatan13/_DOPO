@@ -223,13 +223,14 @@ class Cup extends TowerItem {
         }
 
         public TowerItem onPush(Tower tower) {
-            tower.popCup();
+            tower.pop();
             // this.disable();
+            
             tower.pushCup(this.index);
             TowerItem placeholder = Cup.getCup(this.index);
 
             String[][] items = tower.stackingItems();
-            int j = items.length - 1;
+            int j = items.length - 2;
             boolean lidsToRemove = true;
             while (j >= 0 && lidsToRemove) {
                 TowerItem item = TowerItem.fromArray(items[j]);
@@ -239,6 +240,9 @@ class Cup extends TowerItem {
                     item.isRemovable()
                 ) {
                     tower.pop();
+                    tower.pop();
+                    tower.pushCup(this.index);
+                    placeholder = Cup.getCup(this.index);
                 } else {
                     lidsToRemove = false;
                 }
@@ -263,7 +267,7 @@ class Cup extends TowerItem {
         }
 
         public TowerItem onPush(Tower tower) throws TowerException {
-            tower.popCup();
+            tower.pop();
             // this.disable();
 
             String[][] items = tower.stackingItems();
@@ -271,7 +275,10 @@ class Cup extends TowerItem {
             boolean foundGreaterIndex = false;
             while (j >= 0 && !foundGreaterIndex) {
                 TowerItem item = TowerItem.fromArray(items[j]);
-                foundGreaterIndex = item.getIndex() > this.index;
+                if (item.getIndex() > this.index) {
+                    foundGreaterIndex = true;
+                    j++;
+                }
                 j--;
             }
             

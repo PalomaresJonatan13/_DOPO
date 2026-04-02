@@ -194,6 +194,7 @@ public class Tower {
         this.towerItems.add(newItem);
         boolean oldVisibility = this.visible;
         this.visible = false; this.visibleItems = false;
+        System.out.println("going to call onPush " + this.numberOfItems());
         TowerItem placeholder = newItem.onPush(this);
         if (placeholder.getHeightReached() == 0) {
             this.towerItems.removeLast();
@@ -214,10 +215,11 @@ public class Tower {
 
             this.towerItems.set(this.towerItems.indexOf(placeholder), newItem);
             newItem.updateLiddedState();
-            if (this.visibleItems) this.makeVisible();
+            if (this.visibleItems) this.makeItemsVisible();
             this.ok = true;
         } else {
             placeholder.disable();
+            System.err.println("restoring");
             this.restoreTower(towerItemsCopy, oldVisibility);
             this.ok = false;
             throw new TowerException(TowerException.OVERFLOW(index, isCup));
@@ -295,11 +297,14 @@ public class Tower {
             TowerItem item = this.towerItems.get(itemPosition);
             if (item.isRemovable()) {
                 boolean isLidded = item.updateLiddedState();
-                if (isLidded && !item.isCup()) itemPosition = this.positionOfItem(index, true);
+                if (isLidded) {
+                    int itemPositionOther = this.positionOfItem(index, !isCup);
+                    itemPosition = Math.min(itemPosition, itemPositionOther);
+                }
 
                 List<TowerItem> itemsSubList = this.towerItems.subList(itemPosition + 1, this.numberOfItems());
                 List<TowerItem> itemsAfterItem = new ArrayList<>(itemsSubList);
-                this.removeStartingAtItem(index, isLidded || isCup);
+                this.removeFromPosition(itemPosition);
 
                 boolean isVisible = this.visibleItems;
                 this.visibleItems = false;

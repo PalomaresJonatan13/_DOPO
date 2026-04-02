@@ -30,7 +30,18 @@ public class TowerC4FearfulLidTest {
 
     @Test
     public void shouldNotPushLidIfItAlreadyExists() {
-        TestUtils.shouldNotPushLidIfItAlreadyExists(tower, cupType, lidType);
+        tower.pushCup(2, cupType);
+        tower.pushCup(3, cupType);
+        tower.pushLid(2, lidType);
+        tower.pushLid(2, lidType);
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "2"}, {"cup", "3"}, {"lid", "2"}},
+            new int[] {3, 8, 5},
+            new int[] {},
+            false
+        );
     }
 
     @Test
@@ -44,28 +55,68 @@ public class TowerC4FearfulLidTest {
     }
 
     @Test
-    public void shouldPushValidFirstLid() {
-        TestUtils.shouldPushValidFirstLid(tower, cupType, lidType);
-    }
-
-    @Test
     public void shouldPushValidLidAfterItemsWithLowerIndex() {
-        TestUtils.shouldPushValidLidAfterItemsWithLowerIndex(tower, cupType, lidType);
+        tower.pushCup(3, cupType);
+        tower.pushCup(2, cupType);
+        tower.pushCup(1, cupType);
+        tower.pushLid(2, lidType);
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "3"}, {"cup", "2"}, {"cup", "1"}, {"lid", "2"}},
+            new int[] {5, 4, 3, 5},
+            new int[] {2},
+            true
+        );
     }
 
     @Test
     public void shouldPushLidAfterBiggerCup() {
-        TestUtils.shouldPushLidAfterBiggerCup(tower, cupType, lidType);
+        tower.pushCup(2, cupType);
+        tower.pushCup(3, cupType);
+        tower.pushLid(2, lidType);
+        
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "2"}, {"cup", "3"}, {"lid", "2"}},
+            new int[] {3, 8, 5},
+            new int[] {},
+            true
+        );
     }
     
     @Test
     public void shouldPushLidAfterLidOrSmallerCupIfNewHeightIsLessThanTowersHeight() {
-        TestUtils.shouldPushLidAfterLidOrSmallerCupIfNewHeightIsLessThanTowersHeight(tower, cupType, lidType);
+        tower.pushCup(3);
+        tower.pushLid(4);
+        tower.pushCup(2);
+        tower.pushLid(1);
+        tower.pushLid(3, lidType);
+        
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "3"}, {"lid", "4"}, {"cup", "2"}, {"lid", "1"}, {"lid", "3"}},
+            new int[] {5, 6, 9, 8, 10},
+            new int[] {},
+            true
+        );
     }
 
     @Test
     public void shouldCoverACupAfterPushingItsLidOnTopOfIt() {
-        TestUtils.shouldCoverACupAfterPushingItsLidOnTopOfIt(tower, cupType, lidType);
+        tower.pushLid(1);
+        tower.pushCup(4, cupType);
+        tower.pushLid(3);
+        tower.pushCup(2, cupType);
+        tower.pushLid(4, lidType);
+        
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "1"}, {"cup", "4"}, {"lid", "3"}, {"cup", "2"}, {"lid", "4"}},
+            new int[] {1, 8, 3, 6, 9},
+            new int[] {4},
+            true
+        );
     }
     
     // popCup, popLid
@@ -80,12 +131,19 @@ public class TowerC4FearfulLidTest {
 
     @Test
     public void shouldPopLidIfThereAreCupsAbove() {
-        TestUtils.shouldPopLidIfThereAreCupsAbove(tower, cupType, lidType);
-    }
+        tower.pushCup(3, cupType);
+        tower.pushLid(4);
+        tower.pushLid(3, lidType);
+        tower.pushCup(2, cupType);
+        tower.popLid();
 
-    @Test
-    public void shouldPopLidIfItIsTheLastItem() {
-        TestUtils.shouldPopLidIfItIsTheLastItem(tower, cupType, lidType);
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "3"}, {"lid", "4"}, {"cup", "2"}},
+            new int[] {5, 6, 9},
+            new int[] {},
+            true
+        );
     }
 
     @Test
@@ -94,18 +152,8 @@ public class TowerC4FearfulLidTest {
     }
 
     @Test
-    public void shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreNoElementsInBetween() {
-        TestUtils.shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreNoElementsInBetween(tower, cupType, lidType);
-    }
-
-    @Test
     public void shouldPopCupAndLidIfTheCupIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween() {
         TestUtils.shouldPopCupAndLidIfTheCupIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween(tower, cupType, lidType);
-    }
-
-    @Test
-    public void shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween() {
-        TestUtils.shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween(tower, cupType, lidType);
     }
 
 
@@ -120,32 +168,12 @@ public class TowerC4FearfulLidTest {
     }
 
     @Test
-    public void shouldRemoveLidIfTheLidIsNotTheLastItem() {
-        TestUtils.shouldRemoveLidIfTheLidIsNotTheLastItem(tower, cupType, lidType);
-    }
-
-    @Test
-    public void shouldRemoveLidIfTheLidIsTheLastItem() {
-        TestUtils.shouldRemoveLidIfTheLidIsTheLastItem(tower, cupType, lidType);
-    }
-
-    @Test
     public void shouldRemoveCupAndLidIfTheCupIsRemovedWhenTheyAreAttachedAndThereAreNoElementsInBetween() {
         TestUtils.shouldRemoveCupAndLidIfTheCupIsRemovedWhenTheyAreAttachedAndThereAreNoElementsInBetween(tower, cupType, lidType);
     }
 
     @Test
-    public void shouldRemoveCupAndLidIfTheLidIsRemovedWhenTheyAreAttachedAndThereAreNoElementsInBetween() {
-        TestUtils.shouldRemoveCupAndLidIfTheLidIsRemovedWhenTheyAreAttachedAndThereAreNoElementsInBetween(tower, cupType, lidType);
-    }
-
-    @Test
     public void shouldRemoveCupAndLidIfTheCupIsRemovedWhenTheyAreAttachedAndThereAreElementsInBetween() {
         TestUtils.shouldRemoveCupAndLidIfTheCupIsRemovedWhenTheyAreAttachedAndThereAreElementsInBetween(tower, cupType, lidType);
-    }
-
-    @Test
-    public void shouldRemoveCupAndLidIfTheLidIsRemovedWhenTheyAreAttachedAndThereAreElementsInBetween() {
-        TestUtils.shouldRemoveCupAndLidIfTheLidIsRemovedWhenTheyAreAttachedAndThereAreElementsInBetween(tower, cupType, lidType);
     }
 }

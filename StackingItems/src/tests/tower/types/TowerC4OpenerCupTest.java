@@ -85,7 +85,19 @@ public class TowerC4OpenerCupTest {
 
     @Test
     public void shouldPopCupIfItIsTheLastItem() {
-        TestUtils.shouldPopCupIfItIsTheLastItem(tower, cupType, lidType);
+        tower.pushCup(2, cupType);
+        tower.pushCup(4, cupType);
+        tower.pushCup(1, cupType);
+        tower.pushCup(3, cupType);
+        tower.popCup();
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "2"}, {"cup", "4"}, {"cup", "1"}},
+            new int[] {3, 10, 5},
+            new int[] {},
+            true
+        );
     }
 
     @Test
@@ -121,7 +133,20 @@ public class TowerC4OpenerCupTest {
 
     @Test
     public void shouldRemoveCupIfTheCupIsNotTheLastItem() {
-        TestUtils.shouldRemoveCupIfTheCupIsNotTheLastItem(tower, cupType, lidType);
+        tower.pushCup(4, cupType);
+        tower.pushCup(3, lidType);
+        tower.pushCup(2, cupType);
+        tower.pushCup(1, cupType);
+        tower.pushLid(4, lidType);
+        tower.removeCup(2);
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "4"}, {"cup", "3"}, {"cup", "1"}, {"lid", "4"}},
+            new int[] {7, 6, 3, 8},
+            new int[] {4},
+            true
+        );
     }
 
     @Test

@@ -7,16 +7,15 @@ public class main_ {
         TowerItem.clearActiveItems();
         //Lid lid = Lid.getLid(4, Lid.FEARFUL, 10, 10, 40, 100);
             Tower tower = new Tower(5, 10);
-            tower.pushCup(3);
-            tower.pushLid(2, Lid.FEARFUL);
-            // tower.pushCup(4);
-            Lid lid = Lid.getLid(2);
-            tower.makeVisible();
-            System.out.println(tower.stackingItems().length);
-            //System.out.println(cup.getType() + " " + cup.isRemovable());
-
-            // tower.makeVisible();
-            // tower.removeLid(4);
-            //System.out.println(e.getMessage());
+            String cupType = "normal";
+            String lidType = "crazy";
+            tower.pushCup(1, cupType);
+            tower.pushCup(4, cupType);
+            tower.pushLid(3, lidType);
+            tower.pushLid(2, lidType);
+            tower.pushLid(4, lidType);
+            System.out.println("next: pushLid 1");
+            tower.pushLid(1, lidType);
+            System.out.println(tower.stackingItems());
     }
 }

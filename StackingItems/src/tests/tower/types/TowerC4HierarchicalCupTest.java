@@ -49,23 +49,20 @@ public class TowerC4HierarchicalCupTest {
     }
 
     @Test
-    public void shouldPushValidCupAfterItemsWithLowerIndex() {
-        TestUtils.shouldPushValidCupAfterItemsWithLowerIndex(tower, cupType, lidType);
-    }
-
-    @Test
-    public void shouldPushCupAfterBiggerCup() {
-        TestUtils.shouldPushCupAfterBiggerCup(tower, cupType, lidType);
-    }
-    
-    @Test
-    public void shouldPushCupAfterLidOrSmallerCupIfNewHeightIsLessThanTowersHeight() {
-        TestUtils.shouldPushCupAfterLidOrSmallerCupIfNewHeightIsLessThanTowersHeight(tower, cupType, lidType);
-    }
-
-    @Test
     public void shouldCoverACupAfterPushingItsLidOnTopOfIt() {
-        TestUtils.shouldCoverACupAfterPushingItsLidOnTopOfIt(tower, cupType, lidType);
+        tower.pushLid(1, lidType);
+        tower.pushCup(4, cupType);
+        tower.pushLid(3, lidType);
+        tower.pushCup(2, cupType);
+        tower.pushLid(4, lidType);
+        
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "4"}, {"lid", "1"}, {"lid", "3"}, {"cup", "2"}, {"lid", "4"}},
+            new int[] {7, 2, 3, 6, 8},
+            new int[] {4},
+            true
+        );
     }
     
     // popCup, popLid

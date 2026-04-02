@@ -156,7 +156,7 @@ public class TestUtils {
     public static void shouldPushCupAfterBiggerCup(Tower tower, String cupType, String lidType) {
         // last cup reached the towers height, but the new cup is smaller, so it should be pushed
         tower.pushLid(1, lidType);
-        tower.pushCup(5, cupType);
+        tower.pushCup(5);
         tower.pushCup(2, cupType);
         
         TestUtils.assertTowerState(
@@ -212,16 +212,16 @@ public class TestUtils {
     }
 
     public static void shouldCoverACupAfterPushingItsLidOnTopOfIt(Tower tower, String cupType, String lidType) {
-        tower.pushLid(1, lidType);
+        tower.pushCup(5, cupType);
         tower.pushCup(4, cupType);
         tower.pushLid(3, lidType);
-        tower.pushCup(2, cupType);
+        tower.pushCup(2);
         tower.pushLid(4, lidType);
         
         TestUtils.assertTowerState(
             tower,
-            new String[][] {{"lid", "1"}, {"cup", "4"}, {"lid", "3"}, {"cup", "2"}, {"lid", "4"}},
-            new int[] {1, 8, 3, 6, 9},
+            new String[][] {{"cup", "5"}, {"cup", "4"}, {"lid", "3"}, {"cup", "2"}, {"lid", "4"}},
+            new int[] {9, 8, 3, 6, 9},
             new int[] {4},
             true
         );
@@ -329,16 +329,16 @@ public class TestUtils {
     }
 
     public static void shouldPopCupAndLidIfTheCupIsPoppedWhenTheyAreAttachedAndThereAreNoElementsInBetween(Tower tower, String cupType, String lidType) {
-        tower.pushLid(2, lidType);
+        tower.pushCup(5);
         tower.pushCup(3, cupType);
         tower.pushLid(3, lidType);
-        tower.pushLid(4, lidType);
+        tower.pushLid(4);
         tower.popCup();
 
         TestUtils.assertTowerState(
             tower,
-            new String[][] {{"lid", "2"}, {"lid", "4"}},
-            new int[] {1, 2},
+            new String[][] {{"cup", "5"}, {"lid", "4"}},
+            new int[] {9, 2},
             new int[] {},
             true
         );
@@ -348,7 +348,7 @@ public class TestUtils {
         tower.pushCup(5, cupType);
         tower.pushCup(3, cupType);
         tower.pushLid(3, lidType);
-        tower.pushCup(2, cupType);
+        tower.pushCup(2);
         tower.popLid();
 
         TestUtils.assertTowerState(
@@ -361,36 +361,37 @@ public class TestUtils {
     }
 
     public static void shouldPopCupAndLidIfTheCupIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween(Tower tower, String cupType, String lidType) {
-        tower.pushCup(1, cupType);
+        tower.pushCup(5);
         tower.pushCup(4, cupType);
-        tower.pushLid(3, lidType);
-        tower.pushLid(2, lidType);
+        tower.pushLid(3);
+        tower.pushLid(2);
         tower.pushLid(4, lidType);
-        tower.pushLid(1, lidType);
+        tower.pushLid(1);
         tower.popCup();
 
         TestUtils.assertTowerState(
             tower,
-            new String[][] {{"cup", "1"}, {"lid", "3"}, {"lid", "2"}, {"lid", "1"}},
-            new int[] {1, 2, 3, 4},
+            new String[][] {{"cup", "5"}, {"lid", "3"}, {"lid", "2"}, {"lid", "1"}},
+            new int[] {9, 2, 3, 4},
             new int[] {},
             true
         );
     }
 
     public static void shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween(Tower tower, String cupType, String lidType) {
-        tower.pushLid(1, lidType);
+        tower.pushCup(5);
         tower.pushCup(4, cupType);
-        tower.pushLid(3, lidType);
+        tower.pushLid(1);
+        tower.pushCup(3);
         tower.pushCup(2, cupType);
         tower.pushLid(4, lidType);
-        tower.pushCup(1, cupType);
+        tower.pushCup(1);
         tower.popLid();
 
         TestUtils.assertTowerState(
             tower,
-            new String[][] {{"lid", "1"}, {"lid", "3"}, {"cup", "2"}, {"cup", "1"}},
-            new int[] {1, 2, 5, 4},
+            new String[][] {{"cup", "5"}, {"lid", "1"}, {"cup", "3"}, {"cup", "2"}, {"cup", "1"}},
+            new int[] {9, 2, 7, 6, 5},
             new int[] {},
             true
         );
@@ -418,7 +419,7 @@ public class TestUtils {
     }
 
     public static void shouldNotRemoveLidIfTheLidIsNotInTheTower(Tower tower, String cupType, String lidType) {
-        tower.pushLid(1, lidType);
+        tower.pushLid(1);
         tower.pushCup(3, cupType);
         tower.pushCup(2, cupType);
         tower.removeLid(3);
@@ -434,8 +435,8 @@ public class TestUtils {
 
     public static void shouldRemoveCupIfTheCupIsNotTheLastItem(Tower tower, String cupType, String lidType) {
         // add c3, l1, c2, c1, l4, then remove c2
-        tower.pushCup(3, cupType);
-        tower.pushLid(1, lidType);
+        tower.pushCup(4, cupType);
+        tower.pushLid(3, lidType);
         tower.pushCup(2, cupType);
         tower.pushCup(1, cupType);
         tower.pushLid(4, lidType);
@@ -443,9 +444,9 @@ public class TestUtils {
 
         TestUtils.assertTowerState(
             tower,
-            new String[][] {{"cup", "3"}, {"lid", "1"}, {"cup", "1"}, {"lid", "4"}},
-            new int[] {5, 2, 3, 6},
-            new int[] {},
+            new String[][] {{"cup", "4"}, {"lid", "3"}, {"cup", "1"}, {"lid", "4"}},
+            new int[] {7, 2, 3, 8},
+            new int[] {4},
             true
         );
     }
@@ -471,7 +472,7 @@ public class TestUtils {
     public static void shouldRemoveCupIfTheCupIsTheLastItem(Tower tower, String cupType, String lidType) {
         tower.pushCup(3, cupType);
         tower.pushLid(1, lidType);
-        tower.pushCup(2, cupType);
+        tower.pushCup(2);
         tower.pushCup(1, cupType);
         tower.removeCup(1);
 
@@ -502,17 +503,17 @@ public class TestUtils {
     }
 
     public static void shouldRemoveCupAndLidIfTheCupIsRemovedWhenTheyAreAttachedAndThereAreNoElementsInBetween(Tower tower, String cupType, String lidType) {
-        tower.pushLid(2, lidType);
+        tower.pushCup(5);
         tower.pushCup(3, cupType);
         tower.pushLid(3, lidType);
-        tower.pushLid(4, lidType);
-        tower.pushCup(1, cupType);
+        tower.pushLid(4);
+        tower.pushCup(1);
         tower.removeCup(3);
 
         TestUtils.assertTowerState(
             tower,
-            new String[][] {{"lid", "2"}, {"lid", "4"}, {"cup", "1"}},
-            new int[] {1, 2, 3},
+            new String[][] {{"cup", "5"}, {"lid", "4"}, {"cup", "1"}},
+            new int[] {9, 2, 3},
             new int[] {},
             true
         );
@@ -522,7 +523,7 @@ public class TestUtils {
         tower.pushCup(5, cupType);
         tower.pushCup(3, cupType);
         tower.pushLid(3, lidType);
-        tower.pushCup(2, cupType);
+        tower.pushCup(2);
         tower.pushLid(1, lidType);
         tower.removeLid(3);
 
@@ -536,12 +537,12 @@ public class TestUtils {
     }
 
     public static void shouldRemoveCupAndLidIfTheCupIsRemovedWhenTheyAreAttachedAndThereAreElementsInBetween(Tower tower, String cupType, String lidType) {
-        tower.pushCup(5, cupType);
+        tower.pushCup(5);
         tower.pushCup(4, cupType);
-        tower.pushLid(3, lidType);
-        tower.pushLid(2, lidType);
+        tower.pushLid(3);
+        tower.pushLid(2);
         tower.pushLid(4, lidType);
-        tower.pushCup(1, cupType);
+        tower.pushCup(1);
         tower.removeCup(4);
 
         TestUtils.assertTowerState(
@@ -557,9 +558,9 @@ public class TestUtils {
         tower.pushCup(5, cupType);
         tower.pushCup(4, cupType);
         tower.pushLid(3, lidType);
-        tower.pushCup(2, cupType);
+        tower.pushCup(2);
         tower.pushLid(4, lidType);
-        tower.pushCup(1, cupType);
+        tower.pushCup(1);
         tower.removeLid(4);
 
         TestUtils.assertTowerState(

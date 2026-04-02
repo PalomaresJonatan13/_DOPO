@@ -65,7 +65,19 @@ public class TowerC4CrazyLidTest {
 
     @Test
     public void shouldCoverACupAfterPushingItsLidOnTopOfIt() {
-        TestUtils.shouldCoverACupAfterPushingItsLidOnTopOfIt(tower, cupType, lidType);
+        tower.pushLid(1, lidType);
+        tower.pushCup(4, cupType);
+        tower.pushLid(3, lidType);
+        tower.pushCup(2, cupType);
+        tower.pushLid(4, lidType);
+        
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "1"}, {"lid", "4"}, {"cup", "4"}, {"lid", "3"}, {"cup", "2"}},
+            new int[] {1, 2, 9, 4, 7},
+            new int[] {4},
+            true
+        );
     }
     
     // popCup, popLid
@@ -105,7 +117,21 @@ public class TowerC4CrazyLidTest {
 
     @Test
     public void shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween() {
-        TestUtils.shouldPopCupAndLidIfTheLidIsPoppedWhenTheyAreAttachedAndThereAreElementsInBetween(tower, cupType, lidType);
+        tower.pushLid(5);
+        tower.pushCup(4, cupType);
+        tower.pushCup(3);
+        tower.pushCup(2, cupType);
+        tower.pushLid(4, lidType);
+        tower.pushCup(1);
+        tower.popLid();
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "5"}, {"cup", "3"}, {"cup", "2"}, {"cup", "1"}},
+            new int[] {1, 6, 5, 4},
+            new int[] {},
+            true
+        );
     }
 
 
