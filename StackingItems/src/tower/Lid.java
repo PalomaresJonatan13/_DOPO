@@ -1,47 +1,32 @@
 package tower;
 import shapes.*;
 
+import java.util.*;
 import java.awt.Color;
-import java.util.Arrays;
-import java.util.HashMap;
 
-import exceptions.TowerException;
-
-class Lid extends TowerItem {
+abstract class Lid extends TowerItem {
     protected Rectangle base;
     protected Circle[] lidShapes;
-    protected String type = NORMAL;
     protected boolean isInverted = false;
 
     public static String NORMAL = "normal";
     public static String FEARFUL = "fearful";
     public static String CRAZY = "crazy";
-    private static String[] types = {NORMAL, FEARFUL, CRAZY};
+    public static String[] types = {NORMAL, FEARFUL, CRAZY};
 
-    protected Lid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        super(index, NORMAL, blockSize, towerMargin, towerWidth, towerHeight);
+    protected Lid(int index, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+        super(index, type, blockSize, towerMargin, towerWidth, towerHeight);
     }
 
     public static Lid getLid(int index, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        Lid lid = null;
-        HashMap<String, TowerItem> associatedItems = activeItems.get(index);
-
-        if (associatedItems == null || associatedItems.get("lid") == null) {
-            if (type == NORMAL) lid = new Lid(index, blockSize, towerMargin, towerWidth, towerHeight);
-            else if (type == FEARFUL) lid = new FearfulLid(index, blockSize, towerMargin, towerWidth, towerHeight);
-            else if (type == CRAZY) lid = new CrazyLid(index, blockSize, towerMargin, towerWidth, towerHeight);
-            Cup cup = lid.cup();
-            if (cup != null) {
-                lid.setColor(cup.getColor());
-            }
-        } else {
-            lid = (Lid) associatedItems.get("lid");
-        }
-        return lid;
+        if (type == NORMAL) return NormalLid.getLid(index, blockSize, towerMargin, towerWidth, towerHeight);
+        else if (type == FEARFUL) return FearfulLid.getLid(index, blockSize, towerMargin, towerWidth, towerHeight);
+        else if (type == CRAZY) return CrazyLid.getLid(index, blockSize, towerMargin, towerWidth, towerHeight);
+        else throw new IllegalArgumentException("The type given is not valid.");
     }
 
     public static Lid getLid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        return Lid.getLid(index, NORMAL, blockSize, towerMargin, towerWidth, towerHeight);
+        return getLid(index, NORMAL, blockSize, towerMargin, towerWidth, towerHeight);
     }
 
     public static Lid getLid(int index) {
@@ -213,90 +198,4 @@ class Lid extends TowerItem {
     public static boolean isAValidType(String type) {
         return Arrays.asList(types).contains(type);
     }
-
-    // ------------------------------------------------------------------------------------------------------------
-    // ------------------------------------------------------------------------------------------------------------
-    // ------------------------------------------------------------------------------------------------------------
-
-    private static class FearfulLid extends Lid {
-        protected FearfulLid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-            super(index, blockSize, towerMargin, towerWidth, towerHeight);
-            this.type = Lid.FEARFUL;
-        }
-
-        public String getType() {
-            return this.type;
-        }
-
-        public boolean isRemovable() {
-            return this.isRemovable;
-        }
-
-        public TowerItem onPush(Tower tower) throws TowerException {
-            TowerItem placeholder = null;
-            HashMap<String, TowerItem> items = activeItems.get(this.index);
-            if (items != null && items.get("cup") != null) {
-                placeholder = this;
-            } else {
-                tower.pop();
-                // this.disable();
-                throw new TowerException(TowerException.INVALID_PUSH_FEARFUL(index));
-            }
-            return placeholder;
-        }
-
-        public boolean updateLiddedState() { // called during pushItem
-            super.updateLiddedState();
-            this.isRemovable = !this.isLidded;
-            return this.isLidded;
-        }
-    }
-
-    private static class CrazyLid extends Lid {
-        protected CrazyLid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-            super(index, blockSize, towerMargin, towerWidth, towerHeight);
-            this.type = Lid.CRAZY;
-            this.isInverted = true;
-        }
-
-        public String getType() {
-            return this.type;
-        }
-        
-        public boolean isInverted() {
-            return this.isInverted;
-        }
-
-        public TowerItem onPush(Tower tower) throws TowerException {
-            tower.pop();
-            // this.disable();
-
-            tower.pushLid(this.index);
-            // tower.makeVisible(); ///////
-            String[][] items = tower.stackingItems();
-            int j = items.length - 2;
-            int itemIndex = 0;
-            while (j >= 0 && itemIndex < this.index) {
-                TowerItem item = TowerItem.fromArray(items[j]);
-                itemIndex = item.getIndex();
-                if (itemIndex == this.index && item.updateLiddedState()) {
-                    tower.removeLid(this.index);
-                    tower.insert(this.index, true, item.getType(), j);
-                    // tower.makeVisible(); ///////
-                    tower.insert(this.index, false, this.type, j);
-                    // tower.makeVisible(); ///////
-                    j = 0;
-                }
-                j--;
-            }
-            // tower.makeVisible(); ///////
-            TowerItem placeholder = Lid.getLid(this.index);
-            if (placeholder == null) {
-                tower.pushLid(this.index);
-                placeholder = Lid.getLid(this.index);
-            }
-            return placeholder;
-        }
-    }
-
 }

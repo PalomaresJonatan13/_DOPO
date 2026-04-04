@@ -168,13 +168,14 @@ public class TowerVisibleTest {
         tower.pushLid(3);
         tower.pushLid(4);
         tower.pushCup(4);
+        tower.pushLid(1);
         tower.pushCup(3);
         tower.cover();
 
         TestUtils.assertTowerState(
             tower,
-            new String[][] {{"lid", "3"}, {"lid", "4"}, {"cup", "4"}, {"cup", "3"}},
-            new int[] {1, 2, 9, 8},
+            new String[][] {{"lid", "3"}, {"lid", "4"}, {"cup", "4"}, {"lid", "1"}, {"cup", "3"}},
+            new int[] {1, 2, 9, 4, 9},
             new int[] {},
             false
         );

@@ -49,10 +49,12 @@ abstract class TowerItem {
     public static TowerItem getTowerItem(
         int index, boolean isCup, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight
     ) {
-        return (isCup ?
-            Cup.getCup(index, type, blockSize, towerMargin, towerWidth, towerHeight) :
-            Lid.getLid(index, type, blockSize, towerMargin, towerWidth, towerHeight)
-        );
+        if (isAValidType(isCup, type)) {
+            return (isCup ?
+                Cup.getCup(index, type, blockSize, towerMargin, towerWidth, towerHeight) :
+                Lid.getLid(index, type, blockSize, towerMargin, towerWidth, towerHeight)
+            );
+        } else throw new IllegalArgumentException("The type given is not valid.");
     }
 
     public static TowerItem getTowerItem(
@@ -65,10 +67,7 @@ abstract class TowerItem {
     }
 
     public static TowerItem getTowerItem(int index, boolean isCup) {
-        return (isCup ?
-            Cup.getCup(index) :
-            Lid.getLid(index)
-        );
+        return isCup ? Cup.getCup(index) : Lid.getLid(index);
     }
 
     // ------------------------------------------------------------------------------------------------------------

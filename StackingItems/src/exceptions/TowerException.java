@@ -21,6 +21,10 @@ public class TowerException extends Exception {
         return String.format("Cannot remove an item that is not removable (index: %d | isCup: %b | type: %s).", index, isCup, type);
     }
 
+    public static String IMPOSSIBLE_COVER(int index) {
+        return String.format("Cannot cover the cup (index: %d) because it will cause an overflow.", index);
+    }
+
     public TowerException(String message) {
         super(message);
     }
