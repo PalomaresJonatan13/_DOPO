@@ -4,16 +4,16 @@ import java.util.HashMap;
 import exceptions.*;
 
 class HierarchicalCup extends Cup {
-    protected HierarchicalCup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        super(index, Cup.HIERARCHICAL, blockSize, towerMargin, towerWidth, towerHeight);
+    protected HierarchicalCup(int index, int towerWidth, int towerHeight) {
+        super(index, Cup.HIERARCHICAL, towerWidth, towerHeight);
     }
 
-    public static Cup getCup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+    public static Cup getCup(int index, int towerWidth, int towerHeight) {
         Cup cup = null;
         HashMap<String, TowerItem> associatedItems = activeItems.get(index);
 
         if (associatedItems == null || associatedItems.get("cup") == null) {
-            cup = new HierarchicalCup(index, blockSize, towerMargin, towerWidth, towerHeight);
+            cup = new HierarchicalCup(index, towerWidth, towerHeight);
             Lid lid = cup.lid();
             if (lid != null) {
                 cup.setColor(lid.getColor());
@@ -31,7 +31,6 @@ class HierarchicalCup extends Cup {
 
     public TowerItem onPush(Tower tower) throws TowerException {
         tower.pop();
-        // this.disable();
 
         String[][] items = tower.stackingItems();
         int j = items.length - 1;

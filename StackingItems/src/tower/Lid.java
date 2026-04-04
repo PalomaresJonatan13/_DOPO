@@ -14,19 +14,19 @@ abstract class Lid extends TowerItem {
     public static String CRAZY = "crazy";
     public static String[] types = {NORMAL, FEARFUL, CRAZY};
 
-    protected Lid(int index, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        super(index, type, blockSize, towerMargin, towerWidth, towerHeight);
+    protected Lid(int index, String type, int towerWidth, int towerHeight) {
+        super(index, type, towerWidth, towerHeight);
     }
 
-    public static Lid getLid(int index, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        if (type == NORMAL) return NormalLid.getLid(index, blockSize, towerMargin, towerWidth, towerHeight);
-        else if (type == FEARFUL) return FearfulLid.getLid(index, blockSize, towerMargin, towerWidth, towerHeight);
-        else if (type == CRAZY) return CrazyLid.getLid(index, blockSize, towerMargin, towerWidth, towerHeight);
+    public static Lid getLid(int index, String type, int towerWidth, int towerHeight) {
+        if (type == NORMAL) return NormalLid.getLid(index, towerWidth, towerHeight);
+        else if (type == FEARFUL) return FearfulLid.getLid(index, towerWidth, towerHeight);
+        else if (type == CRAZY) return CrazyLid.getLid(index, towerWidth, towerHeight);
         else throw new IllegalArgumentException("The type given is not valid.");
     }
 
-    public static Lid getLid(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        return getLid(index, NORMAL, blockSize, towerMargin, towerWidth, towerHeight);
+    public static Lid getLid(int index, int towerWidth, int towerHeight) {
+        return getLid(index, NORMAL, towerWidth, towerHeight);
     }
 
     public static Lid getLid(int index) {
@@ -163,28 +163,28 @@ abstract class Lid extends TowerItem {
     // ------------------------------------------------------------------------------------------------------------
 
     protected void createSides() {
-        this.base = new Rectangle(this.width()*this.blockSize, this.blockSize);
+        this.base = new Rectangle(this.width()*BLOCKSIZE, BLOCKSIZE);
         this.base.changeColor(this.color);
 
         this.lidShapes = new Circle[2];
-        this.lidShapes[0] = new Circle(this.blockSize/3);
-        this.lidShapes[1] = new Circle(this.blockSize/3);
+        this.lidShapes[0] = new Circle(BLOCKSIZE/3);
+        this.lidShapes[1] = new Circle(BLOCKSIZE/3);
         this.lidShapes[0].changeColor(Color.WHITE);
         this.lidShapes[1].changeColor(Color.BLACK);
     }
 
     // this is in terms of pixels
     protected void centerX() {
-        int newX = this.towerMargin + (this.towerWidth - this.width())*this.blockSize/2;
+        int newX = TOWER_MARGIN + (this.towerWidth - this.width())*BLOCKSIZE/2;
         this.base.moveHorizontallyTo(newX);
-        this.lidShapes[0].moveHorizontallyTo(newX + this.blockSize/2);
-        this.lidShapes[1].moveHorizontallyTo(newX + 5*this.blockSize/6);
+        this.lidShapes[0].moveHorizontallyTo(newX + BLOCKSIZE/2);
+        this.lidShapes[1].moveHorizontallyTo(newX + 5*BLOCKSIZE/6);
     }
 
     protected void moveVerticallyTo(int y) {
         this.base.moveVerticallyTo(y);
-        this.lidShapes[0].moveVerticallyTo(y + this.blockSize/2);
-        this.lidShapes[1].moveVerticallyTo(y + this.blockSize/2);
+        this.lidShapes[0].moveVerticallyTo(y + BLOCKSIZE/2);
+        this.lidShapes[1].moveVerticallyTo(y + BLOCKSIZE/2);
     }
 
     // ------------------------------------------------------------------------------------------------------------

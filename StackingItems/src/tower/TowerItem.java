@@ -20,7 +20,7 @@ abstract class TowerItem {
     protected int towerMargin;
     protected int towerWidth;
     protected int towerHeight;
-
+    
     private static final Random RANDOM = new Random();
     public static final Color[] _COLORS = {
         hexColor("#000000"), hexColor("#053C5E"), hexColor("#132A13"), hexColor("#1B998B"),
@@ -29,11 +29,11 @@ abstract class TowerItem {
         hexColor("#84BCDA"), hexColor("#8C7051"), hexColor("#90A955"), hexColor("#BB6B00"),
         hexColor("#D5BF86"), hexColor("#ECC30B"), hexColor("#ECF39E"), hexColor("#F0E5D8")
     };
+    public static final int TOWER_MARGIN = Tower.MARGIN;
+    public static final int BLOCKSIZE = Tower.BLOCKSIZE;
     protected static HashMap<Integer, HashMap<String, TowerItem>> activeItems = new HashMap<>();
 
-    protected TowerItem(int index, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        this.blockSize = blockSize;
-        this.towerMargin = towerMargin;
+    protected TowerItem(int index, String type, int towerWidth, int towerHeight) {
         this.towerWidth = towerWidth;
         this.towerHeight = towerHeight;
 
@@ -47,22 +47,22 @@ abstract class TowerItem {
     }
 
     public static TowerItem getTowerItem(
-        int index, boolean isCup, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight
+        int index, boolean isCup, String type, int towerWidth, int towerHeight
     ) {
         if (isAValidType(isCup, type)) {
             return (isCup ?
-                Cup.getCup(index, type, blockSize, towerMargin, towerWidth, towerHeight) :
-                Lid.getLid(index, type, blockSize, towerMargin, towerWidth, towerHeight)
+                Cup.getCup(index, type, towerWidth, towerHeight) :
+                Lid.getLid(index, type, towerWidth, towerHeight)
             );
         } else throw new IllegalArgumentException("The type given is not valid.");
     }
 
     public static TowerItem getTowerItem(
-        int index, boolean isCup, int blockSize, int towerMargin, int towerWidth, int towerHeight
+        int index, boolean isCup, int towerWidth, int towerHeight
     ) {
         return (isCup ?
-            Cup.getCup(index, blockSize, towerMargin, towerWidth, towerHeight) :
-            Lid.getLid(index, blockSize, towerMargin, towerWidth, towerHeight)
+            Cup.getCup(index, towerWidth, towerHeight) :
+            Lid.getLid(index, towerWidth, towerHeight)
         );
     }
 
@@ -84,6 +84,10 @@ abstract class TowerItem {
 
     public boolean isRemovable() {
         return this.isRemovable;
+    }
+
+    public boolean isLidded() {
+        return this.updateLiddedState();
     }
 
     public int width() {
@@ -119,8 +123,8 @@ abstract class TowerItem {
     public void onCover(Tower tower)  { /* EMPTY */ };
 
     protected void moveTo(int y) {
-        int bottomOfTower = this.towerMargin + this.towerHeight*this.blockSize;
-        this.moveVerticallyTo(bottomOfTower - (y + this.height())*this.blockSize);
+        int bottomOfTower = TOWER_MARGIN + this.towerHeight*BLOCKSIZE;
+        this.moveVerticallyTo(bottomOfTower - (y + this.height())*BLOCKSIZE);
     }
 
     // ------------------------------------------------------------------------------------------------------------

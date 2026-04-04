@@ -14,19 +14,19 @@ abstract class Cup extends TowerItem {
     public static String HIERARCHICAL = "hierarchical";
     public static String[] types = {NORMAL, OPENER, HIERARCHICAL};
 
-    protected Cup(int index, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        super(index, type, blockSize, towerMargin, towerWidth, towerHeight);
+    protected Cup(int index, String type, int towerWidth, int towerHeight) {
+        super(index, type, towerWidth, towerHeight);
     }
 
-    public static Cup getCup(int index, String type, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        if (type == NORMAL) return NormalCup.getCup(index, blockSize, towerMargin, towerWidth, towerHeight);
-        else if (type == OPENER) return OpenerCup.getCup(index, blockSize, towerMargin, towerWidth, towerHeight);
-        else if (type == HIERARCHICAL) return HierarchicalCup.getCup(index, blockSize, towerMargin, towerWidth, towerHeight);
+    public static Cup getCup(int index, String type, int towerWidth, int towerHeight) {
+        if (type == NORMAL) return NormalCup.getCup(index, towerWidth, towerHeight);
+        else if (type == OPENER) return OpenerCup.getCup(index, towerWidth, towerHeight);
+        else if (type == HIERARCHICAL) return HierarchicalCup.getCup(index, towerWidth, towerHeight);
         else throw new IllegalArgumentException("The type given is not valid.");
     }
 
-    public static Cup getCup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        return getCup(index, NORMAL, blockSize, towerMargin, towerWidth, towerHeight);
+    public static Cup getCup(int index, int towerWidth, int towerHeight) {
+        return getCup(index, NORMAL, towerWidth, towerHeight);
     }
 
     public static Cup getCup(int index) {
@@ -150,29 +150,29 @@ abstract class Cup extends TowerItem {
 
     protected void createSides() {
         // the sides will overlap, but it wont matter
-        int sideLengthPx = this.width()*this.blockSize;
-        this.base = new Rectangle(sideLengthPx, this.blockSize);
-        this.left = new Rectangle(this.blockSize, sideLengthPx);
-        this.right = new Rectangle(this.blockSize, sideLengthPx);
+        int sideLengthPx = this.width()*BLOCKSIZE;
+        this.base = new Rectangle(sideLengthPx, BLOCKSIZE);
+        this.left = new Rectangle(BLOCKSIZE, sideLengthPx);
+        this.right = new Rectangle(BLOCKSIZE, sideLengthPx);
 
         this.base.changeColor(this.color);
         this.left.changeColor(this.color);
         this.right.changeColor(this.color);
 
-        this.base.moveVerticallyTo(sideLengthPx - this.blockSize);
-        this.right.moveHorizontallyTo(sideLengthPx - this.blockSize);
+        this.base.moveVerticallyTo(sideLengthPx - BLOCKSIZE);
+        this.right.moveHorizontallyTo(sideLengthPx - BLOCKSIZE);
     }
 
     // this is in terms of pixels
     protected void centerX() {
-        int newX = this.towerMargin + (this.towerWidth - this.width())*this.blockSize/2;
+        int newX = TOWER_MARGIN + (this.towerWidth - this.width())*BLOCKSIZE/2;
         this.base.moveHorizontallyTo(newX);
         this.left.moveHorizontallyTo(newX);
-        this.right.moveHorizontallyTo(newX + (this.width() - 1)*this.blockSize);
+        this.right.moveHorizontallyTo(newX + (this.width() - 1)*BLOCKSIZE);
     }
 
     protected void moveVerticallyTo(int y) {
-        this.base.moveVerticallyTo(y + (this.height() - 1)*this.blockSize);
+        this.base.moveVerticallyTo(y + (this.height() - 1)*BLOCKSIZE);
         this.left.moveVerticallyTo(y);
         this.right.moveVerticallyTo(y);
     }

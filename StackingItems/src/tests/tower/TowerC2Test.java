@@ -241,8 +241,7 @@ public class TowerC2Test {
     }
 
     @Test
-    public void shouldCover_() {
-        // lid covers cup without elements in between
+    public void shouldCoverWithoutItemsBetweenTheCupAndLid() {
         tower.pushCup(4);
         tower.pushLid(3);
         tower.pushCup(1);
@@ -260,8 +259,7 @@ public class TowerC2Test {
    }
 
    @Test
-    public void shouldCover__() {
-        // lid covers cup with a single element in between
+    public void shouldCoverWithASingleItemBetweenTheCupAndLid() {
         tower.pushCup(4);
         tower.pushLid(3);
         tower.pushCup(1);
@@ -280,8 +278,7 @@ public class TowerC2Test {
    }
 
    @Test
-    public void shouldCover___() {
-        // lid covers cup with several elements in between
+    public void shouldCoverWithSeveralItemsBetweenTheCupAndLid() {
         tower.pushLid(4);
         tower.pushCup(4);
         tower.pushLid(1);
@@ -299,8 +296,8 @@ public class TowerC2Test {
    }
 
    @Test
-    public void shouldCover____() {
-        // lid covers cup with a lidded cup in between
+    public void shouldCoverWithoutSeparatingInnerLiddedCups1() {
+        // lid of an inner lidded cup reaches the height that should be reached by the lid of the cup being lidded
         tower.pushLid(4);
         tower.pushCup(4);
         tower.pushLid(3);
@@ -319,8 +316,8 @@ public class TowerC2Test {
    }
 
    @Test
-    public void shouldCover______() {
-        // lid covers cup with an enclosed item 
+    public void shouldCoverWithoutSeparatingInnerLiddedCups2() {
+        // enclosed item
         tower.pushLid(4);
         tower.pushCup(4);
         tower.pushLid(3);
@@ -340,7 +337,7 @@ public class TowerC2Test {
    }
 
    @Test
-    public void shouldCover_______() { 
+    public void shouldCoverACupInsideALiddedCup() { 
         tower.pushLid(3);
         tower.pushCup(4);
         tower.pushCup(3);
@@ -359,8 +356,7 @@ public class TowerC2Test {
    }
 
    @Test
-    public void shouldCover_____() {
-        // lid covers cup if the cup is the last element
+    public void shouldCoverIfTheCupIsTheLastItem() {
         tower.pushLid(3);
         tower.pushCup(3);
         tower.cover();

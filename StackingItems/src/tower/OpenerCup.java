@@ -3,16 +3,16 @@ package tower;
 import java.util.HashMap;
 
 class OpenerCup extends Cup {
-    protected OpenerCup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
-        super(index, Cup.OPENER, blockSize, towerMargin, towerWidth, towerHeight);
+    protected OpenerCup(int index, int towerWidth, int towerHeight) {
+        super(index, Cup.OPENER, towerWidth, towerHeight);
     }
 
-    public static Cup getCup(int index, int blockSize, int towerMargin, int towerWidth, int towerHeight) {
+    public static Cup getCup(int index, int towerWidth, int towerHeight) {
         Cup cup = null;
         HashMap<String, TowerItem> associatedItems = activeItems.get(index);
 
         if (associatedItems == null || associatedItems.get("cup") == null) {
-            cup = new OpenerCup(index, blockSize, towerMargin, towerWidth, towerHeight);
+            cup = new OpenerCup(index, towerWidth, towerHeight);
             Lid lid = cup.lid();
             if (lid != null) {
                 cup.setColor(lid.getColor());
@@ -30,8 +30,6 @@ class OpenerCup extends Cup {
 
     public TowerItem onPush(Tower tower) {
         tower.pop();
-        // this.disable();
-        
         tower.pushCup(this.index);
         TowerItem placeholder = Cup.getCup(this.index);
 
