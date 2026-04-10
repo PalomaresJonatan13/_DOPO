@@ -111,7 +111,7 @@ abstract class Cup extends TowerItem {
 
     public void setColor(Color color) {
         if (this.color != color) {
-            if (Arrays.asList(TowerItem._COLORS).contains(color)) {
+            if (TowerItem.isAValidItemColor(color)) {
                 this.color = color;
 
                 this.base.changeColor(this.color);
@@ -131,6 +131,7 @@ abstract class Cup extends TowerItem {
             this.base.makeVisible();
             this.left.makeVisible();
             this.right.makeVisible();
+            this.makeExtraShapesVisible();
             this.isVisible = true;
         } else {
             throw new IllegalStateException("Cannot make the cup visible if it is not active.");
@@ -141,6 +142,7 @@ abstract class Cup extends TowerItem {
         this.base.makeInvisible();
         this.left.makeInvisible();
         this.right.makeInvisible();
+        this.makeExtraShapesInvisible();
         this.isVisible = false;
     }
 
@@ -159,8 +161,8 @@ abstract class Cup extends TowerItem {
         this.left.changeColor(this.color);
         this.right.changeColor(this.color);
 
-        this.base.moveVerticallyTo(sideLengthPx - BLOCKSIZE);
-        this.right.moveHorizontallyTo(sideLengthPx - BLOCKSIZE);
+        /* this.base.moveVerticallyTo(sideLengthPx - BLOCKSIZE);
+        this.right.moveHorizontallyTo(sideLengthPx - BLOCKSIZE); */
     }
 
     // this is in terms of pixels
@@ -169,12 +171,14 @@ abstract class Cup extends TowerItem {
         this.base.moveHorizontallyTo(newX);
         this.left.moveHorizontallyTo(newX);
         this.right.moveHorizontallyTo(newX + (this.width() - 1)*BLOCKSIZE);
+        this.centerExtraShapesX();
     }
 
     protected void moveVerticallyTo(int y) {
         this.base.moveVerticallyTo(y + (this.height() - 1)*BLOCKSIZE);
         this.left.moveVerticallyTo(y);
         this.right.moveVerticallyTo(y);
+        this.moveExtraShapesVertically();
     }
 
     // ------------------------------------------------------------------------------------------------------------

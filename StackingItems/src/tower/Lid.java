@@ -6,7 +6,7 @@ import java.awt.Color;
 
 abstract class Lid extends TowerItem {
     protected Rectangle base;
-    protected Circle[] lidShapes;
+    protected Shape_[] shapesLidded;
     protected boolean isInverted = false;
 
     public static String NORMAL = "normal";
@@ -109,13 +109,13 @@ abstract class Lid extends TowerItem {
                     (this.isInverted ? - cup.height() : 1)) {
                 this.isLidded = true;
                 if (this.isVisible) {
-                    this.lidShapes[0].makeVisible();
-                    this.lidShapes[1].makeVisible();
+                    this.shapesLidded[0].makeVisible();
+                    this.shapesLidded[1].makeVisible();
                 }
             } else {
                 this.isLidded = false;
-                this.lidShapes[0].makeInvisible();
-                this.lidShapes[1].makeInvisible();
+                this.shapesLidded[0].makeInvisible();
+                this.shapesLidded[1].makeInvisible();
             }
             if (this.isLidded != lastState) cup.updateLiddedState();
         } else this.isLidded = false;
@@ -125,7 +125,7 @@ abstract class Lid extends TowerItem {
 
     public void setColor(Color color) {
         if (this.color != color) {
-            if (Arrays.asList(TowerItem._COLORS).contains(color)) {
+            if (TowerItem.isAValidItemColor(color)) {
                 this.color = color;
 
                 this.base.changeColor(color);
@@ -141,9 +141,10 @@ abstract class Lid extends TowerItem {
     public void makeVisible() {
         if (this.isActive) {
             this.base.makeVisible();
+            this.makeExtraShapesVisible();
             if (this.isLidded) {
-                this.lidShapes[0].makeVisible();
-                this.lidShapes[1].makeVisible();
+                this.shapesLidded[0].makeVisible();
+                this.shapesLidded[1].makeVisible();
             }
             this.isVisible = true;
         } else {
@@ -153,8 +154,9 @@ abstract class Lid extends TowerItem {
 
     public void makeInvisible() {
         this.base.makeInvisible();
-        this.lidShapes[0].makeInvisible();
-        this.lidShapes[1].makeInvisible();
+        this.makeExtraShapesInvisible();
+        this.shapesLidded[0].makeInvisible();
+        this.shapesLidded[1].makeInvisible();
         this.isVisible = false;
     }
 
@@ -166,25 +168,30 @@ abstract class Lid extends TowerItem {
         this.base = new Rectangle(this.width()*BLOCKSIZE, BLOCKSIZE);
         this.base.changeColor(this.color);
 
-        this.lidShapes = new Circle[2];
-        this.lidShapes[0] = new Circle(BLOCKSIZE/3);
-        this.lidShapes[1] = new Circle(BLOCKSIZE/3);
-        this.lidShapes[0].changeColor(Color.WHITE);
-        this.lidShapes[1].changeColor(Color.BLACK);
+        this.shapesLidded = new Circle[2];
+        this.shapesLidded[0] = new Circle(BLOCKSIZE/3);
+        this.shapesLidded[1] = new Circle(BLOCKSIZE/3);
+        this.shapesLidded[0].changeColor(Color.WHITE);
+        this.shapesLidded[1].changeColor(Color.BLACK);
     }
 
     // this is in terms of pixels
     protected void centerX() {
         int newX = TOWER_MARGIN + (this.towerWidth - this.width())*BLOCKSIZE/2;
         this.base.moveHorizontallyTo(newX);
-        this.lidShapes[0].moveHorizontallyTo(newX + BLOCKSIZE/2);
-        this.lidShapes[1].moveHorizontallyTo(newX + 5*BLOCKSIZE/6);
+        this.centerExtraShapesX();
+
+        int centerShape0 = (int) (newX + BLOCKSIZE * (5f/12));
+        this.shapesLidded[0].moveHorizontallyTo(centerShape0);
+        int centerShape1 = (int) (newX + BLOCKSIZE * (7f/12));
+        this.shapesLidded[1].moveHorizontallyTo(centerShape1);
     }
 
     protected void moveVerticallyTo(int y) {
         this.base.moveVerticallyTo(y);
-        this.lidShapes[0].moveVerticallyTo(y + BLOCKSIZE/2);
-        this.lidShapes[1].moveVerticallyTo(y + BLOCKSIZE/2);
+        this.shapesLidded[0].moveVerticallyTo(y + BLOCKSIZE/2);
+        this.shapesLidded[1].moveVerticallyTo(y + BLOCKSIZE/2);
+        this.moveExtraShapesVertically();
     }
 
     // ------------------------------------------------------------------------------------------------------------

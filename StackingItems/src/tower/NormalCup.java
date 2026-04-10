@@ -1,10 +1,12 @@
 package tower;
+import shapes.*;
 
 import java.util.HashMap;
 
 class NormalCup extends Cup {
     protected NormalCup(int index, int towerWidth, int towerHeight) {
         super(index, Cup.NORMAL, towerWidth, towerHeight);
+        this.extraShapes = new Shape_[]{};
     }
 
     public static Cup getCup(int index, int towerWidth, int towerHeight) {
@@ -23,4 +25,15 @@ class NormalCup extends Cup {
         }
         return cup;
     }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    protected void createExtraShapes() {
+        this.extraShapes = new Shape_[0];
+    }
+
+    protected void centerExtraShapesX() { /* EMPTY */ }
+    protected void moveExtraShapesVertically() { /* EMPTY */ }
 }

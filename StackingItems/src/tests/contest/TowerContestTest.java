@@ -85,7 +85,7 @@ public class TowerContestTest {
 
     @Test
     public void shouldSolveWhenHIsTheHeightWhenNMinus1DoesNotHaveSolution() {
-        int n = 5;
+        int n = 7;
         int h = n*(n-2);
 
         String solution = TowerContest.solve(n, h);
@@ -103,7 +103,7 @@ public class TowerContestTest {
 
     @Test
     public void shouldSolveWhenHIsTheHeightWhenTheCupNNeedsToBeTheLastItem() {
-        int n = 6;
+        int n = 7;
         int h = (n-1)*(n-1) + 2;
 
         String solution = TowerContest.solve(n, h);
@@ -121,7 +121,7 @@ public class TowerContestTest {
 
     @Test
     public void shouldSolveWhenHIsTheMaximumToHaveASolution() {
-        int n = 8;
+        int n = 7;
         int h = n*n;
 
         String solution = TowerContest.solve(n, h);
@@ -130,7 +130,7 @@ public class TowerContestTest {
 
     @Test
     public void shouldReturnImpossibleWhenThereIsNoSolution() {
-        int n = 9;
+        int n = 7;
         int h = n*n - 2;
 
         String solution = TowerContest.solve(n, h);
@@ -139,7 +139,7 @@ public class TowerContestTest {
 
     @Test
     public void shouldReturnImpossibleWhenHIsLessThanTheMinimumToHaveASolution() {
-        int n = 10;
+        int n = 7;
         int h = 2*n-2;
 
         String solution = TowerContest.solve(n, h);
@@ -148,7 +148,7 @@ public class TowerContestTest {
 
     @Test
     public void shouldReturnImpossibleWhenHIsGreaterThanTheMaximumToHaveASolution() {
-        int n = 11;
+        int n = 7;
         int h = n*n + 1;
 
         String solution = TowerContest.solve(n, h);

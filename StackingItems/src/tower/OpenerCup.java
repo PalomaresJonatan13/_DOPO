@@ -1,5 +1,7 @@
 package tower;
+import shapes.*;
 
+import java.awt.Color;
 import java.util.HashMap;
 
 class OpenerCup extends Cup {
@@ -22,6 +24,32 @@ class OpenerCup extends Cup {
             if (cup_.getType() == Cup.OPENER) cup = cup_;
         }
         return cup;
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    protected void createExtraShapes() {
+        this.extraShapes = new Shape_[2];
+        this.extraShapes[0] = new Triangle((int) (BLOCKSIZE * 2f/3));
+        this.extraShapes[1] = new Triangle((int) (BLOCKSIZE * 2f/3));
+        this.extraShapes[0].changeColor(Color.WHITE);
+        this.extraShapes[1].changeColor(Color.BLACK);
+    }
+
+    protected void centerExtraShapesX() {
+        int shapeWidth = this.extraShapes[0].getWidth();
+        int center = TOWER_MARGIN + this.towerWidth*BLOCKSIZE/2;
+        this.extraShapes[0].moveHorizontallyTo(center - shapeWidth/4);
+        this.extraShapes[1].moveHorizontallyTo(center + shapeWidth/4);
+    }
+
+    protected void moveExtraShapesVertically() {
+        int shapeHeight = this.extraShapes[0].getHeight();
+        int newY = TOWER_MARGIN + (this.towerHeight - (this.heightReached - this.height())) * BLOCKSIZE - shapeHeight/2;
+        this.extraShapes[0].moveVerticallyTo(newY);
+        this.extraShapes[1].moveVerticallyTo(newY);
     }
 
     // ------------------------------------------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 package tower;
+import shapes.*;
 
 import java.util.HashMap;
 
@@ -23,4 +24,15 @@ class NormalLid extends Lid {
         }
         return lid;
     }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    protected void createExtraShapes() {
+        this.extraShapes = new Shape_[0];
+    }
+
+    protected void centerExtraShapesX() { /* EMPTY */ }
+    protected void moveExtraShapesVertically() { /* EMPTY */ }
 }

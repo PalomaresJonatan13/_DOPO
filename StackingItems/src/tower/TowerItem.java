@@ -1,4 +1,5 @@
 package tower;
+import shapes.*;
 
 import java.awt.Color;
 import java.util.*;
@@ -15,20 +16,12 @@ abstract class TowerItem {
     protected boolean isActive = false;
     protected boolean isRemovable = true;
     protected String type;
+    protected Shape_[] extraShapes;
 
-    protected int blockSize;
-    protected int towerMargin;
     protected int towerWidth;
     protected int towerHeight;
     
     private static final Random RANDOM = new Random();
-    public static final Color[] _COLORS = {
-        hexColor("#000000"), hexColor("#053C5E"), hexColor("#132A13"), hexColor("#1B998B"),
-        hexColor("#2D3047"), hexColor("#31572C"), hexColor("#403D58"), hexColor("#452103"),
-        hexColor("#46237A"), hexColor("#4E598C"), hexColor("#4F772D"), hexColor("#690500"),
-        hexColor("#84BCDA"), hexColor("#8C7051"), hexColor("#90A955"), hexColor("#BB6B00"),
-        hexColor("#D5BF86"), hexColor("#ECC30B"), hexColor("#ECF39E"), hexColor("#F0E5D8")
-    };
     public static final int TOWER_MARGIN = Tower.MARGIN;
     public static final int BLOCKSIZE = Tower.BLOCKSIZE;
     protected static HashMap<Integer, HashMap<String, TowerItem>> activeItems = new HashMap<>();
@@ -41,6 +34,7 @@ abstract class TowerItem {
         this.type = type;
         this.setColor();
         this.createSides();
+        this.createExtraShapes();
 
         this.setHeightReached(0);
         this.centerX();
@@ -127,6 +121,18 @@ abstract class TowerItem {
         this.moveVerticallyTo(bottomOfTower - (y + this.height())*BLOCKSIZE);
     }
 
+    protected void makeExtraShapesVisible() {
+        for (Shape_ shape : this.extraShapes) {
+            shape.makeVisible();
+        }
+    }
+
+    protected void makeExtraShapesInvisible() {
+        for (Shape_ shape : this.extraShapes) {
+            shape.makeInvisible();
+        }
+    }
+
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
@@ -141,8 +147,11 @@ abstract class TowerItem {
     public abstract void makeVisible();
     public abstract void makeInvisible();
     protected abstract void createSides();
+    protected abstract void createExtraShapes();
     protected abstract void centerX();
+    protected abstract void centerExtraShapesX();
     protected abstract void moveVerticallyTo(int y);
+    protected abstract void moveExtraShapesVertically();
 
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
@@ -200,25 +209,47 @@ abstract class TowerItem {
     // ------------------------------------------------------------------------------------------------------------
 
     public static Color randomItemColor() {
-        int colorIndex = RANDOM.nextInt(_COLORS.length);
-        return _COLORS[colorIndex];
+        float lim1 = (140f-1) / 360;
+        float lim2 = (200f+1) / 360;
+        float lim3 = (280f-1) / 360;
+        float lim4 = (330f+1) / 360;
+        float hue = ((RANDOM.nextBoolean()) ?
+            RANDOM.nextFloat()*lim1 :
+            ((RANDOM.nextBoolean()) ?
+                lim2 + RANDOM.nextFloat()*(lim3-lim2) :
+                lim4 + RANDOM.nextFloat()*(1-lim4)
+            )
+        );
+        float saturation = (0.20f+0.01f) + RANDOM.nextFloat()*(0.3f-0.02f);
+        float brightness = (0.15f+0.01f) + RANDOM.nextFloat()*(0.7f-0.02f);
+        return Color.getHSBColor(hue, saturation, brightness);
     }
 
     public static Color randomItemColor(Color differentColor) {
-        int colorIndex = RANDOM.nextInt(_COLORS.length);
-        Color color = _COLORS[colorIndex];
+        Color color = randomItemColor();
         while (color == differentColor) {
-            colorIndex = RANDOM.nextInt(_COLORS.length);
-            color = _COLORS[colorIndex];
+            color = randomItemColor();
         }
         return color;
     }
 
-    private static Color hexColor(String hex) {
-        return new Color(
-            Integer.valueOf(hex.substring(1, 3), 16),
-            Integer.valueOf(hex.substring(3, 5), 16),
-            Integer.valueOf(hex.substring(5, 7), 16)
+    public static boolean isAValidItemColor(Color color) {
+        float lim1 = 140f / 360;
+        float lim2 = 200f / 360;
+        float lim3 = 280f / 360;
+        float lim4 = 330f / 360;
+
+        float[] hsb = Color.RGBtoHSB(
+            color.getRed(),
+            color.getGreen(),
+            color.getBlue(),
+            null
+        );
+        
+        return (
+            (hsb[0] <= lim1 || (lim2 <= hsb[0] && hsb[0] <= lim3) || lim4 <= hsb[0]) &&
+            (0.2 <= hsb[1] && hsb[1] <= 0.5) &&
+            (0.15 <= hsb[2] && hsb[2] <= 0.85)
         );
     }
 }

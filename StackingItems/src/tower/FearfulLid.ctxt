@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=FearfulLid
+comment1.params=index\ towerWidth\ towerHeight
+comment1.target=FearfulLid(int,\ int,\ int)
+comment2.params=index\ towerWidth\ towerHeight
+comment2.target=Lid\ getLid(int,\ int,\ int)
+comment3.params=
+comment3.target=boolean\ updateLiddedState()
+comment4.params=tower
+comment4.target=TowerItem\ onPush(Tower)
+numComments=5

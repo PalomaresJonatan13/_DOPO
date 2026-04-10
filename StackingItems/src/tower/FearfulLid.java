@@ -1,11 +1,14 @@
 package tower;
 import exceptions.*;
+import shapes.*;
 
 import java.util.*;
+import java.awt.Color;
 
 class FearfulLid extends Lid {
     private FearfulLid(int index, int towerWidth, int towerHeight) {
         super(index, Lid.FEARFUL, towerWidth, towerHeight);
+        // this.extraShapes = new Shape_[]{};
     }
 
     public static Lid getLid(int index, int towerWidth, int towerHeight) {
@@ -29,11 +32,39 @@ class FearfulLid extends Lid {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    protected void createExtraShapes() {
+        int height = this.height()*BLOCKSIZE;
+
+        this.extraShapes = new Shape_[2];
+        this.extraShapes[0] = new Rectangle(BLOCKSIZE/4, height/2);
+        this.extraShapes[1] = new Rectangle(BLOCKSIZE/4, height/2);
+        this.extraShapes[0].changeColor(Color.BLACK);
+        this.extraShapes[1].changeColor(Color.WHITE);
+    }
+
+    protected void centerExtraShapesX() {
+        int thickness = this.extraShapes[0].getWidth();
+        int newX = TOWER_MARGIN + (this.towerWidth - this.width())*BLOCKSIZE/2 - thickness;
+        this.extraShapes[0].moveHorizontallyTo(newX);
+        this.extraShapes[1].moveHorizontallyTo(newX);
+    }
+
+    protected void moveExtraShapesVertically() {
+        int shapeHeight = this.extraShapes[0].getHeight();
+        int lidTop = TOWER_MARGIN + (this.towerHeight - this.heightReached)*BLOCKSIZE;
+        this.extraShapes[0].moveVerticallyTo(lidTop);
+        this.extraShapes[1].moveVerticallyTo(lidTop + shapeHeight);
+    }
+
     public boolean updateLiddedState() { // called during pushItem
         super.updateLiddedState();
         this.isRemovable = !this.isLidded;
         return this.isLidded;
     }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
 
     public TowerItem onPush(Tower tower) throws TowerException {
         TowerItem placeholder = null;

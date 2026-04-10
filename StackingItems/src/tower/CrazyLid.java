@@ -1,7 +1,9 @@
 package tower;
-import java.util.HashMap;
-
 import exceptions.*;
+import shapes.*;
+
+import java.util.HashMap;
+import java.awt.Color;
 
 class CrazyLid extends Lid {
     private CrazyLid(int index, int towerWidth, int towerHeight) {
@@ -24,6 +26,33 @@ class CrazyLid extends Lid {
             if (lid_.getType() == Lid.CRAZY) lid = lid_;
         }
         return lid;
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    protected void createExtraShapes() {
+        int height = this.height()*BLOCKSIZE;
+
+        this.extraShapes = new Shape_[2];
+        this.extraShapes[0] = new Rectangle(BLOCKSIZE/4, height/2);
+        this.extraShapes[1] = new Rectangle(BLOCKSIZE/4, height/2);
+        this.extraShapes[0].changeColor(Color.BLACK);
+        this.extraShapes[1].changeColor(Color.WHITE);
+    }
+
+    protected void centerExtraShapesX() {
+        int newX = TOWER_MARGIN + (this.towerWidth + this.width())*BLOCKSIZE/2;
+        this.extraShapes[0].moveHorizontallyTo(newX);
+        this.extraShapes[1].moveHorizontallyTo(newX);
+    }
+
+    protected void moveExtraShapesVertically() {
+        int shapeHeight = this.extraShapes[0].getHeight();
+        int lidTop = TOWER_MARGIN + (this.towerHeight - this.heightReached)*BLOCKSIZE;
+        this.extraShapes[0].moveVerticallyTo(lidTop);
+        this.extraShapes[1].moveVerticallyTo(lidTop + shapeHeight);
     }
 
     // ------------------------------------------------------------------------------------------------------------

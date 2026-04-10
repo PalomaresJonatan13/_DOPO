@@ -286,22 +286,13 @@ public class Tower {
         } catch (TowerException e) {
             throw new TowerArgumentException("Restore: The given list of TowerItems is not a valid copy (cannot push all the items in the copy given because there would be an overflow).");
         }
+        System.out.println(isVisible);
         if (isVisible) this.makeItemsVisible();
     }
 
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
-
-    private void adjustColorForNewItem(TowerItem newItem) {
-        if (!this.isEmpty()) {
-            TowerItem lastItem = this.towerItems.getLast();
-            Color currentColor = newItem.getColor();
-            if (newItem.getIndex() != lastItem.getIndex() && currentColor == lastItem.getColor()) {
-                newItem.setColor(TowerItem.randomItemColor(currentColor));
-            }
-        }
-    }
 
     private TowerItem prepareNewItem(TowerItem newItem) throws TowerException {
         newItem.enable();
@@ -344,12 +335,14 @@ public class Tower {
         TowerItem newItem = TowerItem.getTowerItem(index, isCup, type, this.width, this.height);
         boolean oldVisibility = this.visibleItems;
         this.makeItemsInvisible();
-        TowerItem placeholder = this.prepareNewItem(newItem);
+        TowerItem placeholder = null;
+        boolean placeholderCreated = true;
+        try {placeholder = this.prepareNewItem(newItem);}
+        catch (TowerException e) {placeholderCreated = false;}
         this.visibleItems = oldVisibility;
 
-        if (!(this.height() > this.height && this.visible)) {
+        if (!(this.height() > this.height && this.visible) && placeholderCreated) {
             HashMap<Integer, Color> colors = this.itemColors;
-            if (placeholder == this.towerItems.getLast()) this.adjustColorForNewItem(newItem);
             if (colors.get(index) == null) colors.put(index, placeholder.getColor());
             newItem.setColor(colors.get(index));
             
@@ -359,6 +352,7 @@ public class Tower {
             if (this.visibleItems) this.makeItemsVisible();
             this.ok = true;
         } else {
+            this.visibleItems = oldVisibility;
             this.restoreTower(towerItemsCopy, this.visibleItems);
             this.ok = false;
             throw new TowerException(TowerException.OVERFLOW(index, isCup));
@@ -671,6 +665,49 @@ public class Tower {
         );
     }
 
+    private int positionToCoverCup(TowerItem lid) {
+        int index = lid.getIndex();
+        if (this.hasItem(index, true) && !this.hasItem(index, false)) {
+            TowerItem cup = TowerItem.getTowerItem(index, true);
+            int limit = this.positionOfNextGreaterIndex(index, true);
+            if (limit == -1) limit = this.numberOfItems();
+            int j = this.positionOfItem(index, true) + 1;
+            int lastJ = j;
+            boolean lidded = false, stop = false;
+            while (j <= limit && !stop) {
+                if (j != this.numberOfItems()) {
+                    TowerItem itemInPosition = this.towerItems.get(j);
+                    int itemIndex = itemInPosition.getIndex();
+                    boolean isCup = itemInPosition.isCup();
+                    int itemIndexEnclosing = this.itemEnclosingItem(itemIndex, isCup);
+                    if (itemInPosition.isLidded() && !isCup && itemIndex < index) {
+                        j = this.positionOfItem(itemInPosition.getIndex(), false) + 1;
+                        continue;
+                    }
+                    if (itemIndexEnclosing != -1 && itemIndexEnclosing < index) {
+                        j = this.positionOfItem(itemIndexEnclosing, false) + 1;
+                        continue;
+                    }
+                }
+                try {
+                    this.insert(index, false, lid.getType(), j);
+                    if (cup.isLidded()) { // then this
+                        lidded = true;
+                        lastJ = j;
+                        j++;
+                    } else stop = true; // finally this
+                    this.remove(index, false);
+                } catch (TowerException e) { // first this (if isVisible)
+                    lidded = false;
+                    j++;
+                }
+            }
+            return lidded ? lastJ : -1;
+        } else {
+            throw new TowerArgumentException("Cover: To find the position where the lid must be inserted to cover the cup, the cup must belong to the tower, while the lid must not.");
+        }
+    }
+
     private void coverCup(int index) throws TowerException {
         if (this.hasItem(index, true) && this.hasItem(index, false)) {
             List<TowerItem> towerItemsCopy = new ArrayList<>(this.towerItems);
@@ -681,61 +718,20 @@ public class Tower {
                 this.removeLid(index);
                 position = this.positionOfItem(index, true);
                 cup = this.towerItems.get(position);
-                if (lid.isInverted()) {
-                    try {this.insert(index, false, lid.getType(), position+1);}
-                    catch (TowerException e) {
-                        this.restoreTower(towerItemsCopy, this.visibleItems);
-                        throw new TowerException(TowerException.IMPOSSIBLE_COVER(index));
-                    }
-                } else if (position == this.numberOfItems() - 1) {
-                    try {this.pushItem(index, false, lid.getType());}
-                    catch (TowerException e) {
-                        this.restoreTower(towerItemsCopy, this.visibleItems);
-                        throw new TowerException(TowerException.IMPOSSIBLE_COVER(index));
-                    }
-                } else {
-                    int limit = this.positionOfNextGreaterIndex(index, true);
-                    if (limit == -1) limit = this.numberOfItems();
-                    int j = position + 1;
-                    boolean lidded = false;
-                    boolean stop = false;
-                    int lastJ = j;
-                    while (j <= limit && !stop) {
-                        if (j != this.numberOfItems()) {
-                            TowerItem itemInPosition = this.towerItems.get(j);
-                            if (itemInPosition.isLidded() && !itemInPosition.isCup() && itemInPosition.getIndex() < index) {
-                                // lastJ = j;
-                                j = this.positionOfItem(itemInPosition.getIndex(), false) + 1;
-                                continue;
-                            }
-                            int itemIndexEnclosing = this.itemEnclosingItem(itemInPosition.getIndex(), itemInPosition.isCup());
-                            if (itemIndexEnclosing != -1 && itemIndexEnclosing < index) {
-                                // lastJ = j;
-                                j = this.positionOfItem(itemIndexEnclosing, false) + 1;
-                                continue;
-                            }
-                        }
-                        try {
-                            this.insert(index, false, lid.getType(), j);
-                            if (cup.isLidded()) { // then this
-                                lidded = true;
-                                lastJ = j;
-                                j++;
-                            } else { // finally this
-                                //lidded = false;
-                                stop = true;
-                            }
-                            this.remove(index, false);
-                        } catch (TowerException e) { // first this (if isVisible)
-                            lidded = false;
-                            j++;
-                        }
-                    }
-                    if (lidded) this.insert(index, false, lid.getType(), lastJ);
+                try {
+                    if (lid.isInverted()) this.insert(index, false, lid.getType(), position+1);
+                    else if (position == this.numberOfItems()-1) this.pushItem(index, false, lid.getType());
                     else {
-                        this.restoreTower(towerItemsCopy, this.visibleItems);
-                        throw new TowerException(TowerException.IMPOSSIBLE_COVER(index));
+                        int positionToCover = this.positionToCoverCup(lid);
+                        if (positionToCover >= 0) {
+                            this.insert(index, false, lid.getType(), positionToCover);
+                        }
+                        else throw new TowerException("");
+                        /* it is handled in the catch below */
                     }
+                } catch (TowerException e) {
+                    this.restoreTower(towerItemsCopy, this.visibleItems);
+                    throw new TowerException(TowerException.IMPOSSIBLE_COVER(index));
                 }
             }
         } else {
@@ -758,7 +754,7 @@ public class Tower {
                     try {
                         this.coverCup(item.getIndex());
                     } catch (TowerException e) {
-                        /* As the tower is invisible, there wont be any TowerExceptions thrown from .coverCup */
+                        /* As the tower is 'invisible', there wont be any TowerExceptions thrown from .coverCup */
                     }
                 }
             }

@@ -5,10 +5,11 @@ import java.util.*;
 import javax.swing.JOptionPane;
 
 public class TowerContest {
-    private static HashMap<String, List<Integer>> memory = new HashMap<>(Map.of(
-        "1_1", List.of(1),
-        "4_8", List.of(1, 4, 3, 2)
-    ));
+    private static HashMap<String, List<Integer>> memory = new HashMap<>();
+    static {
+        memory.put("1_1", List.of(1));
+        memory.put("4_8", List.of(1, 4, 3, 2));
+    };
 
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
