@@ -33,22 +33,20 @@ public class Team extends Participant{
  
    public int marketValue() throws FifaException {
         int minutesPlayed = 0;
-        long weightedSum = 0;
         for (Player p : this.players) {
             minutesPlayed += p.minutes();
         }
 
+        if (minutesPlayed == 0) throw new FifaException(FifaException.IMPOSSIBLE);
+
+        double weightedAverage = 0;
         for (Player p : this.players) {
             int playerMarketValue = p.marketValue();
             int playerMinutes = p.minutes();
-            weightedSum += playerMarketValue*playerMinutes;
+            weightedAverage += playerMarketValue*(playerMinutes/((double) minutesPlayed)) ;
         }
 
-        if (minutesPlayed == 0) {
-            throw new FifaException(FifaException.IMPOSSIBLE);
-        }
-
-        return (int) weightedSum/minutesPlayed;
+        return (int) (weightedAverage);
     }
 
    /**
@@ -60,53 +58,74 @@ public class Team extends Participant{
     //Otherwise, the average minutes played by known players is used for those whose minutes are unknown.
     
     public int expectedMarketValue() throws FifaException{
-        int usedToAverage = 0;
-        long weightedSum = 0;
+        int totalMinutes = 0;
+        double weightedAverage = 0;
         int playersWithNoMinutes = 0;
         for (Player p : this.players) {
             try {
-                usedToAverage += p.minutes();
+                totalMinutes += p.minutes();
             } catch (FifaException e) {
                 playersWithNoMinutes++;
             }
         }
 
+        if (totalMinutes == 0) throw new FifaException(FifaException.IMPOSSIBLE);
         int totalPlayers = this.players.size();
-        // division by 0
-        int averageMinutes = usedToAverage/(totalPlayers - playersWithNoMinutes);
-        usedToAverage = (playersWithNoMinutes > totalPlayers/2) ?
-            totalPlayers - playersWithNoMinutes : 
-            0;
+        int playersWithMinutes = totalPlayers - playersWithNoMinutes;
+        boolean minutesCondition = playersWithNoMinutes > totalPlayers/2;
+        double averageMinutes = (playersWithMinutes != 0) ? totalMinutes/((double) playersWithMinutes) : 0;
+        double denominator =  (minutesCondition) ? playersWithMinutes : totalPlayers*averageMinutes;
+
         for (Player p : this.players) {
             int playerMarketValue = p.marketValue();
-            if (playersWithNoMinutes > totalPlayers/2) {
-                weightedSum += playerMarketValue;
-            } else {
-                try {
-                    int playerMinutes = p.minutes();
-                    weightedSum += playerMarketValue*playerMinutes;
-                } catch (FifaException e) {
-                    weightedSum += playerMarketValue*averageMinutes;
-                }
+            try {
+                int playerMinutes = p.minutes();
+                weightedAverage += playerMarketValue * ((minutesCondition ? 1 : playerMinutes)/denominator);
+            } catch (FifaException e) {
+                if (!minutesCondition) weightedAverage += playerMarketValue*(averageMinutes/denominator);
             }
         }
 
-        if (usedToAverage == 0) {
-            throw new FifaException(FifaException.IMPOSSIBLE);
-        }
-
-        return (int) weightedSum/minutesPlayed;
+        return (int) weightedAverage;
     }
     
     
     /**
-     * Returns the Marked Value using default values 
+     * Returns the Market Value using default values 
      * @return
      * @throws FifaException, if the resistance cannot be calculate
      */
     //If a player's market value or minutes played are unknown, default values ​​are used.
-    public int defaultMarkedValue(int defaultMarketValue, int defaultMinutes) throws FifaException{
-        return 0;
+    public int defaultMarketValue(int defaultMarketValue, int defaultMinutes) throws FifaException{
+        int minutesPlayed = 0;
+        for (Player p : this.players) {
+            try {
+                minutesPlayed += p.minutes();
+            } catch (FifaException e) {
+                minutesPlayed += defaultMinutes;
+            }
+        }
+
+        if (minutesPlayed == 0) throw new FifaException(FifaException.IMPOSSIBLE);
+
+        double weightedAverage = 0;
+        for (Player p : this.players) {
+            int playerMarketValue;
+            int playerMinutes;
+            try {
+                playerMarketValue = p.marketValue();
+            } catch (FifaException e) {
+                playerMarketValue = defaultMarketValue;
+            }
+            try {
+                playerMinutes = p.minutes();
+            } catch (FifaException e) {
+                playerMinutes = defaultMinutes;
+            }
+            weightedAverage += playerMarketValue*(playerMinutes/((double) minutesPlayed)) ;
+        }
+
+        return (int) (weightedAverage);
     }
     
     
