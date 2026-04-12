@@ -1,37 +1,45 @@
 package domain;  
- 
+
 import java.util.ArrayList;
 
+
 public class Team extends Participant{
-   
     private String manager;
     private String uniform;
     
-    private ArrayList<Player> players;
+    private ArrayList<Player> players = new ArrayList<Player>();
     
     /**
      * Constructs a new Team
      * @param name
      * @param type
      */
-    public Team(String name, int minutes, char position, String manager, String uniform){
+    public Team(String name, int minutes, char position, String manager, String uniform) {
         super(name, minutes, position);
-        this.manager=manager;
-        this.uniform=uniform;
-        players= new ArrayList<Player>();
+        this.manager = manager;
+        this.uniform = uniform;
     }
 
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
 
      /**
      * Add a new Player
-     * @param c
+     * @param player
      */   
-    public void addPlayer(Player c){
-        players.add(c);
+    public void addPlayer(Player player) {
+        if (player == null) throw new FifaArgumentException("The player intended to be added to the team does not exist.");
+        players.add(player);
     }
-       
- 
-   public int marketValue() throws FifaException {
+    
+    /**
+     * Returns the Market Value
+     * @return
+     * @throws FifaException, if any market value or minutes is unknown, or if all minutes are zero
+     */
+    // calculated as a weighted average of the market value of the players, with their minutes as weights
+    public int marketValue() throws FifaException {
         int minutesPlayed = 0;
         for (Player p : this.players) {
             minutesPlayed += p.minutes();
@@ -50,14 +58,13 @@ public class Team extends Participant{
     }
 
    /**
-     * Returns the expectet Market Value 
+     * Returns the expected Market Value 
      * @return
-     * @throws FifaException, if any marker value or minutes is unknown
+     * @throws FifaException, if any market value is unknown, or if all minutes are zero
      */
     //If more than half of the players have no recorded minutes, the total number of players is used to average. 
     //Otherwise, the average minutes played by known players is used for those whose minutes are unknown.
-    
-    public int expectedMarketValue() throws FifaException{
+    public int expectedMarketValue() throws FifaException {
         int totalMinutes = 0;
         double weightedAverage = 0;
         int playersWithNoMinutes = 0;
@@ -93,10 +100,10 @@ public class Team extends Participant{
     /**
      * Returns the Market Value using default values 
      * @return
-     * @throws FifaException, if the resistance cannot be calculate
+     * @throws FifaException, if all minutes are zero
      */
     //If a player's market value or minutes played are unknown, default values ​​are used.
-    public int defaultMarketValue(int defaultMarketValue, int defaultMinutes) throws FifaException{
+    public int defaultMarketValue(int defaultMarketValue, int defaultMinutes) throws FifaException {
         int minutesPlayed = 0;
         for (Player p : this.players) {
             try {
@@ -130,7 +137,7 @@ public class Team extends Participant{
     
     
     @Override
-    public String data() throws FifaException{
+    public String data() throws FifaException {
         StringBuffer answer=new StringBuffer();
         answer.append(name+".\t Grupo: "+position+".\t Valor Promedio:" +marketValue());
         for(Player p: players) {

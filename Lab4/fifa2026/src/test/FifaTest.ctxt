@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=FifaTest
+comment1.params=
+comment1.target=void\ setup()
+comment2.params=
+comment2.target=void\ shouldAddPlayer()
+comment3.params=
+comment3.target=void\ shouldAddTeam()
+comment3.text=\ @Test\r\n\ \ \ \ public\ void\ shouldAddPlayerIfThePositionIsNotASingleCharacter()\ {\r\n\ \ \ \ \ \ \ \ fifa.addPlayer("player1",\ "10",\ "ABC",\ "0",\ "club");\r\n\ \ \ \ \ \ \ \ Participant\ player\ \=\ fifa.consult("player1");\r\n\r\n\ \ \ \ \ \ \ \ assertEquals('A',\ player.position());\r\n}
+numComments=4

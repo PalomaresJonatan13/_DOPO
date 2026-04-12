@@ -1,26 +1,29 @@
 package domain;
 
 
-
 public abstract class Participant{
     protected String name;
     protected Integer minutes;
     protected char position; //For players [P(Goalkeepers),D(Defenders), M(Midfielders), A(Forwards)] 
                              // For teams [A .. L]
     
-    
-    public Participant(String name, Integer minutes, char position){
-        this.name=name;
-        this.minutes=minutes;
-        this.position=position;
+    public Participant(String name, Integer minutes, char position) {
+        if (minutes!=null && minutes < 0) throw new FifaArgumentException("The minutes should be non negative.");
+
+        this.name = name;
+        this.minutes = minutes;
+        this.position = position;
     }
-    
+
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
     
     /**
      * Return the name
      * @return
      */
-    public String name(){
+    public String name() {
         return name;
     }
 
@@ -29,7 +32,7 @@ public abstract class Participant{
      * @return
      */
 
-    public int minutes() throws FifaException{
+    public int minutes() throws FifaException {
        if (minutes == null) throw new FifaException(FifaException.MINUTES_UNKNOWN);
        return minutes;
     } 
@@ -39,7 +42,7 @@ public abstract class Participant{
      * Return the position
      * @return
      */
-    public char position(){
+    public char position() {
         return position;
     }
     
