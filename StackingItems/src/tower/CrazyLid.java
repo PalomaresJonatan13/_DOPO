@@ -79,10 +79,10 @@ class CrazyLid extends Lid {
         }
         
         TowerItem placeholder = Lid.getLid(this.index);
-        if (placeholder == null) {
+        /* if (placeholder == null) {
             tower.pushLid(this.index);
             placeholder = Lid.getLid(this.index);
-        }
+        } */
         return placeholder;
     }
 }

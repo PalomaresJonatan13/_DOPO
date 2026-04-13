@@ -46,7 +46,7 @@ public class Circle extends Shape_ {
                     xCoord, yCoord, this.diameter(), this.diameter()
                 )
             );
-            canvas.wait(10);
+            // canvas.wait(10);
         }
     }
 }

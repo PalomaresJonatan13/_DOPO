@@ -36,7 +36,7 @@ public class Rectangle extends Shape_ {
                     this.xPosition, this.yPosition, this.width, this.height
                 )
             );
-            canvas.wait(10);
+            // canvas.wait(10);
         }
     }
 }

@@ -51,7 +51,7 @@ public class Triangle extends Shape_ {
                 this.color,
                 new java.awt.Polygon(xpoints, ypoints, 3)
             );
-            canvas.wait(10);
+            // canvas.wait(10);
         }
     }
 }
