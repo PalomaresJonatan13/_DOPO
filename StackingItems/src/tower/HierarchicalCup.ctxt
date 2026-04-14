@@ -1,9 +1,0 @@
-#BlueJ class context
-comment0.target=HierarchicalCup
-comment1.params=index\ towerWidth\ towerHeight
-comment1.target=HierarchicalCup(int,\ int,\ int)
-comment2.params=index\ towerWidth\ towerHeight
-comment2.target=Cup\ getCup(int,\ int,\ int)
-comment3.params=tower
-comment3.target=TowerItem\ onPush(Tower)
-numComments=4
