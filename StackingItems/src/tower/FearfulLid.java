@@ -23,7 +23,7 @@ class FearfulLid extends Lid {
             }
         } else {
             Lid lid_ = (Lid) associatedItems.get("lid");
-            if (lid_.getType() == Lid.FEARFUL) lid = lid_;
+            if (lid_.getType().equals(Lid.FEARFUL)) lid = lid_;
         }
         return lid;
     }
@@ -32,6 +32,7 @@ class FearfulLid extends Lid {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     protected void createExtraShapes() {
         int height = this.height()*BLOCKSIZE;
 
@@ -42,6 +43,7 @@ class FearfulLid extends Lid {
         this.extraShapes[1].changeColor(Color.WHITE);
     }
 
+    @Override
     protected void centerExtraShapesX() {
         int thickness = this.extraShapes[0].getWidth();
         int newX = TOWER_MARGIN + (this.towerWidth - this.width())*BLOCKSIZE/2 - thickness;
@@ -49,6 +51,7 @@ class FearfulLid extends Lid {
         this.extraShapes[1].moveHorizontallyTo(newX);
     }
 
+    @Override
     protected void moveExtraShapesVertically() {
         int shapeHeight = this.extraShapes[0].getHeight();
         int lidTop = TOWER_MARGIN + (this.towerHeight - this.heightReached)*BLOCKSIZE;
@@ -56,6 +59,7 @@ class FearfulLid extends Lid {
         this.extraShapes[1].moveVerticallyTo(lidTop + shapeHeight);
     }
 
+    @Override
     public boolean updateLiddedState() { // called during pushItem
         super.updateLiddedState();
         this.isRemovable = !this.isLidded;
@@ -66,6 +70,7 @@ class FearfulLid extends Lid {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     public TowerItem onPush(Tower tower) throws TowerException {
         TowerItem placeholder = null;
 

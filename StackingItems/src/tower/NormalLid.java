@@ -20,7 +20,7 @@ class NormalLid extends Lid {
             }
         } else {
             Lid lid_ = (Lid) associatedItems.get("lid");
-            if (lid_.getType() == Lid.NORMAL) lid = lid_;
+            if (lid_.getType().equals(Lid.NORMAL)) lid = lid_;
         }
         return lid;
     }
@@ -29,10 +29,14 @@ class NormalLid extends Lid {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     protected void createExtraShapes() {
         this.extraShapes = new Shape_[0];
     }
 
+    @Override
     protected void centerExtraShapesX() { /* EMPTY */ }
+
+    @Override
     protected void moveExtraShapesVertically() { /* EMPTY */ }
 }

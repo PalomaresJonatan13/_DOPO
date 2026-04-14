@@ -32,6 +32,7 @@ class CrazyLid extends Lid {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     protected void createExtraShapes() {
         int height = this.height()*BLOCKSIZE;
 
@@ -42,12 +43,14 @@ class CrazyLid extends Lid {
         this.extraShapes[1].changeColor(Color.WHITE);
     }
 
+    @Override
     protected void centerExtraShapesX() {
         int newX = TOWER_MARGIN + (this.towerWidth + this.width())*BLOCKSIZE/2;
         this.extraShapes[0].moveHorizontallyTo(newX);
         this.extraShapes[1].moveHorizontallyTo(newX);
     }
 
+    @Override
     protected void moveExtraShapesVertically() {
         int shapeHeight = this.extraShapes[0].getHeight();
         int lidTop = TOWER_MARGIN + (this.towerHeight - this.heightReached)*BLOCKSIZE;
@@ -59,6 +62,7 @@ class CrazyLid extends Lid {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     public TowerItem onPush(Tower tower) throws TowerException {
         tower.pop();
         tower.pushLid(this.index);

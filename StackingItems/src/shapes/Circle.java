@@ -14,10 +14,12 @@ public class Circle extends Shape_ {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     public int getWidth() {
         return this.diameter();
     }
 
+    @Override
     public int getHeight() {
         return this.diameter();
     }
@@ -34,8 +36,9 @@ public class Circle extends Shape_ {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     protected void draw(){
-        if(this.isVisible) {
+        if(this.visible) {
             Canvas canvas = Canvas.getCanvas();
             int xCoord = this.xPosition - this.radius;
             int yCoord = this.yPosition - this.radius;

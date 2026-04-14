@@ -22,7 +22,7 @@ class HierarchicalCup extends Cup {
             }
         } else {
             Cup cup_ = (Cup) associatedItems.get("cup");
-            if (cup_.getType() == Cup.HIERARCHICAL) cup = cup_;
+            if (cup_.getType().equals(Cup.HIERARCHICAL)) cup = cup_;
         }
         return cup;
     }
@@ -31,6 +31,7 @@ class HierarchicalCup extends Cup {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     protected void createExtraShapes() {
         int width = this.width()*BLOCKSIZE;
 
@@ -41,6 +42,7 @@ class HierarchicalCup extends Cup {
         this.extraShapes[1].changeColor(Color.WHITE);
     }
 
+    @Override
     protected void centerExtraShapesX() {
         int center = TOWER_MARGIN + this.towerWidth*BLOCKSIZE/2;
         Shape_ shape1 = this.extraShapes[0];
@@ -49,6 +51,7 @@ class HierarchicalCup extends Cup {
         shape2.moveHorizontallyTo(center);
     }
 
+    @Override
     protected void moveExtraShapesVertically() {
         int newY = TOWER_MARGIN + (this.towerHeight - (this.heightReached - this.height())) * BLOCKSIZE;
         this.extraShapes[0].moveVerticallyTo(newY);
@@ -59,6 +62,7 @@ class HierarchicalCup extends Cup {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     public TowerItem onPush(Tower tower) throws TowerException {
         tower.pop();
 

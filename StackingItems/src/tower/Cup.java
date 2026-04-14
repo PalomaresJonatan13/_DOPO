@@ -12,16 +12,18 @@ abstract class Cup extends TowerItem {
     public static String NORMAL = "normal";
     public static String OPENER = "opener";
     public static String HIERARCHICAL = "hierarchical";
-    public static String[] types = {NORMAL, OPENER, HIERARCHICAL};
+    public static String COVERED = "covered";
+    public static String[] types = {NORMAL, OPENER, HIERARCHICAL, COVERED};
 
     protected Cup(int index, String type, int towerWidth, int towerHeight) {
         super(index, type, towerWidth, towerHeight);
     }
 
     public static Cup getCup(int index, String type, int towerWidth, int towerHeight) {
-        if (type == NORMAL) return NormalCup.getCup(index, towerWidth, towerHeight);
-        else if (type == OPENER) return OpenerCup.getCup(index, towerWidth, towerHeight);
-        else if (type == HIERARCHICAL) return HierarchicalCup.getCup(index, towerWidth, towerHeight);
+        if (type.equals(NORMAL)) return NormalCup.getCup(index, towerWidth, towerHeight);
+        else if (type.equals(OPENER)) return OpenerCup.getCup(index, towerWidth, towerHeight);
+        else if (type.equals(HIERARCHICAL)) return HierarchicalCup.getCup(index, towerWidth, towerHeight);
+        else if (type.equals(COVERED)) return CoveredCup.getCup(index, towerWidth, towerHeight);
         else throw new IllegalArgumentException("The type given is not valid.");
     }
 
@@ -41,6 +43,7 @@ abstract class Cup extends TowerItem {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     public void enable() {
         if (!this.isActive) {
             if (activeItems.containsKey(this.index)) {
@@ -55,6 +58,7 @@ abstract class Cup extends TowerItem {
         }
     }
 
+    @Override
     public void disable() {
         if (this.isActive) {
             TowerItem associatedLid = activeItems.get(this.index).get("lid");
@@ -72,18 +76,22 @@ abstract class Cup extends TowerItem {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     public boolean isCup() {
         return true;
     }
 
+    @Override
     public int height() {
         return this.width();
     }
 
+    @Override
     public String toString() {
-        return "Cup(" + this.index + ")";
+        return "Cup(" + this.index + ", " + this.type + ")";
     }
 
+    @Override
     public String[] asArray() {
         return new String[]{"cup", this.index+""};
     }
@@ -96,6 +104,7 @@ abstract class Cup extends TowerItem {
         return lid;
     }
 
+    @Override
     public boolean updateLiddedState() {
         Lid lid = this.lid();
         if (lid != null) {
@@ -109,6 +118,7 @@ abstract class Cup extends TowerItem {
         return this.isLidded;
     }
 
+    @Override
     public void setColor(Color color) {
         if (this.color != color) {
             if (TowerItem.isAValidItemColor(color)) {
@@ -126,30 +136,42 @@ abstract class Cup extends TowerItem {
         }
     }
 
+    @Override
     public void makeVisible() {
         if (this.isActive) {
             this.base.makeVisible();
             this.left.makeVisible();
             this.right.makeVisible();
             this.makeExtraShapesVisible();
-            this.isVisible = true;
+            this.visible = true;
         } else {
             throw new IllegalStateException("Cannot make the cup visible if it is not active.");
         }
     }
 
+    @Override
     public void makeInvisible() {
         this.base.makeInvisible();
         this.left.makeInvisible();
         this.right.makeInvisible();
         this.makeExtraShapesInvisible();
-        this.isVisible = false;
+        this.visible = false;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return (
+            this.base.isVisible() &&
+            this.left.isVisible() &&
+            this.right.isVisible()
+        );
     }
 
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     protected void createSides() {
         // the sides will overlap, but it wont matter
         int sideLengthPx = this.width()*BLOCKSIZE;
@@ -166,6 +188,7 @@ abstract class Cup extends TowerItem {
     }
 
     // this is in terms of pixels
+    @Override
     protected void centerX() {
         int newX = TOWER_MARGIN + (this.towerWidth - this.width())*BLOCKSIZE/2;
         this.base.moveHorizontallyTo(newX);
@@ -174,6 +197,7 @@ abstract class Cup extends TowerItem {
         this.centerExtraShapesX();
     }
 
+    @Override
     protected void moveVerticallyTo(int y) {
         this.base.moveVerticallyTo(y + (this.height() - 1)*BLOCKSIZE);
         this.left.moveVerticallyTo(y);

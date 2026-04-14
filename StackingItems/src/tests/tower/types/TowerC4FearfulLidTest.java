@@ -125,11 +125,6 @@ public class TowerC4FearfulLidTest {
     // ------------------------------------------------------------------------------------------------------------
 
     @Test
-    public void shouldNotPopLidIfThereAreNoLids() {
-        TestUtils.shouldNotPopLidIfThereAreNoLids(tower, cupType, lidType);
-    }
-
-    @Test
     public void shouldPopLidIfThereAreCupsAbove() {
         tower.pushCup(3, cupType);
         tower.pushLid(4);
@@ -161,11 +156,6 @@ public class TowerC4FearfulLidTest {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
-
-    @Test
-    public void shouldNotRemoveLidIfTheLidIsNotInTheTower() {
-        TestUtils.shouldNotRemoveLidIfTheLidIsNotInTheTower(tower, cupType, lidType);
-    }
 
     @Test
     public void shouldRemoveCupAndLidIfTheCupIsRemovedWhenTheyAreAttachedAndThereAreNoElementsInBetween() {

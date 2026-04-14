@@ -11,7 +11,7 @@ abstract class TowerItem {
     protected int index;
     protected Color color;
     protected int heightReached;
-    protected boolean isVisible = false;
+    protected boolean visible = false;
     protected boolean isLidded = false;
     protected boolean isActive = false;
     protected boolean isRemovable = true;
@@ -112,9 +112,6 @@ abstract class TowerItem {
     public TowerItem onPush(Tower tower) throws TowerException {
         return this;
     };
-    public void onPop(Tower tower)    { /* EMPTY */ };
-    public void onRemove(Tower tower) { /* EMPTY */ };
-    public void onCover(Tower tower)  { /* EMPTY */ };
 
     protected void moveTo(int y) {
         int bottomOfTower = TOWER_MARGIN + this.towerHeight*BLOCKSIZE;
@@ -146,6 +143,7 @@ abstract class TowerItem {
     public abstract void setColor(Color color);
     public abstract void makeVisible();
     public abstract void makeInvisible();
+    public abstract boolean isVisible();
     protected abstract void createSides();
     protected abstract void createExtraShapes();
     protected abstract void centerX();

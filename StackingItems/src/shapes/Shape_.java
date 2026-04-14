@@ -6,13 +6,13 @@ public abstract class Shape_ {
     protected int xPosition;
     protected int yPosition;
     protected Color color;
-    protected boolean isVisible;
+    protected boolean visible;
 
     protected Shape_() {
         this.xPosition = 0;
         this.yPosition = 0;
         this.color = Color.BLACK;
-        this.isVisible = false;
+        this.visible = false;
     }
 
     // ------------------------------------------------------------------------------------------------------------
@@ -33,17 +33,21 @@ public abstract class Shape_ {
     }
 
     public void makeVisible() {
-        if (!this.isVisible) {
-            isVisible = true;
+        if (!this.visible) {
+            this.visible = true;
             this.draw();
         }
     }
     
     public void makeInvisible(){
-        if (this.isVisible) {
+        if (this.visible) {
             this.erase();
-            isVisible = false;
+            this.visible = false;
         }
+    }
+
+    public boolean isVisible() {
+        return this.visible;
     }
 
     public void moveHorizontally(int distance){
@@ -84,7 +88,7 @@ public abstract class Shape_ {
     // ------------------------------------------------------------------------------------------------------------
 
     protected void erase(){
-        if(this.isVisible) {
+        if(this.visible) {
             Canvas canvas = Canvas.getCanvas();
             canvas.erase(this);
         }

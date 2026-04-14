@@ -20,10 +20,12 @@ public class Triangle extends Shape_ {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     public int getWidth() {
         return this.width;
     }
 
+    @Override
     public int getHeight() {
         return this.height;
     }
@@ -32,8 +34,9 @@ public class Triangle extends Shape_ {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     protected void draw(){
-        if(this.isVisible) {
+        if(this.visible) {
             Canvas canvas = Canvas.getCanvas();
             int[] xpoints = {
                 this.xPosition,

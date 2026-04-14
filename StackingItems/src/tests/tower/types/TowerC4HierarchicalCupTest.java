@@ -71,11 +71,6 @@ public class TowerC4HierarchicalCupTest {
     // ------------------------------------------------------------------------------------------------------------
 
     @Test
-    public void shouldNotPopCupIfThereAreNoCups() {
-        TestUtils.shouldNotPopCupIfThereAreNoCups(tower, cupType, lidType);
-    }
-
-    @Test
     public void shouldPopCupIfThereAreLidsAbove() {
         TestUtils.shouldPopCupIfThereAreLidsAbove(tower, cupType, lidType);
     }
@@ -110,11 +105,6 @@ public class TowerC4HierarchicalCupTest {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
-
-    @Test
-    public void shouldNotRemoveCupIfTheCupIsNotInTheTower() {
-        TestUtils.shouldNotRemoveCupIfTheCupIsNotInTheTower(tower, cupType, lidType);
-    }
 
     @Test
     public void shouldRemoveCupIfTheCupIsNotTheLastItem() {

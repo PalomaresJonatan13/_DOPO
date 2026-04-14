@@ -7,6 +7,7 @@ public class TestUtils {
     public static final String NORMAL_CUP = "normal";
     public static final String OPENER_CUP = "opener";
     public static final String HIERARCHICAL_CUP = "hierarchical";
+    public static final String COVERED_CUP = "covered";
     public static final String NORMAL_LID = "normal";
     public static final String FEARFUL_LID = "fearful";
     public static final String CRAZY_LID = "crazy";

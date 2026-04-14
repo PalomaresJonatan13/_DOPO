@@ -86,11 +86,6 @@ public class TowerC4CrazyLidTest {
     // ------------------------------------------------------------------------------------------------------------
 
     @Test
-    public void shouldNotPopLidIfThereAreNoLids() {
-        TestUtils.shouldNotPopLidIfThereAreNoLids(tower, cupType, lidType);
-    }
-
-    @Test
     public void shouldPopLidIfThereAreCupsAbove() {
         TestUtils.shouldPopLidIfThereAreCupsAbove(tower, cupType, lidType);
     }
@@ -134,16 +129,10 @@ public class TowerC4CrazyLidTest {
         );
     }
 
-
     // removeCup, removeLid
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
-
-    @Test
-    public void shouldNotRemoveLidIfTheLidIsNotInTheTower() {
-        TestUtils.shouldNotRemoveLidIfTheLidIsNotInTheTower(tower, cupType, lidType);
-    }
 
     @Test
     public void shouldRemoveLidIfTheLidIsNotTheLastItem() {

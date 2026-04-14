@@ -57,6 +57,20 @@ public class TowerVisibleTest {
         );
     }
 
+    @Test
+    public void shouldNotPushCoveredCupIfTowerVisibleAndHeightReachedIsGreaterThanTowersHeight() {
+        tower.pushLid(1);
+        tower.pushCup(5, TestUtils.COVERED_CUP);
+        
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "1"}},
+            new int[] {1},
+            new int[] {},
+            false
+        );
+    }
+
     // makeVisible, makeInvisible
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------

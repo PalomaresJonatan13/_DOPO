@@ -19,9 +19,9 @@ abstract class Lid extends TowerItem {
     }
 
     public static Lid getLid(int index, String type, int towerWidth, int towerHeight) {
-        if (type == NORMAL) return NormalLid.getLid(index, towerWidth, towerHeight);
-        else if (type == FEARFUL) return FearfulLid.getLid(index, towerWidth, towerHeight);
-        else if (type == CRAZY) return CrazyLid.getLid(index, towerWidth, towerHeight);
+        if (type.equals(NORMAL)) return NormalLid.getLid(index, towerWidth, towerHeight);
+        else if (type.equals(FEARFUL)) return FearfulLid.getLid(index, towerWidth, towerHeight);
+        else if (type.equals(CRAZY)) return CrazyLid.getLid(index, towerWidth, towerHeight);
         else throw new IllegalArgumentException("The type given is not valid.");
     }
 
@@ -41,6 +41,7 @@ abstract class Lid extends TowerItem {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     public void enable() {
         if (!this.isActive) {
             if (activeItems.containsKey(this.index)) {
@@ -55,6 +56,7 @@ abstract class Lid extends TowerItem {
         }
     }
 
+    @Override
     public void disable() {
         if (this.isActive) {
             TowerItem associatedCup = activeItems.get(this.index).get("cup");
@@ -72,22 +74,26 @@ abstract class Lid extends TowerItem {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     public boolean isCup() {
         return false;
     }
-
+    
     public boolean isInverted() {
         return this.isInverted;
     }
 
+    @Override
     public int height() {
         return 1;
     }
-    
+
+    @Override
     public String toString() {
-        return "Lid(" + this.index + ")";
+        return "Lid(" + this.index + ", " + this.type + ")";
     }
 
+    @Override
     public String[] asArray() {
         return new String[]{"lid", this.index+""};
     }
@@ -100,6 +106,7 @@ abstract class Lid extends TowerItem {
         return cup;
     }
 
+    @Override
     public boolean updateLiddedState() {
         Cup cup = this.cup();
         if (cup != null) {
@@ -108,7 +115,7 @@ abstract class Lid extends TowerItem {
             if (this.heightReached == cup.getHeightReached() +
                     (this.isInverted ? - cup.height() : 1)) {
                 this.isLidded = true;
-                if (this.isVisible) {
+                if (this.visible) {
                     this.shapesLidded[0].makeVisible();
                     this.shapesLidded[1].makeVisible();
                 }
@@ -123,6 +130,7 @@ abstract class Lid extends TowerItem {
         return this.isLidded;
     }
 
+    @Override
     public void setColor(Color color) {
         if (this.color != color) {
             if (TowerItem.isAValidItemColor(color)) {
@@ -138,6 +146,7 @@ abstract class Lid extends TowerItem {
         }
     }
 
+    @Override
     public void makeVisible() {
         if (this.isActive) {
             this.base.makeVisible();
@@ -146,24 +155,33 @@ abstract class Lid extends TowerItem {
                 this.shapesLidded[0].makeVisible();
                 this.shapesLidded[1].makeVisible();
             }
-            this.isVisible = true;
+            this.visible = true;
         } else {
             throw new IllegalStateException("Cannot make the lid visible if it is not active.");
         }
     }
 
+    @Override
     public void makeInvisible() {
         this.base.makeInvisible();
         this.makeExtraShapesInvisible();
         this.shapesLidded[0].makeInvisible();
         this.shapesLidded[1].makeInvisible();
-        this.isVisible = false;
+        this.visible = false;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return (
+            this.base.isVisible()
+        );
     }
 
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     protected void createSides() {
         this.base = new Rectangle(this.width()*BLOCKSIZE, BLOCKSIZE);
         this.base.changeColor(this.color);
@@ -176,6 +194,7 @@ abstract class Lid extends TowerItem {
     }
 
     // this is in terms of pixels
+    @Override
     protected void centerX() {
         int newX = TOWER_MARGIN + (this.towerWidth - this.width())*BLOCKSIZE/2;
         this.base.moveHorizontallyTo(newX);
@@ -187,6 +206,7 @@ abstract class Lid extends TowerItem {
         this.shapesLidded[1].moveHorizontallyTo(centerShape1);
     }
 
+    @Override
     protected void moveVerticallyTo(int y) {
         this.base.moveVerticallyTo(y);
         this.shapesLidded[0].moveVerticallyTo(y + BLOCKSIZE/2);

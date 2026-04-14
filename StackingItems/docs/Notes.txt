@@ -1,3 +1,0 @@
-other Cup: on push, it gets covered by its lid (remove and push again if it was already in the tower, or just push)
-
-remove .onPop, .onRemove and .onCover if needed.

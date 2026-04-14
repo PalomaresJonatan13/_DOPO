@@ -129,6 +129,23 @@ public class TowerC4Test {
         );
     }
 
+    @Test
+    public void shouldPushCoveredCupIfAnotherTypeOfCupWasUsedAndRemoved() {
+        tower.pushCup(2);
+        tower.pushLid(4);
+        tower.pushCup(3);
+        tower.popCup();
+        tower.pushCup(3, TestUtils.COVERED_CUP);
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "2"}, {"lid", "4"}, {"cup", "3"}, {"lid", "3"}},
+            new int[] {3, 4, 9, 10},
+            new int[] {3},
+            true
+        );
+    }
+
     // General - ReverseTower
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
@@ -164,6 +181,22 @@ public class TowerC4Test {
             new String[][] {{"cup", "5"}, {"cup", "1"}, {"cup", "3"}, {"lid", "4"}},
             new int[] {9, 2, 7, 8},
             new int[] {},
+            true
+        );
+    }
+
+    @Test
+    public void shouldReverseTowerContainingACoveredCup() {
+        tower.pushCup(3);
+        tower.pushCup(2, TestUtils.COVERED_CUP);
+        tower.pushLid(5);
+        tower.reverseTower();
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "5"}, {"cup", "2"}, {"lid", "2"}, {"cup", "3"}},
+            new int[] {1, 4, 5, 10},
+            new int[] {2},
             true
         );
     }
@@ -235,6 +268,22 @@ public class TowerC4Test {
             new String[][] {{"lid", "5"}, {"cup", "4"}, {"cup", "2"}, {"lid", "2"}},
             new int[] {1, 8, 5, 6},
             new int[] {2},
+            true
+        );
+    }
+
+    @Test
+    public void shouldOrderTowerContainingACoveredCup() {
+        tower.pushCup(3);
+        tower.pushCup(2, TestUtils.COVERED_CUP);
+        tower.pushLid(3);
+        tower.orderTower();
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "3"}, {"lid", "3"}, {"cup", "2"}, {"lid", "2"}},
+            new int[] {5, 6, 9, 10},
+            new int[] {2, 3},
             true
         );
     }
@@ -318,6 +367,63 @@ public class TowerC4Test {
             new String[][] {{"cup", "5"}, {"cup", "1"}, {"lid", "2"}, {"lid", "4"}, {"cup", "3"}},
             new int[] {9, 2, 3, 4, 9},
             new int[] {},
+            true
+        );
+    }
+
+    @Test
+    public void shouldSwapContainingACoveredCup1() {
+        tower.pushLid(2);
+        tower.pushCup(3, TestUtils.COVERED_CUP);
+        tower.pushCup(1);
+        tower.swap(
+            new String[]{"lid", "2"},
+            new String[]{"lid", "3"}
+        );
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "3"}, {"lid", "3"}, {"lid", "2"}, {"cup", "1"}},
+            new int[] {5, 6, 7, 8},
+            new int[] {3},
+            true
+        );
+    }
+
+    @Test
+    public void shouldSwapContainingACoveredCup2() {
+        tower.pushLid(2);
+        tower.pushCup(3, TestUtils.COVERED_CUP);
+        tower.pushCup(1);
+        tower.swap(
+            new String[]{"lid", "2"},
+            new String[]{"cup", "3"}
+        );
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "3"}, {"lid", "3"}, {"lid", "2"}, {"cup", "1"}},
+            new int[] {5, 6, 7, 8},
+            new int[] {3},
+            true
+        );
+    }
+
+    @Test
+    public void shouldSwapContainingACoveredCup3() {
+        tower.pushLid(2);
+        tower.pushCup(3, TestUtils.COVERED_CUP);
+        tower.pushCup(1);
+        tower.swap(
+            new String[]{"lid", "3"},
+            new String[]{"cup", "3"}
+        );
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "2"}, {"cup", "3"}, {"lid", "3"}, {"cup", "1"}},
+            new int[] {1, 6, 7, 8},
+            new int[] {3},
             true
         );
     }
@@ -408,6 +514,31 @@ public class TowerC4Test {
             new String[][] {{"cup", "2"}, {"lid", "5"}, {"cup", "4"}, {"cup", "3"}},
             new int[] {3, 4, 11, 10},
             new int[] {},
+            true
+        );
+        
+        assertTrue(result.length > 0);
+        if (result.length > 0) {
+            int lastHeight = tower.height();
+            tower.swap(result[0], result[1]);
+            assertTrue(tower.height() < lastHeight);
+        }
+    }
+
+    @Test
+    public void shouldSwapToReduceContainingACoveredCup() {
+        tower.pushCup(4);
+        tower.pushLid(3);
+        tower.pushCup(1, TestUtils.COVERED_CUP);
+        tower.pushLid(2);
+        tower.pushCup(2);
+        String[][] result = tower.swapToReduce();
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "4"}, {"lid", "3"}, {"cup", "1"}, {"lid", "1"}, {"lid", "2"}, {"cup", "2"}},
+            new int[] {7, 2, 3, 4, 5, 8},
+            new int[] {1},
             true
         );
         
@@ -534,6 +665,23 @@ public class TowerC4Test {
     }
 
     @Test
+    public void shouldCoverContainingACoveredCup() {
+        tower.pushCup(3);
+        tower.pushLid(1);
+        tower.pushCup(2, TestUtils.COVERED_CUP);
+        tower.pushLid(3);
+        tower.cover();
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"cup", "3"}, {"lid", "1"}, {"lid", "3"}, {"cup", "2"}, {"lid", "2"}},
+            new int[] {5, 2, 6, 9, 10},
+            new int[] {2, 3},
+            true
+        );
+    }
+
+    @Test
     public void shouldCoverContainingAFearfulLid() {
         tower.pushLid(4);
         tower.pushCup(4);
@@ -571,8 +719,6 @@ public class TowerC4Test {
             true
         );
     }
-
-    // specially for crazy lid
 
     // Opener Cup
     // ------------------------------------------------------------------------------------------------------------
@@ -753,6 +899,43 @@ public class TowerC4Test {
             new int[] {5, 2, 3, 4},
             new int[] {},
             false
+        );
+    }
+
+    // Covered Cup
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------
+
+    // Push 
+    // -----------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void shouldPushCoveredCupIfItsLidDoesNotExist() {
+        tower.pushLid(1);
+        tower.pushCup(3, TestUtils.COVERED_CUP);
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "1"}, {"cup", "3"}, {"lid", "3"}},
+            new int[] {1, 6, 7},
+            new int[] {3},
+            true
+        );
+    }
+
+    @Test
+    public void shouldPushCoveredCupIfItsLidDoesExist() {
+        tower.pushLid(3);
+        tower.pushLid(1);
+        tower.pushCup(3, TestUtils.COVERED_CUP);
+
+        TestUtils.assertTowerState(
+            tower,
+            new String[][] {{"lid", "1"}, {"cup", "3"}, {"lid", "3"}},
+            new int[] {1, 6, 7},
+            new int[] {3},
+            true
         );
     }
 

@@ -21,7 +21,7 @@ class NormalCup extends Cup {
             }
         } else {
             Cup cup_ = (Cup) associatedItems.get("cup");
-            if (cup_.getType() == Cup.NORMAL) cup = cup_;
+            if (cup_.getType().equals(Cup.NORMAL)) cup = cup_;
         }
         return cup;
     }
@@ -30,10 +30,14 @@ class NormalCup extends Cup {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     protected void createExtraShapes() {
         this.extraShapes = new Shape_[0];
     }
 
+    @Override
     protected void centerExtraShapesX() { /* EMPTY */ }
+
+    @Override
     protected void moveExtraShapesVertically() { /* EMPTY */ }
 }

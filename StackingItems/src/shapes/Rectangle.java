@@ -14,10 +14,12 @@ public class Rectangle extends Shape_ {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     public int getWidth() {
         return this.width;
     }
 
+    @Override
     public int getHeight() {
         return this.height;
     }
@@ -26,8 +28,9 @@ public class Rectangle extends Shape_ {
     // ------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------
 
+    @Override
     protected void draw() {
-        if(this.isVisible) {
+        if(this.visible) {
             Canvas canvas = Canvas.getCanvas();
             canvas.draw(
                 this,
