@@ -207,10 +207,10 @@ abstract class TowerItem {
     // ------------------------------------------------------------------------------------------------------------
 
     public static Color randomItemColor() {
-        float lim1 = (140f-1) / 360;
-        float lim2 = (200f+1) / 360;
-        float lim3 = (280f-1) / 360;
-        float lim4 = (330f+1) / 360;
+        float lim1 = (140f-5) / 360;
+        float lim2 = (200f+5) / 360;
+        float lim3 = (280f-5) / 360;
+        float lim4 = (330f+5) / 360;
         float hue = ((RANDOM.nextBoolean()) ?
             RANDOM.nextFloat()*lim1 :
             ((RANDOM.nextBoolean()) ?
@@ -218,8 +218,8 @@ abstract class TowerItem {
                 lim4 + RANDOM.nextFloat()*(1-lim4)
             )
         );
-        float saturation = (0.20f+0.01f) + RANDOM.nextFloat()*(0.3f-0.02f);
-        float brightness = (0.15f+0.01f) + RANDOM.nextFloat()*(0.7f-0.02f);
+        float saturation = (0.20f+0.02f) + RANDOM.nextFloat()*(0.3f-0.04f);
+        float brightness = (0.15f+0.02f) + RANDOM.nextFloat()*(0.7f-0.04f);
         return Color.getHSBColor(hue, saturation, brightness);
     }
 
