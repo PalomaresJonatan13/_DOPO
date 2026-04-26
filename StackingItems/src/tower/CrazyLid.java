@@ -5,7 +5,7 @@ import shapes.*;
 import java.util.HashMap;
 import java.awt.Color;
 
-class CrazyLid extends Lid {
+final class CrazyLid extends Lid {
     private CrazyLid(int index, int towerWidth, int towerHeight) {
         super(index, Lid.CRAZY, towerWidth, towerHeight);
         this.isInverted = true;
@@ -22,8 +22,8 @@ class CrazyLid extends Lid {
                 lid.setColor(cup.getColor());
             }
         } else {
-            Lid lid_ = (Lid) associatedItems.get("lid");
-            if (lid_.getType() == Lid.CRAZY) lid = lid_;
+            lid = (Lid) associatedItems.get("lid");
+            if (!lid.getType().equals(Lid.CRAZY)) lid = null;
         }
         return lid;
     }
@@ -36,7 +36,7 @@ class CrazyLid extends Lid {
     protected void createExtraShapes() {
         int height = this.height()*BLOCKSIZE;
 
-        this.extraShapes = new Shape_[2];
+        this.extraShapes = new Shape[2];
         this.extraShapes[0] = new Rectangle(BLOCKSIZE/4, height/2);
         this.extraShapes[1] = new Rectangle(BLOCKSIZE/4, height/2);
         this.extraShapes[0].changeColor(Color.BLACK);

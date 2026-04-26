@@ -15,7 +15,7 @@ import java.util.*;
  *
  * @version: 1.6 (shapes)
  */
-public class Canvas {
+public final class Canvas {
     // Note: The implementation of this class (specifically the handling of
     // shape identity and colors) is slightly more complex than necessary. This
     // is done on purpose to keep the interface and instance fields of the
@@ -47,7 +47,7 @@ public class Canvas {
     private Color backgroundColour;
     private Image canvasImage;
     private List <Object> objects;
-    private HashMap <Object,ShapeDescription> shapes;
+    private HashMap <Object, ShapeDescription> shapes;
     
     /**
      * Create a Canvas.
@@ -98,7 +98,7 @@ public class Canvas {
      // Note: this is a slightly backwards way of maintaining the shape
      // objects. It is carefully designed to keep the visible shape interfaces
      // in this project clean and simple for educational purposes.
-    public void draw(Object referenceObject, Color color, Shape shape) { // ------------
+    public void draw(Object referenceObject, Color color, java.awt.Shape shape) { // ------------
         objects.remove(referenceObject);
         objects.add(referenceObject);
         shapes.put(referenceObject, new ShapeDescription(shape, color));
@@ -161,7 +161,7 @@ public class Canvas {
      * Canvas frame. This is essentially a JPanel with added capability to
      * refresh the image drawn on it.
      */
-    private class CanvasPane extends JPanel{
+    private final class CanvasPane extends JPanel {
         public void paint(Graphics g){
             g.drawImage(canvasImage, 0, 0, null);
         }
@@ -172,11 +172,11 @@ public class Canvas {
      * Canvas frame. This is essentially a JPanel with added capability to
      * refresh the image drawn on it.
      */
-    private class ShapeDescription{
-    	private Shape shape;
+    private final class ShapeDescription{
+    	private java.awt.Shape shape;
         private Color color;
 
-        public ShapeDescription(Shape shape, Color color) { // ------------
+        public ShapeDescription(java.awt.Shape shape, Color color) { // ------------
             this.shape = shape;
             this.color = color;
         }

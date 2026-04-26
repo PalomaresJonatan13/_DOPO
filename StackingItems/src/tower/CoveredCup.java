@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import exceptions.TowerException;
 
-class CoveredCup extends Cup {
+final class CoveredCup extends Cup {
     protected CoveredCup(int index, int towerWidth, int towerHeight) {
         super(index, Cup.COVERED, towerWidth, towerHeight);
     }
@@ -22,8 +22,8 @@ class CoveredCup extends Cup {
                 cup.setColor(lid.getColor());
             }
         } else {
-            Cup cup_ = (Cup) associatedItems.get("cup");
-            if (cup_.getType().equals(Cup.COVERED)) cup = cup_;
+            cup = (Cup) associatedItems.get("cup");
+            if (!cup.getType().equals(Cup.COVERED)) cup = null;
         }
         return cup;
     }
@@ -34,7 +34,7 @@ class CoveredCup extends Cup {
 
     @Override
     protected void createExtraShapes() {
-        this.extraShapes = new Shape_[2];
+        this.extraShapes = new Shape[2];
         this.extraShapes[0] = new Circle((int) (BLOCKSIZE * 1f/3));
         this.extraShapes[1] = new Circle((int) (BLOCKSIZE * 1f/6));
         this.extraShapes[0].changeColor(Color.WHITE);
@@ -71,7 +71,7 @@ class CoveredCup extends Cup {
             tower.remove(this.index, false);
             tower.pushLid(this.index, lid.getType());
         }
-        if (TowerItem.getTowerItem(this.index, false) == null) throw new TowerException(TowerException.OVERFLOW(this.index, true, this.type));
+        if (TowerItem.getTowerItem(this.index, false) == null) throw new TowerException(TowerException.overflow(this.index, true, this.type));
         
         TowerItem placeholder = Cup.getCup(this.index);
         return placeholder;        

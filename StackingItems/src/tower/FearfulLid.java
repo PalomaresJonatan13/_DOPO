@@ -5,7 +5,7 @@ import shapes.*;
 import java.util.*;
 import java.awt.Color;
 
-class FearfulLid extends Lid {
+final class FearfulLid extends Lid {
     private FearfulLid(int index, int towerWidth, int towerHeight) {
         super(index, Lid.FEARFUL, towerWidth, towerHeight);
         // this.extraShapes = new Shape_[]{};
@@ -22,8 +22,8 @@ class FearfulLid extends Lid {
                 lid.setColor(cup.getColor());
             }
         } else {
-            Lid lid_ = (Lid) associatedItems.get("lid");
-            if (lid_.getType().equals(Lid.FEARFUL)) lid = lid_;
+            lid = (Lid) associatedItems.get("lid");
+            if (!lid.getType().equals(Lid.FEARFUL)) lid = null;
         }
         return lid;
     }
@@ -36,7 +36,7 @@ class FearfulLid extends Lid {
     protected void createExtraShapes() {
         int height = this.height()*BLOCKSIZE;
 
-        this.extraShapes = new Shape_[2];
+        this.extraShapes = new Shape[2];
         this.extraShapes[0] = new Rectangle(BLOCKSIZE/4, height/2);
         this.extraShapes[1] = new Rectangle(BLOCKSIZE/4, height/2);
         this.extraShapes[0].changeColor(Color.BLACK);
@@ -79,7 +79,7 @@ class FearfulLid extends Lid {
             placeholder = this;
         } else {
             tower.pop();
-            throw new TowerException(TowerException.INVALID_PUSH_FEARFUL(index));
+            throw new TowerException(TowerException.invalidPushFearful(index));
         }
         
         return placeholder;

@@ -16,7 +16,7 @@ abstract class TowerItem {
     protected boolean isActive = false;
     protected boolean isRemovable = true;
     protected String type;
-    protected Shape_[] extraShapes;
+    protected Shape[] extraShapes;
 
     protected int towerWidth;
     protected int towerHeight;
@@ -119,13 +119,13 @@ abstract class TowerItem {
     }
 
     protected void makeExtraShapesVisible() {
-        for (Shape_ shape : this.extraShapes) {
+        for (Shape shape : this.extraShapes) {
             shape.makeVisible();
         }
     }
 
     protected void makeExtraShapesInvisible() {
-        for (Shape_ shape : this.extraShapes) {
+        for (Shape shape : this.extraShapes) {
             shape.makeInvisible();
         }
     }

@@ -3,10 +3,9 @@ import shapes.*;
 
 import java.util.HashMap;
 
-class NormalCup extends Cup {
+final class NormalCup extends Cup {
     protected NormalCup(int index, int towerWidth, int towerHeight) {
         super(index, Cup.NORMAL, towerWidth, towerHeight);
-        this.extraShapes = new Shape_[]{};
     }
 
     public static Cup getCup(int index, int towerWidth, int towerHeight) {
@@ -20,8 +19,8 @@ class NormalCup extends Cup {
                 cup.setColor(lid.getColor());
             }
         } else {
-            Cup cup_ = (Cup) associatedItems.get("cup");
-            if (cup_.getType().equals(Cup.NORMAL)) cup = cup_;
+            cup = (Cup) associatedItems.get("cup");
+            if (!cup.getType().equals(Cup.NORMAL)) cup = null;
         }
         return cup;
     }
@@ -32,7 +31,7 @@ class NormalCup extends Cup {
 
     @Override
     protected void createExtraShapes() {
-        this.extraShapes = new Shape_[0];
+        this.extraShapes = new Shape[0];
     }
 
     @Override

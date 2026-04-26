@@ -115,11 +115,11 @@ public class Tower {
     }
 
     public boolean isVisible() {
-        boolean isVisible_ = this.frame.isVisible();
+        boolean visible = this.frame.isVisible();
         for (TowerItem item : this.towerItems) {
-            isVisible_ = isVisible_ && item.isVisible();
+            visible = visible && item.isVisible();
         }
-        return isVisible_;
+        return visible;
     }
 
     // ------------------------------------------------------------------------------------------------------------
@@ -387,7 +387,7 @@ public class Tower {
                 this.visibleItems = oldVisibility;
                 this.restoreTower(towerItemsCopy, this.visibleItems);
                 this.ok = false;
-                throw new TowerException(TowerException.OVERFLOW(index, isCup, type));
+                throw new TowerException(TowerException.overflow(index, isCup, type));
             }
         }
     }
@@ -422,7 +422,7 @@ public class Tower {
                 if (isVisible) this.makeItemsVisible();
                 this.ok = true;
             } else {
-                throw new TowerException(TowerException.REMOVING_NOT_REMOVABLE_ITEM(item.getIndex(), item.isCup(), item.getType()));
+                throw new TowerException(TowerException.removingNotRemovableItem(item.getIndex(), item.isCup(), item.getType()));
             }
         } else {
             throw new TowerArgumentException("Remove: The desired item to be removed does not belong to the Tower.");
@@ -609,7 +609,7 @@ public class Tower {
                 if (isVisible) this.makeItemsVisible();
             } catch (TowerException e) {
                 this.restoreTower(towerItemsCopy, isVisible);
-                throw new TowerException(TowerException.OVERFLOW(index, isCup, type));
+                throw new TowerException(TowerException.overflow(index, isCup, type));
             }
         } else {
             throw new TowerArgumentException("Insert: The given position to insert should be greater than or equal to 0 and less than or equal to the number of items in the Tower.");
@@ -649,7 +649,7 @@ public class Tower {
                     if (isVisible) this.makeItemsVisible();
                 } catch (TowerException e) {
                     this.restoreTower(towerItemsCopy, isVisible);
-                    throw new TowerException(TowerException.IMPOSSIBLE_SWAP(index1, isCup1, item1.getType(), index2, isCup2, item2.getType()));
+                    throw new TowerException(TowerException.impossibleSwap(index1, isCup1, item1.getType(), index2, isCup2, item2.getType()));
                 }
             } else {this.ok = true;}
         } else {
@@ -804,7 +804,7 @@ public class Tower {
                     }
                 } catch (TowerException e) {
                     this.restoreTower(towerItemsCopy, this.visibleItems);
-                    throw new TowerException(TowerException.IMPOSSIBLE_COVER(index));
+                    throw new TowerException(TowerException.impossibleCover(index));
                 }
             }
         } else {

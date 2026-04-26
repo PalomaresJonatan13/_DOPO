@@ -3,7 +3,7 @@ import shapes.*;
 
 import java.util.HashMap;
 
-class NormalLid extends Lid {
+final class NormalLid extends Lid {
     private NormalLid(int index, int towerWidth, int towerHeight) {
         super(index, Lid.NORMAL, towerWidth, towerHeight);
     }
@@ -19,8 +19,8 @@ class NormalLid extends Lid {
                 lid.setColor(cup.getColor());
             }
         } else {
-            Lid lid_ = (Lid) associatedItems.get("lid");
-            if (lid_.getType().equals(Lid.NORMAL)) lid = lid_;
+            lid = (Lid) associatedItems.get("lid");
+            if (!lid.getType().equals(Lid.NORMAL)) lid = null;
         }
         return lid;
     }
@@ -31,7 +31,7 @@ class NormalLid extends Lid {
 
     @Override
     protected void createExtraShapes() {
-        this.extraShapes = new Shape_[0];
+        this.extraShapes = new Shape[0];
     }
 
     @Override

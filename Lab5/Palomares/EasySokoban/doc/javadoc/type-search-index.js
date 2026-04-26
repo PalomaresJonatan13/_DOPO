@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html","k":"18"},{"p":"domain","l":"EasySokoban"},{"p":"tests","l":"EasySokobanConstructorTest"},{"p":"tests","l":"EasySokobanTest"},{"p":"domain","l":"SokobanException","k":"13"},{"p":"presentation","l":"SokobanGUI"},{"p":"tests","l":"TestUtils"}];updateSearchResults();

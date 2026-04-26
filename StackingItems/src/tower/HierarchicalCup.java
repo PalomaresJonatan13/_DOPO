@@ -5,7 +5,7 @@ import shapes.*;
 import java.util.HashMap;
 import java.awt.Color;
 
-class HierarchicalCup extends Cup {
+final class HierarchicalCup extends Cup {
     protected HierarchicalCup(int index, int towerWidth, int towerHeight) {
         super(index, Cup.HIERARCHICAL, towerWidth, towerHeight);
     }
@@ -21,8 +21,8 @@ class HierarchicalCup extends Cup {
                 cup.setColor(lid.getColor());
             }
         } else {
-            Cup cup_ = (Cup) associatedItems.get("cup");
-            if (cup_.getType().equals(Cup.HIERARCHICAL)) cup = cup_;
+            cup = (Cup) associatedItems.get("cup");
+            if (!cup.getType().equals(Cup.HIERARCHICAL)) cup = null;
         }
         return cup;
     }
@@ -35,7 +35,7 @@ class HierarchicalCup extends Cup {
     protected void createExtraShapes() {
         int width = this.width()*BLOCKSIZE;
 
-        this.extraShapes = new Shape_[2];
+        this.extraShapes = new Shape[2];
         this.extraShapes[0] = new Rectangle(width/4, BLOCKSIZE/4);
         this.extraShapes[1] = new Rectangle(width/4, BLOCKSIZE/4);
         this.extraShapes[0].changeColor(Color.BLACK);
@@ -45,8 +45,8 @@ class HierarchicalCup extends Cup {
     @Override
     protected void centerExtraShapesX() {
         int center = TOWER_MARGIN + this.towerWidth*BLOCKSIZE/2;
-        Shape_ shape1 = this.extraShapes[0];
-        Shape_ shape2 = this.extraShapes[1];
+        Shape shape1 = this.extraShapes[0];
+        Shape shape2 = this.extraShapes[1];
         shape1.moveHorizontallyTo(center - shape1.getWidth());
         shape2.moveHorizontallyTo(center);
     }

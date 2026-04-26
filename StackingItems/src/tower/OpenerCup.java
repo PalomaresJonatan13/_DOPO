@@ -4,7 +4,7 @@ import shapes.*;
 import java.awt.Color;
 import java.util.HashMap;
 
-class OpenerCup extends Cup {
+final class OpenerCup extends Cup {
     protected OpenerCup(int index, int towerWidth, int towerHeight) {
         super(index, Cup.OPENER, towerWidth, towerHeight);
     }
@@ -20,8 +20,8 @@ class OpenerCup extends Cup {
                 cup.setColor(lid.getColor());
             }
         } else {
-            Cup cup_ = (Cup) associatedItems.get("cup");
-            if (cup_.getType().equals(Cup.OPENER)) cup = cup_;
+            cup = (Cup) associatedItems.get("cup");
+            if (!cup.getType().equals(Cup.OPENER)) cup = null;
         }
         return cup;
     }
@@ -32,7 +32,7 @@ class OpenerCup extends Cup {
 
     @Override
     protected void createExtraShapes() {
-        this.extraShapes = new Shape_[2];
+        this.extraShapes = new Shape[2];
         this.extraShapes[0] = new Triangle((int) (BLOCKSIZE * 2f/3));
         this.extraShapes[1] = new Triangle((int) (BLOCKSIZE * 2f/3));
         this.extraShapes[0].changeColor(Color.WHITE);

@@ -1,6 +1,6 @@
 package shapes;
 
-public class Triangle extends Shape_ {
+public class Triangle extends Shape {
     private int height;
     private int width;
 

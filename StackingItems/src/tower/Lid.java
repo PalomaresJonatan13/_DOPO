@@ -6,7 +6,7 @@ import java.awt.Color;
 
 abstract class Lid extends TowerItem {
     protected Rectangle base;
-    protected Shape_[] shapesLidded;
+    protected Shape[] shapesLidded;
     protected boolean isInverted = false;
 
     public static String NORMAL = "normal";
