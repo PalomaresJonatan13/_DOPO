@@ -1,0 +1,60 @@
+hay que recolectar todas las monedas
+
+Modalidad player: hay tiempo definido
+modalidad PvsP: van en sentido diferente, gana el que llegue primero. Las zonas seguras iniciales y finales son opuestas
+
+maquinas aleatoria y experta
+
+skins: tienen nombre, se escogen en la interfaz inicial luego de escoger el modo de juego
+    azul: más veloz (x1.5) y mayor tamaño (x1.5)
+    verde: no muere al primer contacto, pero pierde velocidad (queda en x0.7)
+
+zona segura intermedia: checkpoint
+
+monedas skin: de color de las skins definidas, al recolectar el jugador cambia a esa skin, y se mantiene hasta recolectar otra moneda o morir. Se tienen que recolectar todas
+
+punto azul: vertical u horizontal, rebota contra las paredes
+punto azul patrullero: patrulla en círculos o figuras geométricas.
+deslizador vertical: verticalmente rebotando contra las paredes
+acelerado: vertical u horizontal, al doble de velocidad, rebota contra las paredes
+
+fuente de vida: dan un punto adicional de vida al jugador que llega a ellas, y luego desaparece.
+bombas: destruyen a cualquier elemento que pasa por ellas (jugador o enemigo)
+
+para cada configuración de juego:
+    zonas de inicio, intermedias, final
+    tipo y posición de monedas
+    tipo y ubicación inicial de enemigos
+    tipo y ubicación de elementos especiales
+    tiempo límite
+se almacenan en archivos .txt
+mínimo 3 configuraciones, una que corresponde a la configuración original de nivel uno
+
+al morir, se reinicia el nivel y se suma una muerte, no hay límite de vidas (nada más mostrar el conteo de muertes).
+si los dos jugadores se chocan, se cuenta la muerte para ambos.
+
+seleccionar modalidad y tipo de cuadrado
+escoger color del border que lo va a distinguir (2 jugadores)
+seleccionar una de las configuraciones disponibles
+moverse
+mostrar muertes, monedas, tiempo restante
+se puede pausar el juego.
+También terminarlo.
+Mostrar mensaje de victoria y ofrecer opcione para continuar
+Se puede abrir y salvar el estado de un juego
+
+se debe permitir incluir nuevos tipo de jugadores, monedas, enemigos y elementos especiales
+
+log de errores
+
+si están en una zona intermedia no pueden morir
+
+
+
+todas las monedas se reinician cuando el jugador muere? (sí por ahora)
+    El problema es que no se puede reiniciar para todos, porque los conteos de monedas son independientes.
+personalización de niveles? (por ahora no)
+- the disable and isActive methods are common to several classes.
+- different types of enemies
+- all the player's body should be inside the "walls".
+- shapes for the collisions
