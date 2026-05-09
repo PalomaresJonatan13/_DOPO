@@ -2,6 +2,9 @@ package domain;
 
 import java.util.*;
 
+/**
+ * Agujero negro que desaparece tras varios tic-tacs y puede convertir vecinos de forma cuadrada.
+ */
 public class BlackHole implements Thing {
     private Forest forest;
     private int row, column;
@@ -12,6 +15,12 @@ public class BlackHole implements Thing {
         RANDOM = new Random();
     }
 
+    /**
+     * Coloca el agujero negro en la celda dada.
+     * @param forest bosque
+     * @param row fila
+     * @param column columna
+     */
     public BlackHole(Forest forest, int row, int column) {
         this.forest = forest;
         this.row = row;
@@ -20,10 +29,16 @@ public class BlackHole implements Thing {
         this.forest.setThing(row, column, (Thing) this);
     }
 
+    /**
+     * @return {@link Thing#ROUND}
+     */
     public int shape() {
         return Thing.ROUND;
     }
 
+    /**
+     * Tras 12 tic-tacs se elimina; con probabilidad afecta vecinos de forma {@link Thing#SQUARE}.
+     */
     public void ticTac() {
         this.tictac++;
         if (this.tictac == 12) {
@@ -42,5 +57,13 @@ public class BlackHole implements Thing {
                 }
             }
         }
+    }
+
+    /**
+     * @return representación {@code BlackHole fila,columna}
+     */
+    @Override
+    public String toString() {
+        return String.format("%s %d,%d", this.getClass().getSimpleName(), this.row, this.column);
     }
 }

@@ -17,7 +17,7 @@ public class ShadowTest {
 
     @Before
     public void setUp(){
-        forest = new Forest();
+        forest = new Forest(true);
     }
 
     @Test

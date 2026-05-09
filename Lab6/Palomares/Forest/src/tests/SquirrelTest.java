@@ -17,7 +17,7 @@ public class SquirrelTest {
 
     @Before
     public void setUp(){
-        forest = new Forest();
+        forest = new Forest(true);
     }
 
     @Test

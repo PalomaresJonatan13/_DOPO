@@ -2,6 +2,10 @@ package domain;
 import java.awt.Color;
 import java.util.*;
 
+/**
+ * Ardilla que se mueve al azar, reproduce si hay otra ardilla a distancia 2 con celda intermedia libre,
+ * y muere si no puede mantener energía.
+ */
 public class Squirrel extends LivingThing implements Thing {
     private Forest forest;
     private int row, column;
@@ -14,8 +18,12 @@ public class Squirrel extends LivingThing implements Thing {
         RANDOM = new Random();
     }
 
-    // maybe unit tests using trees as obstacles to prevent Squirrels to move everywhere and reproduce
-    // multiple times for the same tic-tac
+    /**
+     * Crea una ardilla en la celda dada y la coloca en el bosque.
+     * @param forest bosque
+     * @param row fila
+     * @param column columna
+     */
     public Squirrel(Forest forest, int row, int column){
         this.forest = forest;
         this.row = row;
@@ -26,6 +34,11 @@ public class Squirrel extends LivingThing implements Thing {
         this.forest.setThing(row, column, (Thing) this);
     }
 
+    /**
+     * Interpola el color entre marrón y tono más claro según el paso de simulación.
+     * @param totalIterations pasos totales de referencia
+     * @param iteration índice actual (acotado)
+     */
     private void changeColor(int totalIterations, int iteration) {
         float relativeIteration = ((float) iteration) / ((float) totalIterations);
         this.color = new Color(
@@ -35,18 +48,30 @@ public class Squirrel extends LivingThing implements Thing {
         );
     }
 
+    /**
+     * @return fila actual
+     */
     public final int getRow(){
         return this.row;
     }
 
+    /**
+     * @return columna actual
+     */
     public final int getColumn(){
         return this.column;
     }
 
+    /**
+     * @return color de dibujo
+     */
     public final Color getColor(){
         return this.color;
     }
 
+    /**
+     * Ejecuta movimiento, reproducción y envejecimiento si sigue viva.
+     */
     public void ticTac() {
         if (this.tictac+1 > this.forest.getTictac()) return;
         this.tictac++;
@@ -67,8 +92,10 @@ public class Squirrel extends LivingThing implements Thing {
         }
     }
 
-    // it is not possible that two squirrels reproduce twice, because after the first squirrel moves
-    // they have no longer one intermediate empty cell
+    /**
+     * Intenta crear una ardilla hija en una celda intermedia entre esta y otra ardilla vecina a distancia 2.
+     * @return número de crías creadas en este tic-tac
+     */
     private int reproduce() {
         int reproduced = 0;
         List<Integer[]> neighborCells = Forest.neighborCells(this.forest, this.row, this.column, 2);
@@ -89,6 +116,9 @@ public class Squirrel extends LivingThing implements Thing {
         return reproduced;
     }
 
+    /**
+     * Elige una celda vecina libre al azar y se desplaza si existe.
+     */
     private void move() {
         List<Integer[]> neighborCells = Forest.neighborCells(this.forest, this.row, this.column);
         Thing cellThing = this;
@@ -108,8 +138,19 @@ public class Squirrel extends LivingThing implements Thing {
         }
     }
 
+    /**
+     * Marca la ardilla como muerta y vacía su celda.
+     */
     public void die(){
         this.dead = true;
         this.forest.setThing(this.row, this.column,null);
+    }
+
+    /**
+     * @return representación {@code Squirrel fila,columna}
+     */
+    @Override
+    public String toString() {
+        return String.format("%s %d,%d", this.getClass().getSimpleName(), this.row, this.column);
     }
 }

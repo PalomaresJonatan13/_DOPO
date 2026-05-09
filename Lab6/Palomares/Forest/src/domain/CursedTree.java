@@ -2,15 +2,27 @@ package domain;
 
 import java.util.List;
 
+/**
+ * Árbol que drena energía de los seres vivos en celdas vecinas.
+ */
 public class CursedTree extends Tree {
     private Forest forest;
     private boolean dead = false;
 
+    /**
+     * Crea un árbol maldito en la posición indicada.
+     * @param forest bosque
+     * @param row fila
+     * @param column columna
+     */
     public CursedTree(Forest forest, int row, int column) {
         super(forest, row, column);
         this.forest = forest;
     }
 
+    /**
+     * Ejecuta el tic-tac del árbol y aplica drenaje a vecinos vivos.
+     */
     public void ticTac() {
         super.ticTac();
 
@@ -27,6 +39,9 @@ public class CursedTree extends Tree {
         }
     }
 
+    /**
+     * Marca el árbol como muerto y vacía la celda.
+     */
     public void die(){
         this.dead = true;
         forest.setThing(row, column,null);

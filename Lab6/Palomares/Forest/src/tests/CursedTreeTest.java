@@ -11,7 +11,7 @@ public class CursedTreeTest {
 
     @Before
     public void setUp(){
-        forest = new Forest();
+        forest = new Forest(true);
     }
 
     @Test

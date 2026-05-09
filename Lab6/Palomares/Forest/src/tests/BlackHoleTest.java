@@ -11,7 +11,7 @@ public class BlackHoleTest {
 
     @Before
     public void setUp(){
-        forest = new Forest();
+        forest = new Forest(true);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class BlackHoleTest {
     public void shouldDeleteItself30PercentOfTheTimeIfThereIsANeighborThatCanBeAffected() {
         int timesDeleted = 0;
         for (int j=0; j<1000; j++) {
-            forest = new Forest();
+            forest = new Forest(true);
             new BlackHole(forest, 0, 0);
             new Squirrel(forest, 0, 1);
             
