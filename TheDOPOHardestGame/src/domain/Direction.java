@@ -14,6 +14,11 @@ public enum Direction {
         this.dy = dy;
     }
 
-    public int getDx() { return this.dx; }
-    public int getDy() { return this.dy; }
+    public int getDx() {
+        return this.dx;
+    }
+
+    public int getDy() {
+        return this.dy;
+    }
 }

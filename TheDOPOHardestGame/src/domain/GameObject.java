@@ -1,35 +1,79 @@
 package domain;
 
-public abstract class GameObject {
-    protected double x;
-    protected double y;
+import java.io.Serializable;
+
+public abstract class GameObject implements Serializable {
+    protected double centerX;
+    protected double centerY;
     protected double width;
     protected double height;
     protected boolean active;
+    protected Shape shape;
 
-    public GameObject(double x, double y, double width, double height) {
-        if (width <= 0 || height <= 0) throw new IllegalArgumentException("Width and height must be positive.");
-        if (x < 0 || y < 0) throw new IllegalArgumentException("x and y must be non-negative.");
-        this.x = x;
-        this.y = y;
+    public static enum Shape {
+        SQUARE, CIRCLE
+    }
+
+    public GameObject(double centerX, double centerY, double width, double height, Shape shape) {
+        this.centerX = centerX;
+        this.centerY = centerY;
         this.width = width;
         this.height = height;
+        this.shape = shape;
         this.active = true;
     }
 
-    public double getX() { return x; }
-    public void setX(double x) { this.x = x; }
+    public double getCenterX() {
+        return this.centerX;
+    }
 
-    public double getY() { return y; }
-    public void setY(double y) { this.y = y; }
-    public double getWidth() { return width; }
-    public double getHeight() { return height; }
+    public void setCenterX(double centerX) {
+        this.centerX = centerX;
+    }
 
-    public boolean intersects(GameObject other) { // maybe change this to make it depend on the shape of the object
-        return x < other.x + other.width &&
-               x + width > other.x &&
-               y < other.y + other.height &&
-               y + height > other.y;
+    public double getCenterY() {
+        return this.centerY;
+    }
+
+    public void setCenterY(double centerY) {
+        this.centerY = centerY;
+    }
+
+    public double getX() {
+        return this.centerX - this.width / 2.0;
+    }
+
+    public double getY() {
+        return this.centerY - this.height / 2.0;
+    }
+
+    public double getWidth() {
+        return this.width;
+    }
+
+    public double getHeight() {
+        return this.height;
+    }
+
+    public Shape getShape() {
+        return this.shape;
+    }
+
+    public boolean intersects(GameObject other) {
+        double thisLeft = this.getX();
+        double thisRight = this.getX() + this.width;
+        double thisTop = this.getY();
+        double thisBottom = this.getY() + this.height;
+
+        double otherLeft = other.getX();
+        double otherRight = other.getX() + other.width;
+        double otherTop = other.getY();
+        double otherBottom = other.getY() + other.height;
+
+        return thisLeft < otherRight &&
+                thisRight > otherLeft &&
+                thisTop < otherBottom &&
+                thisBottom > otherTop;
     }
 
     public boolean isActive() {
