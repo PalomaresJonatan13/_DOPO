@@ -13,6 +13,7 @@ public class Player extends GameObject implements MovableObject {
     private int extraLives = 0;
     private double checkpointX, checkpointY;
     private int coinCount = 0;
+    private String name;
 
     // State Pattern fields
     private PlayerType originalType;
@@ -20,19 +21,28 @@ public class Player extends GameObject implements MovableObject {
     private static final double BASE_SPEED = 0.075;
     private static final double SIDE_LENGTH = 0.6;
 
-    public Player(double x, double y) {
-        this(x, y, PlayerType.DEFAULT);
+    public Player(double x, double y, String name) {
+        this(x, y, PlayerType.DEFAULT, name);
     }
 
-    public Player(double x, double y, PlayerType originalType) {
+    public Player(double x, double y, PlayerType originalType, String name) {
         super(x, y, SIDE_LENGTH, SIDE_LENGTH, Shape.SQUARE);
         this.checkpointX = x;
         this.checkpointY = y;
+        this.name = name;
 
         this.speed = BASE_SPEED;
         this.originalType = originalType;
 
         this.changeSkin(originalType);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "Player{name='%s', type=%s, x=%.2f, y=%.2f, width=%.2f, height=%.2f, alive=%b, coins=%d, extraLives=%d, checkpointX=%.2f, checkpointY=%.2f, deaths=%d}",
+            name, currentState.getClass().getSimpleName(), centerX, centerY, width, height, isAlive, coinCount, extraLives, checkpointX, checkpointY, deaths
+        );
     }
 
     public void changeSkin(PlayerType type) {
@@ -131,8 +141,8 @@ public class Player extends GameObject implements MovableObject {
     }
 
     public void setCheckpoint(Cell cell) {
-        this.checkpointX = cell.getX();
-        this.checkpointY = cell.getY();
+        this.checkpointX = cell.getCenterX();
+        this.checkpointY = cell.getCenterY();
     }
 
     public void increaseCoinCount() {
@@ -141,5 +151,9 @@ public class Player extends GameObject implements MovableObject {
 
     public int getCoinCount() {
         return this.coinCount;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

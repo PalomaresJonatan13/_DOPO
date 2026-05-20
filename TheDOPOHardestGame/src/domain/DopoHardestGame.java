@@ -8,11 +8,11 @@ import java.util.*;
 import java.io.*;
 
 public class DopoHardestGame implements Serializable {
-    private Set<Player> players = new LinkedHashSet<>();
-    private Set<Enemy> enemies = new HashSet<>();
-    private Set<Coin> coins = new HashSet<>(); // for the presentation package, give it only the active coins
-    private Set<Cell> cells = new HashSet<>();
-    private Set<SpecialObject> specialObjects = new HashSet<>();
+    private List<Player> players = new ArrayList<>();
+    private List<Enemy> enemies = new ArrayList<>();
+    private List<Coin> coins = new ArrayList<>(); // for the presentation package, give it only the active coins
+    private List<Cell> cells = new ArrayList<>();
+    private List<SpecialObject> specialObjects = new ArrayList<>();
     private List<Cell> checkpoints = new ArrayList<>();
 
     private int width, height;
@@ -20,7 +20,7 @@ public class DopoHardestGame implements Serializable {
     private boolean isPaused = false;
     private boolean isGameOver = false;
     private boolean isVictory = false;
-    private Set<Player> winners = new HashSet<>();
+    private List<Player> winners = new ArrayList<>();
     private GameMode gameMode;
 
     public enum GameMode {
@@ -57,12 +57,12 @@ public class DopoHardestGame implements Serializable {
         Cell checkpoint;
         if (gameMode == GameMode.PLAYER) {
             checkpoint = this.checkpoints.get(0);
-            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY()));
+            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY(), "P1"));
         } else {
             checkpoint = this.checkpoints.get(0);
-            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY()));
+            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY(), "P1"));
             checkpoint = this.checkpoints.get(1);
-            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY()));
+            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY(), "P2"));
         }
     }
 
@@ -107,7 +107,8 @@ public class DopoHardestGame implements Serializable {
             if (enemy.canBounce()) {
                 Bouncable bouncable = (Bouncable) enemy;
                 if (!isRectInCells(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight())) {
-                    bouncable.bounceX();
+                    // use GameObject as parameter for isRectInCells, not 4 parameters
+                    bouncable.bounceX(); // change Bouncable, 
                     bouncable.bounceY();
                 }
             }
@@ -132,8 +133,8 @@ public class DopoHardestGame implements Serializable {
 
             for (Coin coin : this.coins) {
                 if (coin.isActive() && player.intersects(coin)) {
-                    coin.disable();
                     this.applyCoinEffect(player, coin);
+                    coin.disable();
                 }
             }
 
@@ -147,9 +148,8 @@ public class DopoHardestGame implements Serializable {
         }
 
         if (this.gameMode != GameMode.PLAYER) {
-            Iterator<Player> it = this.players.iterator();
-            Player p1 = it.next();
-            Player p2 = it.hasNext() ? it.next() : null;
+            Player p1 = this.players.get(0);
+            Player p2 = this.players.size() > 1 ? this.players.get(1) : null;
             if (p2 != null) {
                 boolean p1Safe = this.isPlayerInSafeZone(p1);
                 boolean p2Safe = this.isPlayerInSafeZone(p2);
@@ -165,8 +165,18 @@ public class DopoHardestGame implements Serializable {
     }
 
     private boolean isPlayerInSafeZone(Player player) {
+        int playerIdx = this.players.indexOf(player);
         for (Cell cell : this.cells) {
-            if (cell.isSafe() && player.intersects(cell)) {
+            boolean isSafeForPlayer = false;
+            if (cell.getType() == Cell.CellType.SAFE_ZONE) {
+                isSafeForPlayer = true;
+            } else if (playerIdx == 0 && cell.getType() == Cell.CellType.START) {
+                isSafeForPlayer = true;
+            } else if (playerIdx == 1 && cell.getType() == Cell.CellType.FINAL) {
+                isSafeForPlayer = true;
+            }
+
+            if (isSafeForPlayer && player.intersects(cell)) {
                 player.setCheckpoint(cell);
                 return true;
             }
@@ -196,8 +206,7 @@ public class DopoHardestGame implements Serializable {
      */
 
     private void applyCoinEffect(Player player, Coin coin) {
-        if (!coin.isActive())
-            return;
+        if (!coin.isActive()) return;
 
         if (coin.getType() == Coin.CoinType.NORMAL) {
             player.changeSkin(null);
@@ -228,12 +237,18 @@ public class DopoHardestGame implements Serializable {
     }
 
     private void checkWinCondition(Player player) {
+        Cell.CellType targetType = Cell.CellType.FINAL;
+        if (this.players.indexOf(player) == 1) { // Player 2 (P2)
+            targetType = Cell.CellType.START;
+        }
         for (Cell cell : this.cells) {
-            if (cell.getType() == Cell.CellType.FINAL &&
+            if (cell.getType() == targetType &&
                     player.intersects(cell) &&
                     this.allCoinsCollected()) {
                 this.isVictory = true;
-                this.winners.add(player);
+                if (!this.winners.contains(player)) {
+                    this.winners.add(player);
+                }
             }
         }
     }
@@ -284,9 +299,9 @@ public class DopoHardestGame implements Serializable {
         this.isPaused = !this.isPaused;
     }
 
-    public void terminateGame() {
+    /* public void terminateGame() {
         this.isGameOver = true;
-    }
+    } */
 
     public boolean isPaused() {
         return this.isPaused;
@@ -316,27 +331,27 @@ public class DopoHardestGame implements Serializable {
         return this.height;
     }
 
-    public Set<Player> getPlayers() {
-        return Collections.unmodifiableSet(this.players);
+    public List<Player> getPlayers() {
+        return Collections.unmodifiableList(this.players);
     }
 
-    public Set<Enemy> getEnemies() {
-        return Collections.unmodifiableSet(this.enemies);
+    public List<Enemy> getEnemies() {
+        return Collections.unmodifiableList(this.enemies);
     }
 
-    public Set<Coin> getCoins() {
-        return Collections.unmodifiableSet(this.coins);
+    public List<Coin> getCoins() {
+        return Collections.unmodifiableList(this.coins);
     }
 
-    public Set<Cell> getCells() {
-        return Collections.unmodifiableSet(this.cells);
+    public List<Cell> getCells() {
+        return Collections.unmodifiableList(this.cells);
     }
 
-    public Set<SpecialObject> getSpecialObjects() {
-        return Collections.unmodifiableSet(this.specialObjects);
+    public List<SpecialObject> getSpecialObjects() {
+        return Collections.unmodifiableList(this.specialObjects);
     }
 
-    public Set<Player> getWinners() {
-        return Collections.unmodifiableSet(this.winners);
+    public List<Player> getWinners() {
+        return Collections.unmodifiableList(this.winners);
     }
 }

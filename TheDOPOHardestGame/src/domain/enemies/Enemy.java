@@ -10,6 +10,11 @@ public abstract class Enemy extends GameObject implements MovableObject {
         super(centerX, centerY, 2 * RADIUS, 2 * RADIUS, Shape.CIRCLE);
     }
 
+    @Override
+    public String toString() {
+        return String.format("Enemy{type=%s, x=%.2f, y=%.2f, active=%b}", this.getClass().getSimpleName(), centerX, centerY, active);
+    }
+
     public abstract boolean canBounce();
 
     public void disable() {

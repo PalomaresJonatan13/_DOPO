@@ -61,14 +61,14 @@ public abstract class GameObject implements Serializable {
 
     public boolean intersects(GameObject other) {
         double thisLeft = this.getX();
-        double thisRight = this.getX() + this.width;
+        double thisRight = this.getX() + this.getWidth();
         double thisTop = this.getY();
-        double thisBottom = this.getY() + this.height;
+        double thisBottom = this.getY() + this.getHeight();
 
         double otherLeft = other.getX();
-        double otherRight = other.getX() + other.width;
+        double otherRight = other.getX() + other.getWidth();
         double otherTop = other.getY();
-        double otherBottom = other.getY() + other.height;
+        double otherBottom = other.getY() + other.getHeight();
 
         return thisLeft < otherRight &&
                 thisRight > otherLeft &&

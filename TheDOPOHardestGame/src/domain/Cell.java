@@ -16,11 +16,16 @@ public class Cell extends GameObject {
         this.type = type;
     }
 
+    @Override
+    public String toString() {
+        return String.format("Cell{type=%s, x=%.2f, y=%.2f, active=%b}", type, centerX, centerY, active);
+    }
+
     public CellType getType() {
         return type;
     }
 
     public boolean isSafe() {
-        return type == CellType.SAFE_ZONE;
+        return type == CellType.SAFE_ZONE || type == CellType.START;
     }
 }

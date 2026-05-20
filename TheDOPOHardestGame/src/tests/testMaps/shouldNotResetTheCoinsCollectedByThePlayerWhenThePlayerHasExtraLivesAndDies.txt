@@ -1,0 +1,6 @@
+Coins: red_0.5,0.5
+Cells: normal_0.5,0.5/1.5,0.5
+SpecialObjects: life_0.5,0.5 bomb_0.5,0.5
+Checkpoints: 0.5,0.5
+Dimensions: 2,1
+TimeRemaining: 60.0

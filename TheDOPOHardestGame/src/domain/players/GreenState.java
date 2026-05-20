@@ -34,4 +34,8 @@ public class GreenState implements PlayerState {
         this.hasShield = true;
         player.setSpeed(player.getBaseSpeed() * 2);
     }
+
+    public boolean hasShield() {
+        return this.hasShield;
+    }
 }

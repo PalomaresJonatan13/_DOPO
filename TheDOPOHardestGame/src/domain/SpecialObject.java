@@ -16,6 +16,14 @@ public class SpecialObject extends GameObject {
         this.active = true;
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+            "SpecialObject{type=%s, x=%.2f, y=%.2f, active=%b}",
+            type, centerX, centerY, active
+        );
+    }
+
     public SpecialObjectType getType() {
         return type;
     }

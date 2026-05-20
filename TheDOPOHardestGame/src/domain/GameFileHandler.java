@@ -9,11 +9,11 @@ import java.util.*;
 
 public class GameFileHandler {
     private DopoHardestGame.GameMode gameMode;
-    private Set<Player> players = new LinkedHashSet<>();
-    private Set<Enemy> enemies = new HashSet<>();
-    private Set<Coin> coins = new HashSet<>();
-    private Set<Cell> cells = new HashSet<>();
-    private Set<SpecialObject> specialObjects = new HashSet<>();
+    private List<Player> players = new ArrayList<>();
+    private List<Enemy> enemies = new ArrayList<>();
+    private List<Coin> coins = new ArrayList<>();
+    private List<Cell> cells = new ArrayList<>();
+    private List<SpecialObject> specialObjects = new ArrayList<>();
     private List<Cell> checkpoints = new ArrayList<>();
     private int width;
     private int height;
@@ -21,16 +21,14 @@ public class GameFileHandler {
 
     private static final Set<String> enemyTypes = Set.of("normal", "fast", "patrol", "slider");
 
-    public GameFileHandler() {
-        /* EMPTY */ }
+    public GameFileHandler() { /* EMPTY */ }
 
     public void loadMap(File file) throws DOPOException {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                if (line.isEmpty())
-                    continue;
+                if (line.isEmpty()) continue;
 
                 if (line.startsWith("Enemies: ")) {
                     this.parseEnemies(line);
@@ -49,6 +47,7 @@ public class GameFileHandler {
                 }
             }
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             throw new IllegalArgumentException(DOPOException.CANNOT_READ_FILE);
         }
     }
@@ -57,11 +56,11 @@ public class GameFileHandler {
     public void loadSerialized(File file) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             this.gameMode = (DopoHardestGame.GameMode) ois.readObject();
-            this.players = (Set<Player>) ois.readObject();
-            this.enemies = (Set<Enemy>) ois.readObject();
-            this.coins = (Set<Coin>) ois.readObject();
-            this.cells = (Set<Cell>) ois.readObject();
-            this.specialObjects = (Set<SpecialObject>) ois.readObject();
+            this.players = (List<Player>) ois.readObject();
+            this.enemies = (List<Enemy>) ois.readObject();
+            this.coins = (List<Coin>) ois.readObject();
+            this.cells = (List<Cell>) ois.readObject();
+            this.specialObjects = (List<SpecialObject>) ois.readObject();
             this.checkpoints = (List<Cell>) ois.readObject();
             this.width = ois.readInt();
             this.height = ois.readInt();
@@ -239,24 +238,24 @@ public class GameFileHandler {
         return this.gameMode;
     }
 
-    public Set<Player> getPlayers() {
-        return new LinkedHashSet<>(this.players);
+    public List<Player> getPlayers() {
+        return new ArrayList<>(this.players);
     }
 
-    public Set<Enemy> getEnemies() {
-        return new HashSet<>(this.enemies);
+    public List<Enemy> getEnemies() {
+        return new ArrayList<>(this.enemies);
     }
 
-    public Set<Coin> getCoins() {
-        return new HashSet<>(this.coins);
+    public List<Coin> getCoins() {
+        return new ArrayList<>(this.coins);
     }
 
-    public Set<Cell> getCells() {
-        return new HashSet<>(this.cells);
+    public List<Cell> getCells() {
+        return new ArrayList<>(this.cells);
     }
 
-    public Set<SpecialObject> getSpecialObjects() {
-        return new HashSet<>(this.specialObjects);
+    public List<SpecialObject> getSpecialObjects() {
+        return new ArrayList<>(this.specialObjects);
     }
 
     public List<Cell> getCheckpoints() {

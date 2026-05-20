@@ -17,6 +17,11 @@ public class Coin extends GameObject {
         this.type = type;
     }
 
+    @Override
+    public String toString() {
+        return String.format("Coin{type=%s, x=%.2f, y=%.2f, active=%b}", type, centerX, centerY, active);
+    }
+
     public CoinType getType() {
         return this.type;
     }
