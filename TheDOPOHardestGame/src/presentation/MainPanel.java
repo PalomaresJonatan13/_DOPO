@@ -10,6 +10,7 @@ import java.awt.*;
 class MainPanel extends JPanel {
 
     private JButton playButton;
+    private JButton playSavedButton;
 
     public MainPanel() {
         this.prepareElements();
@@ -66,6 +67,10 @@ class MainPanel extends JPanel {
 
         playButton = new OutlinedButton("PLAY", "GAME", new Color(240, 40, 40));
         buttonsPanel.add(playButton);
+
+        playSavedButton = new OutlinedButton("PLAY FROM", "SAVED GAME", new Color(40, 180, 40));
+        buttonsPanel.add(playSavedButton);
+
         centerPanel.add(buttonsPanel);
 
         centerPanel.add(Box.createVerticalGlue());
@@ -87,6 +92,10 @@ class MainPanel extends JPanel {
 
     public JButton getPlayButton() {
         return playButton;
+    }
+
+    public JButton getPlaySavedButton() {
+        return playSavedButton;
     }
 
 }

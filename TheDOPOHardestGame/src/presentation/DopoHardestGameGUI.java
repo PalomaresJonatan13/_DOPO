@@ -99,6 +99,27 @@ public class DopoHardestGameGUI extends JFrame {
         mainPanel.getPlayButton().addActionListener(e -> {
             cardLayout.show(cardContainer, CARD_MAPS);
         });
+
+        mainPanel.getPlaySavedButton().addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File("."));
+
+            int returnValue = fileChooser.showOpenDialog(this);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                try {
+                    DopoHardestGame game = new DopoHardestGame(selectedFile);
+                    gamePanel.startGame(game, mapsPanel.getPlayerColors());
+                    cardLayout.show(cardContainer, CARD_GAME);
+                    gamePanel.requestFocusInWindow();
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "Could not load saved game: " + ex.getMessage(),
+                        "Load Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
 
     private void prepareActionsMaps() {
@@ -120,20 +141,16 @@ public class DopoHardestGameGUI extends JFrame {
     private void loadAndStartGame(String mapFileName) {
         File mapFile = new File(getMapsDir(), mapFileName);
         try {
-            DopoHardestGame game = new DopoHardestGame(mapFile, mapsPanel.getSelectedMode());
+            DopoHardestGame game = new DopoHardestGame(mapFile, mapsPanel.getSelectedMode(), mapsPanel.getP1PlayerColor(), mapsPanel.getP2PlayerColor());
             gamePanel.startGame(game, mapsPanel.getPlayerColors());
             cardLayout.show(cardContainer, CARD_GAME);
             gamePanel.requestFocusInWindow();
         } catch (DOPOException ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Could not load map: " + ex.getMessage(),
-                    "Map Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                this,
+                "Could not load map: " + ex.getMessage(), "Map Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    // -----------------------------------------------------------------------
-    // Entry point
-    // -----------------------------------------------------------------------
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

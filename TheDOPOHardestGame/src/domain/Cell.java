@@ -12,7 +12,7 @@ public class Cell extends GameObject {
     }
 
     public Cell(double x, double y, CellType type) {
-        super(x, y, 1.0, 1.0, Shape.SQUARE);
+        super(x, y, 1.0, 1.0);
         this.type = type;
     }
 
@@ -26,6 +26,6 @@ public class Cell extends GameObject {
     }
 
     public boolean isSafe() {
-        return type == CellType.SAFE_ZONE || type == CellType.START;
+        return type != CellType.NORMAL;
     }
 }

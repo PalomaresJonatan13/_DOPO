@@ -10,7 +10,7 @@ import java.io.*;
 public class DopoHardestGame implements Serializable {
     private List<Player> players = new ArrayList<>();
     private List<Enemy> enemies = new ArrayList<>();
-    private List<Coin> coins = new ArrayList<>(); // for the presentation package, give it only the active coins
+    private List<Coin> coins = new ArrayList<>();
     private List<Cell> cells = new ArrayList<>();
     private List<SpecialObject> specialObjects = new ArrayList<>();
     private List<Cell> checkpoints = new ArrayList<>();
@@ -38,7 +38,7 @@ public class DopoHardestGame implements Serializable {
         this.coins = loader.getCoins();
         this.cells = loader.getCells();
         this.specialObjects = loader.getSpecialObjects();
-        this.checkpoints = loader.getCheckpoints(); // by default it should be some Cell with type START
+        this.checkpoints = loader.getCheckpoints();
 
         this.width = loader.getWidth();
         this.height = loader.getHeight();
@@ -47,8 +47,12 @@ public class DopoHardestGame implements Serializable {
     }
 
     public DopoHardestGame(File gameMap, GameMode gameMode) throws DOPOException { // .txt
+        this(gameMap, gameMode, Player.PlayerType.DEFAULT, Player.PlayerType.DEFAULT);
+    }
+
+    public DopoHardestGame(File gameMap, GameMode gameMode, Player.PlayerType playerType1, Player.PlayerType playerType2) throws DOPOException { // .txt
         if (gameMode == null)
-            throw new IllegalArgumentException("Invalid game mode: " + gameMode);
+            throw new IllegalArgumentException("The game mode cannot be null.");
         if (gameMap == null)
             throw new IllegalArgumentException("Game map cannot be null.");
 
@@ -57,12 +61,12 @@ public class DopoHardestGame implements Serializable {
         Cell checkpoint;
         if (gameMode == GameMode.PLAYER) {
             checkpoint = this.checkpoints.get(0);
-            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY(), "P1"));
+            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY(), playerType1, "P1"));
         } else {
             checkpoint = this.checkpoints.get(0);
-            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY(), "P1"));
+            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY(), playerType1, "P1"));
             checkpoint = this.checkpoints.get(1);
-            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY(), "P2"));
+            this.players.add(new Player(checkpoint.getCenterX(), checkpoint.getCenterY(), playerType2, "P2"));
         }
     }
 
@@ -76,11 +80,18 @@ public class DopoHardestGame implements Serializable {
         this.coins = loader.getCoins();
         this.cells = loader.getCells();
         this.specialObjects = loader.getSpecialObjects();
-        this.checkpoints = loader.getCheckpoints(); // should be some Cell with type START
+        this.checkpoints = loader.getCheckpoints();
 
         this.width = loader.getWidth();
         this.height = loader.getHeight();
         this.timeRemaining = loader.getTimeRemaining();
+    }
+
+    public void saveGame(File file) {
+        if (file == null)
+            throw new IllegalArgumentException("The saved game file cannot be null.");
+        GameFileHandler handler = new GameFileHandler();
+        handler.exportGameFile(file, this);
     }
 
     public void update() {
@@ -96,7 +107,7 @@ public class DopoHardestGame implements Serializable {
             double oldCenterY = player.getCenterY();
             player.move();
             // Prevent moving out of the cells bounds
-            if (!isRectInCells(player.getX(), player.getY(), player.getWidth(), player.getHeight())) {
+            if (!isRectInCells(player)) {
                 player.setCenterX(oldCenterX);
                 player.setCenterY(oldCenterY);
             }
@@ -106,10 +117,8 @@ public class DopoHardestGame implements Serializable {
             enemy.move();
             if (enemy.canBounce()) {
                 Bouncable bouncable = (Bouncable) enemy;
-                if (!isRectInCells(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight())) {
-                    // use GameObject as parameter for isRectInCells, not 4 parameters
-                    bouncable.bounceX(); // change Bouncable, 
-                    bouncable.bounceY();
+                if (!isRectInCells(enemy)) {
+                    bouncable.bounce();
                 }
             }
         }
@@ -165,14 +174,9 @@ public class DopoHardestGame implements Serializable {
     }
 
     private boolean isPlayerInSafeZone(Player player) {
-        int playerIdx = this.players.indexOf(player);
         for (Cell cell : this.cells) {
             boolean isSafeForPlayer = false;
-            if (cell.getType() == Cell.CellType.SAFE_ZONE) {
-                isSafeForPlayer = true;
-            } else if (playerIdx == 0 && cell.getType() == Cell.CellType.START) {
-                isSafeForPlayer = true;
-            } else if (playerIdx == 1 && cell.getType() == Cell.CellType.FINAL) {
+            if (cell.getType() != Cell.CellType.NORMAL) {
                 isSafeForPlayer = true;
             }
 
@@ -196,14 +200,6 @@ public class DopoHardestGame implements Serializable {
             coin.reset();
         }
     }
-
-    /*
-     * private void resetEnemies() {
-     * for (Enemy enemy : enemies) {
-     * enemy.reset();
-     * }
-     * }
-     */
 
     private void applyCoinEffect(Player player, Coin coin) {
         if (!coin.isActive()) return;
@@ -264,21 +260,25 @@ public class DopoHardestGame implements Serializable {
         if (playerIndex < 0 || playerIndex >= players.size())
             throw new IllegalArgumentException("Invalid player index.");
 
-        int i = 0;
+        int j = 0;
         Player p = null;
         for (Player pl : players) {
-            if (i == playerIndex) {
+            if (j == playerIndex) {
                 p = pl;
                 break;
             }
-            i++;
+            j++;
         }
-        if (p != null)
-            p.setDirection(dx, dy);
+        if (p != null) p.setDirection(dx, dy);
     }
 
-    private boolean isRectInCells(double rectX, double rectY, double rectW, double rectH) {
+    private boolean isRectInCells(GameObject object) {
         double eps = 0.0001;
+        double rectX = object.getX();
+        double rectY = object.getY();
+        double rectW = object.getWidth();
+        double rectH = object.getHeight();
+
         return isPointInCells(rectX + eps, rectY + eps) && // left top
                 isPointInCells(rectX + rectW - eps, rectY + eps) && // right top
                 isPointInCells(rectX + eps, rectY + rectH - eps) && // left bottom
@@ -298,10 +298,6 @@ public class DopoHardestGame implements Serializable {
     public void togglePause() {
         this.isPaused = !this.isPaused;
     }
-
-    /* public void terminateGame() {
-        this.isGameOver = true;
-    } */
 
     public boolean isPaused() {
         return this.isPaused;
@@ -345,6 +341,10 @@ public class DopoHardestGame implements Serializable {
 
     public List<Cell> getCells() {
         return Collections.unmodifiableList(this.cells);
+    }
+
+    public List<Cell> getCheckpoints() {
+        return Collections.unmodifiableList(this.checkpoints);
     }
 
     public List<SpecialObject> getSpecialObjects() {

@@ -8,18 +8,12 @@ public abstract class GameObject implements Serializable {
     protected double width;
     protected double height;
     protected boolean active;
-    protected Shape shape;
 
-    public static enum Shape {
-        SQUARE, CIRCLE
-    }
-
-    public GameObject(double centerX, double centerY, double width, double height, Shape shape) {
+    public GameObject(double centerX, double centerY, double width, double height) {
         this.centerX = centerX;
         this.centerY = centerY;
         this.width = width;
         this.height = height;
-        this.shape = shape;
         this.active = true;
     }
 
@@ -53,10 +47,6 @@ public abstract class GameObject implements Serializable {
 
     public double getHeight() {
         return this.height;
-    }
-
-    public Shape getShape() {
-        return this.shape;
     }
 
     public boolean intersects(GameObject other) {

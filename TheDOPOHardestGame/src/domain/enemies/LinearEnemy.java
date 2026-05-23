@@ -24,12 +24,8 @@ public abstract class LinearEnemy extends Enemy implements Bouncable {
     }
 
     @Override
-    public void bounceX() {
+    public void bounce() {
         this.speedX = -this.speedX;
-    }
-
-    @Override
-    public void bounceY() {
         this.speedY = -this.speedY;
     }
 }

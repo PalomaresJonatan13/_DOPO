@@ -26,7 +26,7 @@ public class Player extends GameObject implements MovableObject {
     }
 
     public Player(double x, double y, PlayerType originalType, String name) {
-        super(x, y, SIDE_LENGTH, SIDE_LENGTH, Shape.SQUARE);
+        super(x, y, SIDE_LENGTH, SIDE_LENGTH);
         this.checkpointX = x;
         this.checkpointY = y;
         this.name = name;
@@ -46,15 +46,16 @@ public class Player extends GameObject implements MovableObject {
     }
 
     public void changeSkin(PlayerType type) {
+        if (type == null) {
+            if (this.currentState == null) type = PlayerType.DEFAULT;
+            else return; // do not change the skin if the type is null and the player already has a skin.
+        }
         switch (type) {
             case DEFAULT -> this.currentState = new DefaultState();
             case RED -> this.currentState = new RedState();
             case GREEN -> this.currentState = new GreenState();
             case BLUE -> this.currentState = new BlueState();
-            default -> { // otherwise (when it is null) do not change the skin.
-                if (this.currentState == null)
-                    this.currentState = new DefaultState();
-            }
+            default -> {return;}
         }
 
         this.currentState.onEnterState(this);
@@ -76,12 +77,16 @@ public class Player extends GameObject implements MovableObject {
         return SIDE_LENGTH;
     }
 
-    public void setWidth(double w) {
-        this.width = w;
+    public int getExtraLives() {
+        return this.extraLives;
     }
 
-    public void setHeight(double h) {
-        this.height = h;
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
     }
 
     public void setSpeed(double speed) {

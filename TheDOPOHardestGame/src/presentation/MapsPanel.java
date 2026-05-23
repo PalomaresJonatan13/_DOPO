@@ -1,11 +1,13 @@
 package presentation;
 
-import domain.DopoHardestGame.*;
+import domain.DopoHardestGame.GameMode;
+import domain.players.Player.PlayerType;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.file.*;
 
 
 // ---------------------------------------------------------------------------
@@ -18,6 +20,8 @@ class MapsPanel extends JPanel {
     private JComboBox<GameMode> modeSelector;
     private ColorSelector p1ColorSelector;
     private ColorSelector p2ColorSelector;
+    private PlayerColorSelector p1PlayerColorSelector;
+    private PlayerColorSelector p2PlayerColorSelector;
     private JPanel gridPanel;
     private JPanel wrapperPanel;
     private JScrollPane scrollPane;
@@ -117,24 +121,33 @@ class MapsPanel extends JPanel {
         p2ColorSelector = new ColorSelector("P2/M Border", Color.RED, "Select P2/M Border Color");
         p2ColorSelector.setEnabled(false);
 
+        p1PlayerColorSelector = new PlayerColorSelector("P1 Color", 0); // Red
+        p2PlayerColorSelector = new PlayerColorSelector("P2 Color", 1); // Blue
+        p2PlayerColorSelector.setEnabled(false);
+
         modeSelector.addActionListener(e -> {
             GameMode mode = (GameMode) modeSelector.getSelectedItem();
             if (mode == GameMode.PLAYER) {
                 p2ColorSelector.setEnabled(false);
                 p2ColorSelector.setText("P2/M Border");
+                p2PlayerColorSelector.setEnabled(false);
             } else if (mode == GameMode.PvsP) {
                 p2ColorSelector.setEnabled(true);
                 p2ColorSelector.setText("P2 Border");
                 p2ColorSelector.setSelectedColor(Color.RED);
+                p2PlayerColorSelector.setEnabled(true);
             } else {
                 p2ColorSelector.setEnabled(true);
                 p2ColorSelector.setText("M Border");
                 p2ColorSelector.setSelectedColor(Color.GRAY);
+                p2PlayerColorSelector.setEnabled(true);
             }
         });
 
         colorPanel.add(p1ColorSelector);
+        colorPanel.add(p1PlayerColorSelector);
         colorPanel.add(p2ColorSelector);
+        colorPanel.add(p2PlayerColorSelector);
         bottomBar.add(colorPanel);
 
         add(bottomBar, BorderLayout.SOUTH);
@@ -142,6 +155,14 @@ class MapsPanel extends JPanel {
 
     public Color[] getPlayerColors() {
         return new Color[] { p1ColorSelector.getSelectedColor(), p2ColorSelector.getSelectedColor() };
+    }
+
+    public PlayerType getP1PlayerColor() {
+        return p1PlayerColorSelector.getSelectedType();
+    }
+
+    public PlayerType getP2PlayerColor() {
+        return p2PlayerColorSelector.getSelectedType();
     }
 
     public GameMode getSelectedMode() {
@@ -208,8 +229,7 @@ class MapsPanel extends JPanel {
             try {
                 int nextId = getNextCustomMapId();
                 File destFile = new File(DopoHardestGameGUI.getMapsDir(), "custom_map_" + nextId + ".txt");
-                java.nio.file.Files.copy(selectedFile.toPath(), destFile.toPath(),
-                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(selectedFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 refreshMaps();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Failed to upload map: " + ex.getMessage(), "Error",
@@ -225,8 +245,7 @@ class MapsPanel extends JPanel {
             File destFile = fileChooser.getSelectedFile();
             File srcFile = new File(DopoHardestGameGUI.getMapsDir(), mapFileName);
             try {
-                java.nio.file.Files.copy(srcFile.toPath(), destFile.toPath(),
-                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 JOptionPane.showMessageDialog(this, "Map saved successfully.");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Failed to save map: " + ex.getMessage(), "Error",
@@ -265,71 +284,5 @@ class MapsPanel extends JPanel {
             }
         }
         return maxId + 1;
-    }
-
-    private class ColorSelector extends JPanel {
-        private JLabel label;
-        private JPanel colorBox;
-        private Color selectedColor;
-        private String title;
-
-        public ColorSelector(String text, Color initialColor, String chooserTitle) {
-            this.title = chooserTitle;
-            this.selectedColor = initialColor;
-            setOpaque(false);
-            setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
-            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-            label = new JLabel(text);
-            label.setForeground(Color.WHITE);
-            label.setFont(new Font("Arial Black", Font.BOLD, 12));
-
-            colorBox = new JPanel();
-            colorBox.setPreferredSize(new Dimension(20, 20));
-            colorBox.setBackground(initialColor);
-            colorBox.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
-
-            add(label);
-            add(colorBox);
-
-            addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    if (isEnabled()) {
-                        Color c = JColorChooser.showDialog(ColorSelector.this, title, selectedColor);
-                        if (c != null) {
-                            setSelectedColor(c);
-                        }
-                    }
-                }
-            });
-        }
-
-        public Color getSelectedColor() {
-            return selectedColor;
-        }
-
-        public void setSelectedColor(Color color) {
-            this.selectedColor = color;
-            colorBox.setBackground(color);
-        }
-
-        @Override
-        public void setEnabled(boolean enabled) {
-            super.setEnabled(enabled);
-            label.setEnabled(enabled);
-            colorBox.setEnabled(enabled);
-            if (enabled) {
-                label.setForeground(Color.WHITE);
-                colorBox.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
-            } else {
-                label.setForeground(Color.GRAY);
-                colorBox.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-            }
-        }
-
-        public void setText(String text) {
-            label.setText(text);
-        }
     }
 }

@@ -5,13 +5,13 @@ public class SpecialObject extends GameObject {
         LIFE, BOMB
     }
 
-    private static final double RADIUS = 0.3;
+    private static final double SIDE_LENGTH = 0.5;
 
     private SpecialObjectType type;
     private boolean active;
 
     public SpecialObject(double x, double y, SpecialObjectType type) {
-        super(x, y, 2 * RADIUS, 2 * RADIUS, Shape.CIRCLE);
+        super(x, y, SIDE_LENGTH, SIDE_LENGTH);
         this.type = type;
         this.active = true;
     }

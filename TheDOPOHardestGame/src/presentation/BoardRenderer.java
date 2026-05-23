@@ -1,6 +1,14 @@
 package presentation;
 
-import domain.*;
+import domain.DopoHardestGame;
+import domain.Cell;
+import domain.Cell.CellType;
+import domain.enemies.Enemy;
+import domain.players.*;
+import domain.Coin;
+import domain.Coin.CoinType;
+import domain.SpecialObject;
+import domain.SpecialObject.SpecialObjectType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,8 +46,7 @@ public class BoardRenderer extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (game == null)
-            return;
+        if (game == null) return;
 
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -52,14 +59,14 @@ public class BoardRenderer extends JPanel {
         int offsetY = (getHeight() - rows * TILE) / 2;
 
         // Draw cells
-        for (domain.Cell cell : game.getCells()) {
+        for (Cell cell : game.getCells()) {
             int px = (int) (cell.getX() * TILE);
             int py = (int) (cell.getY() * TILE);
             // Checkerboard uses rounded grid position for parity
             int col = (int) Math.round(cell.getX());
             int row = (int) Math.round(cell.getY());
-            domain.Cell.CellType type = cell.getType();
-            if (type == domain.Cell.CellType.NORMAL) {
+            CellType type = cell.getType();
+            if (type == CellType.NORMAL) {
                 g2.setColor(((col + row) % 2 == 0) ? COLOR_TILE_GRAY : COLOR_TILE_WHITE);
             } else {
                 g2.setColor(COLOR_SPECIAL_CELL);
@@ -67,9 +74,9 @@ public class BoardRenderer extends JPanel {
             g2.fillRect(offsetX + px, offsetY + py, (int) (cell.getWidth() * TILE), (int) (cell.getHeight() * TILE));
         }
 
-        // Draw enemies — Black border
+        // Draw enemies
         if (!game.getEnemies().isEmpty()) {
-            for (domain.enemies.Enemy enemy : game.getEnemies()) {
+            for (Enemy enemy : game.getEnemies()) {
                 if (!enemy.isActive())
                     continue;
                 int px = (int) (enemy.getX() * TILE);
@@ -85,20 +92,20 @@ public class BoardRenderer extends JPanel {
             }
         }
 
-        // Draw coins — Black border, colored background
+        // Draw coins
         if (!game.getCoins().isEmpty()) {
-            for (domain.Coin coin : game.getCoins()) {
+            for (Coin coin : game.getCoins()) {
                 if (!coin.isActive())
                     continue;
                 int px = (int) (coin.getX() * TILE);
                 int py = (int) (coin.getY() * TILE);
                 int coinSize = (int) (coin.getWidth() * TILE);
 
-                if (coin.getType() == domain.Coin.CoinType.RED) {
+                if (coin.getType() == CoinType.RED) {
                     g2.setColor(Color.RED);
-                } else if (coin.getType() == domain.Coin.CoinType.BLUE) {
+                } else if (coin.getType() == CoinType.BLUE) {
                     g2.setColor(Color.BLUE);
-                } else if (coin.getType() == domain.Coin.CoinType.GREEN) {
+                } else if (coin.getType() == CoinType.GREEN) {
                     g2.setColor(Color.GREEN);
                 } else {
                     g2.setColor(COLOR_COIN);
@@ -114,7 +121,7 @@ public class BoardRenderer extends JPanel {
 
         // Draw special objects
         if (!game.getSpecialObjects().isEmpty()) {
-            for (domain.SpecialObject obj : game.getSpecialObjects()) {
+            for (SpecialObject obj : game.getSpecialObjects()) {
                 if (!obj.isActive())
                     continue;
                 int px = (int) (obj.getX() * TILE);
@@ -122,12 +129,12 @@ public class BoardRenderer extends JPanel {
                 int objW = (int) (obj.getWidth() * TILE);
                 int objH = (int) (obj.getHeight() * TILE);
 
-                if (obj.getType() == domain.SpecialObject.SpecialObjectType.BOMB) {
+                if (obj.getType() == SpecialObjectType.BOMB) {
                     g2.setColor(Color.BLACK);
                     g2.fillRect(offsetX + px, offsetY + py, objW, objH);
                     g2.setStroke(new BasicStroke(3f));
                     g2.drawRect(offsetX + px, offsetY + py, objW, objH);
-                } else if (obj.getType() == domain.SpecialObject.SpecialObjectType.LIFE) {
+                } else if (obj.getType() == SpecialObjectType.LIFE) {
                     g2.setColor(new Color(173, 216, 230)); // Light blue
                     g2.fillRect(offsetX + px, offsetY + py, objW, objH);
                     g2.setColor(Color.BLACK);
@@ -140,17 +147,17 @@ public class BoardRenderer extends JPanel {
         // Draw players
         if (!game.getPlayers().isEmpty()) {
             int playerIndex = 0;
-            for (domain.players.Player player : game.getPlayers()) {
+            for (Player player : game.getPlayers()) {
                 int px = (int) (player.getX() * TILE);
                 int py = (int) (player.getY() * TILE);
                 int playerSize = (int) (player.getWidth() * TILE);
 
-                domain.players.PlayerState state = player.getCurrentState();
-                if (state instanceof domain.players.RedState) {
+                PlayerState state = player.getCurrentState();
+                if (state instanceof RedState) {
                     g2.setColor(Color.RED);
-                } else if (state instanceof domain.players.BlueState) {
+                } else if (state instanceof BlueState) {
                     g2.setColor(Color.BLUE);
-                } else if (state instanceof domain.players.GreenState) {
+                } else if (state instanceof GreenState) {
                     g2.setColor(Color.GREEN);
                 } else {
                     g2.setColor(COLOR_PLAYER);

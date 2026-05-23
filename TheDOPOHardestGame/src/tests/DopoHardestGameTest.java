@@ -4,6 +4,7 @@ import domain.*;
 import domain.DopoHardestGame.GameMode;
 import domain.enemies.Enemy;
 import domain.players.*;
+import domain.exceptions.DOPOException;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -87,7 +88,19 @@ public class DopoHardestGameTest {
             new DopoHardestGame(new File("invalid.txt"));
             fail("Expected an IllegalArgumentException to be thrown");
         } catch (IllegalArgumentException e) {
-            assertTrue(true);
+            assertEquals("Invalid saved game file. Only .dopo files are admitted.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldThrowExceptionWithMessageWhenLoadingMapFileWithWrongExtension() {
+        try {
+            new DopoHardestGame(new File("notamap.dopo"), GameMode.PLAYER);
+            fail("Expected a DOPOException to be thrown");
+        } catch (DOPOException e) {
+            assertEquals("Invalid map file. Only .txt files are admitted.", e.getMessage());
+        } catch (Exception e) {
+            fail("Expected DOPOException but got: " + e.getClass().getName());
         }
     }
 

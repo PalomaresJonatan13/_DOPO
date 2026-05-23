@@ -1,5 +1,6 @@
 package domain;
 
+import domain.DopoHardestGame.*;
 import domain.enemies.*;
 import domain.exceptions.*;
 import domain.players.*;
@@ -24,6 +25,12 @@ public class GameFileHandler {
     public GameFileHandler() { /* EMPTY */ }
 
     public void loadMap(File file) throws DOPOException {
+        if (file == null) {
+            throw new IllegalArgumentException("File cannot be null.");
+        }
+        if (!file.getName().toLowerCase().endsWith(".txt")) {
+            throw new DOPOException("Invalid map file. Only .txt files are admitted.");
+        }
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -48,12 +55,18 @@ public class GameFileHandler {
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
-            throw new IllegalArgumentException(DOPOException.CANNOT_READ_FILE);
+            throw new DOPOException(DOPOException.CANNOT_READ_FILE);
         }
     }
 
     @SuppressWarnings("unchecked")
     public void loadSerialized(File file) {
+        if (file == null) {
+            throw new IllegalArgumentException("File cannot be null.");
+        }
+        if (!file.getName().toLowerCase().endsWith(".dopo")) {
+            throw new IllegalArgumentException("Invalid saved game file. Only .dopo files are admitted.");
+        }
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             this.gameMode = (DopoHardestGame.GameMode) ois.readObject();
             this.players = (List<Player>) ois.readObject();
@@ -67,6 +80,29 @@ public class GameFileHandler {
             this.timeRemaining = ois.readDouble();
         } catch (IOException | ClassNotFoundException e) {
             throw new IllegalArgumentException(DOPOException.CANNOT_READ_FILE);
+        }
+    }
+
+    public void exportGameFile(File file, DopoHardestGame game) {
+        if (file == null) {
+            throw new IllegalArgumentException("File cannot be null.");
+        }
+        if (!file.getName().toLowerCase().endsWith(".dopo")) {
+            throw new IllegalArgumentException("Invalid saved game file. Only .dopo files are admitted.");
+        }
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+            oos.writeObject(game.getGameMode());
+            oos.writeObject(new ArrayList<>(game.getPlayers()));
+            oos.writeObject(new ArrayList<>(game.getEnemies()));
+            oos.writeObject(new ArrayList<>(game.getCoins()));
+            oos.writeObject(new ArrayList<>(game.getCells()));
+            oos.writeObject(new ArrayList<>(game.getSpecialObjects()));
+            oos.writeObject(new ArrayList<>(game.getCheckpoints()));
+            oos.writeInt(game.getWidth());
+            oos.writeInt(game.getHeight());
+            oos.writeDouble(game.getTimeRemaining());
+        } catch (IOException e) {
+            throw new IllegalArgumentException(DOPOException.CANNOT_WRITE_FILE);
         }
     }
 
@@ -234,7 +270,7 @@ public class GameFileHandler {
         this.timeRemaining = timeRemaining;
     }
 
-    public DopoHardestGame.GameMode getGameMode() {
+    public GameMode getGameMode() {
         return this.gameMode;
     }
 

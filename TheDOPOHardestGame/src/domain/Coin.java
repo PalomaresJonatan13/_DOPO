@@ -13,7 +13,7 @@ public class Coin extends GameObject {
     }
 
     public Coin(double x, double y, CoinType type) {
-        super(x, y, 2 * RADIUS, 2 * RADIUS, Shape.CIRCLE);
+        super(x, y, 2 * RADIUS, 2 * RADIUS);
         this.type = type;
     }
 

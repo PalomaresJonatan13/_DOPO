@@ -1,12 +1,14 @@
 package presentation;
 
-import domain.*;
+import domain.DopoHardestGame;
 import domain.players.Player;
-import domain.DopoHardestGame.*;
+import domain.DopoHardestGame.GameMode;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.List;
 
 // ---------------------------------------------------------------------------
@@ -21,6 +23,7 @@ class GamePanel extends JPanel {
     private PlayerStatsBox p1StatsBox;
     private PlayerStatsBox p2StatsBox;
     private BoardRenderer renderer;
+    private JButton saveButton;
     private JButton backButton;
     private ActionListener backToMapsListener;
 
@@ -48,6 +51,14 @@ class GamePanel extends JPanel {
         statusLabel.setForeground(new Color(180, 180, 200));
         statusLabel.setBorder(BorderFactory.createEmptyBorder(6, 20, 6, 20));
 
+        saveButton = new JButton("SAVE");
+        saveButton.setFont(new Font("Arial Black", Font.BOLD, 12));
+        saveButton.setForeground(Color.WHITE);
+        saveButton.setBackground(new Color(80, 90, 120));
+        saveButton.setFocusPainted(false);
+        saveButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        saveButton.addActionListener(e -> saveGame());
+
         backButton = new JButton("BACK TO MAPS");
         backButton.setFont(new Font("Arial Black", Font.BOLD, 12));
         backButton.setForeground(Color.WHITE);
@@ -63,6 +74,7 @@ class GamePanel extends JPanel {
             }
         });
 
+        bottomPanel.add(saveButton, BorderLayout.WEST);
         bottomPanel.add(statusLabel, BorderLayout.CENTER);
         bottomPanel.add(backButton, BorderLayout.EAST);
         add(bottomPanel, BorderLayout.SOUTH);
@@ -204,6 +216,29 @@ class GamePanel extends JPanel {
         }
     }
 
+    private void saveGame() {
+        if (game == null) return;
+        if (!game.isPaused()) game.togglePause();
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Save game");
+        chooser.setFileFilter(new FileNameExtensionFilter("DOPO saved game (*.dopo)", "dopo"));
+        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+
+        File file = chooser.getSelectedFile();
+        if (file == null) return;
+        if (!file.getName().toLowerCase().endsWith(".dopo"))
+            file = new File(file.getAbsolutePath() + ".dopo");
+
+        try {
+            game.saveGame(file);
+            statusLabel.setText("Game saved to " + file.getName());
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Save failed", JOptionPane.ERROR_MESSAGE);
+        }
+        requestFocusInWindow();
+    }
+
     private void updateStatsLabels() {
         if (game.getPlayers() == null || game.getPlayers().isEmpty()) return;
 
@@ -212,7 +247,7 @@ class GamePanel extends JPanel {
         domain.players.Player p2 = players.size() > 1 ? players.get(1) : null;
 
         if (p1 != null) {
-            String text = String.format("P1 - Deaths: %d | Coins: %d", p1.getDeaths(), p1.getCoinCount());
+            String text = String.format("P1 - Deaths: %d | Coins: %d | Extra lives: %d", p1.getDeaths(), p1.getCoinCount(), p1.getExtraLives());
             p1StatsBox.updateStats(text, p1Color);
         } else {
             p1StatsBox.updateStats("", null);
@@ -220,43 +255,10 @@ class GamePanel extends JPanel {
 
         if (p2 != null) {
             String p2Prefix = game.getGameMode() == GameMode.PvsP ? "P2" : "M";
-            String text = String.format("%s - Deaths: %d | Coins: %d", p2Prefix, p2.getDeaths(), p2.getCoinCount());
+            String text = String.format("%s - Deaths: %d | Coins: %d | Extra lives: %d", p2Prefix, p2.getDeaths(), p2.getCoinCount(), p2.getExtraLives());
             p2StatsBox.updateStats(text, p2Color);
         } else {
             p2StatsBox.updateStats("", null);
-        }
-    }
-
-    private class PlayerStatsBox extends JPanel {
-        private JPanel colorIndicator;
-        private JLabel textLabel;
-
-        public PlayerStatsBox() {
-            setOpaque(false);
-            setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
-
-            colorIndicator = new JPanel();
-            colorIndicator.setPreferredSize(new Dimension(14, 14));
-            colorIndicator.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
-            colorIndicator.setVisible(false);
-
-            textLabel = new JLabel("");
-            textLabel.setFont(new Font("Arial Black", Font.BOLD, 14));
-            textLabel.setForeground(Color.WHITE);
-
-            add(colorIndicator);
-            add(textLabel);
-        }
-
-        public void updateStats(String text, Color borderColor) {
-            if (text == null || text.isEmpty()) {
-                colorIndicator.setVisible(false);
-                textLabel.setText("");
-            } else {
-                colorIndicator.setBackground(borderColor);
-                colorIndicator.setVisible(true);
-                textLabel.setText(text);
-            }
         }
     }
 }
